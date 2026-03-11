@@ -2,6 +2,7 @@ import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges
 import { DlNode } from './dl-node.model';
 import { DlNodeComponent } from './dl-node.component';
 import { toDocLang, simplify } from './md-to-doclang';
+import { assignHeadingIds } from './slug';
 
 @Component({
   selector: 'md-node',
@@ -24,7 +25,9 @@ export class MdNodeComponent implements OnChanges {
         return;
       }
       toDocLang(md).then(node => {
-        this.dlNode = simplify(node);
+        const simplified = simplify(node);
+        assignHeadingIds(simplified);
+        this.dlNode = simplified;
         this.cd.markForCheck();
       });
     }

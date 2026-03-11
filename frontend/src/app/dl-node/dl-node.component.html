@@ -61,32 +61,32 @@
     @case ('h') {
       @switch (headingLevel) {
         @case (1) {
-          <h1 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <h1 [attr.id]="elementId" [ngStyle]="inlineStyles" [ngClass]="cssClasses">
             <ng-container [ngTemplateOutlet]="content"/>
           </h1>
         }
         @case (2) {
-          <h2 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <h2 [attr.id]="elementId" [ngStyle]="inlineStyles" [ngClass]="cssClasses">
             <ng-container [ngTemplateOutlet]="content"/>
           </h2>
         }
         @case (3) {
-          <h3 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <h3 [attr.id]="elementId" [ngStyle]="inlineStyles" [ngClass]="cssClasses">
             <ng-container [ngTemplateOutlet]="content"/>
           </h3>
         }
         @case (4) {
-          <h4 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <h4 [attr.id]="elementId" [ngStyle]="inlineStyles" [ngClass]="cssClasses">
             <ng-container [ngTemplateOutlet]="content"/>
           </h4>
         }
         @case (5) {
-          <h5 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <h5 [attr.id]="elementId" [ngStyle]="inlineStyles" [ngClass]="cssClasses">
             <ng-container [ngTemplateOutlet]="content"/>
           </h5>
         }
         @case (6) {
-          <h6 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <h6 [attr.id]="elementId" [ngStyle]="inlineStyles" [ngClass]="cssClasses">
             <ng-container [ngTemplateOutlet]="content"/>
           </h6>
         }

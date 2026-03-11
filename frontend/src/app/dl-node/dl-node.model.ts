@@ -10,6 +10,7 @@ export interface DlNode {
   text?: string;
   children?: DlNode[];
   type?: BlockType;
+  id?: string;
 
   // Inline formatting
   bold?: boolean;

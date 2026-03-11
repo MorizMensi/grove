@@ -138,6 +138,10 @@ export class DlNodeComponent implements OnChanges {
     return this.canonical.language ? `language-${this.canonical.language}` : '';
   }
 
+  get elementId(): string | null {
+    return this.canonical.id ?? null;
+  }
+
   get headingLevel(): number {
     const lvl = this.canonical.level ?? 1;
     return Math.max(1, Math.min(6, lvl));
