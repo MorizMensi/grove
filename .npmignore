@@ -1,0 +1,7 @@
+frontend/src/
+frontend/node_modules/
+frontend/.angular/
+bin/
+server/
+tsconfig.json
+.gitignore

@@ -1,0 +1,209 @@
+<!--
+  Shared content template: text + recursive children,
+  wrapped in sup/sub and link as needed.
+  All references use `canonical` (the normalized node).
+  Children are passed as-is to child dl-node components,
+  which will normalize them on input.
+-->
+<ng-template #textAndChildren>
+  @if (canonical.text) {{{ canonical.text }}}
+  @if (colorSwatch) {<span class="color-swatch" [style.background-color]="colorSwatch"></span>}
+  @for (child of canonical.children; track $index) {
+    <dl-node [node]="child"/>
+  }
+</ng-template>
+
+<ng-template #withLink>
+  @if (safeLink) {
+    <a [href]="safeLink"><ng-container [ngTemplateOutlet]="textAndChildren"/></a>
+  } @else {
+    <ng-container [ngTemplateOutlet]="textAndChildren"/>
+  }
+</ng-template>
+
+<ng-template #content>
+  @if (canonical.superscript) {
+    <sup><ng-container [ngTemplateOutlet]="withLink"/></sup>
+  } @else if (canonical.subscript) {
+    <sub><ng-container [ngTemplateOutlet]="withLink"/></sub>
+  } @else {
+    <ng-container [ngTemplateOutlet]="withLink"/>
+  }
+</ng-template>
+
+<!-- Block type dispatch -->
+@if (canonical) {
+  @switch (canonical.type) {
+
+    <!-- Self-closing blocks -->
+    @case ('hr') {
+      <hr/>
+    }
+
+    @case ('img') {
+      @if (safeSrc) {
+        <img [src]="safeSrc"
+             [alt]="canonical.alt ?? ''"
+             [attr.width]="canonical.width ?? null"
+             [attr.height]="canonical.height ?? null"/>
+      }
+    }
+
+    @case ('bi') {
+      @if (safeIcon) {
+        <i class="bi bi-{{ safeIcon }}"
+           [ngStyle]="inlineStyles"
+           [ngClass]="cssClasses"></i>
+      }
+    }
+
+    <!-- Headings -->
+    @case ('h') {
+      @switch (headingLevel) {
+        @case (1) {
+          <h1 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+            <ng-container [ngTemplateOutlet]="content"/>
+          </h1>
+        }
+        @case (2) {
+          <h2 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+            <ng-container [ngTemplateOutlet]="content"/>
+          </h2>
+        }
+        @case (3) {
+          <h3 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+            <ng-container [ngTemplateOutlet]="content"/>
+          </h3>
+        }
+        @case (4) {
+          <h4 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+            <ng-container [ngTemplateOutlet]="content"/>
+          </h4>
+        }
+        @case (5) {
+          <h5 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+            <ng-container [ngTemplateOutlet]="content"/>
+          </h5>
+        }
+        @case (6) {
+          <h6 [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+            <ng-container [ngTemplateOutlet]="content"/>
+          </h6>
+        }
+      }
+    }
+
+    <!-- Paragraph -->
+    @case ('p') {
+      <p [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+        <ng-container [ngTemplateOutlet]="content"/>
+      </p>
+    }
+
+    <!-- Blockquote -->
+    @case ('quote') {
+      <blockquote [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+        <ng-container [ngTemplateOutlet]="content"/>
+      </blockquote>
+    }
+
+    <!-- Code block -->
+    @case ('pre') {
+      @if (isMermaid && mermaidSvg) {
+        <div class="mermaid-diagram" [innerHTML]="mermaidSvg"></div>
+      } @else if (isMermaid) {
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="language-label">Mermaid</span>
+          </div>
+          <pre [ngStyle]="inlineStyles"><code><ng-container [ngTemplateOutlet]="textAndChildren"/></code></pre>
+        </div>
+      } @else if (displayLanguage) {
+        <div class="code-block-wrapper">
+          <div class="code-block-header">
+            <span class="language-label">{{ displayLanguage }}</span>
+            <button class="copy-btn" [class.copied]="copied" (click)="copyCode()">
+              {{ copied ? 'Copied!' : 'Copy' }}
+            </button>
+          </div>
+          @if (highlightedHtml) {
+            <pre [ngStyle]="inlineStyles"><code [class]="langClass" [attr.data-line-numbers]="lineNumbers" [innerHTML]="highlightedHtml"></code></pre>
+          } @else {
+            <pre [ngStyle]="inlineStyles"><code [class]="langClass" [attr.data-line-numbers]="lineNumbers"><ng-container [ngTemplateOutlet]="textAndChildren"/></code></pre>
+          }
+        </div>
+      } @else {
+        @if (highlightedHtml) {
+          <pre [ngStyle]="inlineStyles"><code [class]="langClass" [innerHTML]="highlightedHtml"></code></pre>
+        } @else {
+          <pre [ngStyle]="inlineStyles"><code [class]="langClass"><ng-container [ngTemplateOutlet]="textAndChildren"/></code></pre>
+        }
+      }
+    }
+
+    <!-- Math -->
+    @case ('math') {
+      @if (canonical.displayMode) {
+        <div class="math-block" [innerHTML]="mathHtml"></div>
+      } @else {
+        <span class="math-inline" [innerHTML]="mathHtml"></span>
+      }
+    }
+
+    <!-- List -->
+    @case ('list') {
+      @if (canonical.ordered) {
+        <ol [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <ng-container [ngTemplateOutlet]="content"/>
+        </ol>
+      } @else {
+        <ul [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <ng-container [ngTemplateOutlet]="content"/>
+        </ul>
+      }
+    }
+
+    <!-- List item -->
+    @case ('li') {
+      <li [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+        <ng-container [ngTemplateOutlet]="content"/>
+      </li>
+    }
+
+    <!-- Table -->
+    @case ('table') {
+      <div class="table-wrapper">
+        <table [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <ng-container [ngTemplateOutlet]="content"/>
+        </table>
+      </div>
+    }
+
+    <!-- Table row -->
+    @case ('tr') {
+      <tr [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+        <ng-container [ngTemplateOutlet]="content"/>
+      </tr>
+    }
+
+    <!-- Table cell -->
+    @case ('td') {
+      @if (canonical.header) {
+        <th [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <ng-container [ngTemplateOutlet]="content"/>
+        </th>
+      } @else {
+        <td [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+          <ng-container [ngTemplateOutlet]="content"/>
+        </td>
+      }
+    }
+
+    <!-- Inline (no type) -->
+    @default {
+      <span [ngStyle]="inlineStyles" [ngClass]="cssClasses">
+        <ng-container [ngTemplateOutlet]="content"/>
+      </span>
+    }
+  }
+}
