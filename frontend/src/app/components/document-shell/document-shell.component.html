@@ -1,85 +1,160 @@
 <div class="document-shell">
-  <nav class="breadcrumbs">
-    @for (crumb of breadcrumbs; track crumb.path; let last = $last) {
-      @if (!last) {
-        <a [routerLink]="crumb.path">{{ crumb.label }}</a>
-        <span class="separator">/</span>
-      } @else {
-        <span class="current">{{ crumb.label }}</span>
-      }
-    }
-  </nav>
-
-  @if (mode === 'loading') {
-    <p class="empty-state">Loading...</p>
-  } @else if (mode === 'directory') {
-    @if (entries.length === 0) {
-      <p class="empty-state">No documents in this folder.</p>
-    } @else {
-      <div class="surface-card entry-list">
-        @for (entry of entries; track entry.name) {
-          <a [routerLink]="entryLink(entry)" [queryParams]="entryQueryParams(entry)" class="entry-row">
-            <i class="bi" [class]="iconClass(entry)" [class.icon-folder]="entry.type === 'directory'" [class.icon-file]="entry.type === 'file'"></i>
-            <span class="entry-name">{{ formatName(entry.name) }}</span>
-            @if (entry.extension && entry.extension !== 'md') {
-              <span class="extension-badge">.{{ entry.extension }}</span>
+    <nav class="breadcrumbs">
+        @for (crumb of breadcrumbs; track crumb.path; let last = $last) {
+            @if (!last) {
+                <a [routerLink]="crumb.path">{{ crumb.label }}</a>
+                <span class="separator">/</span>
+            } @else {
+                <span class="current">{{ crumb.label }}</span>
             }
-          </a>
         }
-      </div>
+        <div class="action-buttons">
+            <button
+                class="action-btn"
+                (click)="openExternal('terminal')"
+                aria-label="Open Terminal"
+            >
+                <i class="bi bi-terminal"></i>
+            </button>
+            <button
+                class="action-btn"
+                (click)="openExternal('zed')"
+                aria-label="Open in Zed"
+            >
+                <i class="bi bi-code-slash"></i>
+            </button>
+            <button
+                class="action-btn"
+                (click)="openExternal('claude')"
+                aria-label="Open Claude Code"
+            >
+                <i class="bi bi-braces-asterisk"></i>
+            </button>
+            @if (mode === "file") {
+                <button
+                    class="action-btn"
+                    (click)="openExternal('file')"
+                    aria-label="Edit file"
+                >
+                    <i class="bi bi-pencil"></i>
+                </button>
+            }
+        </div>
+    </nav>
+
+    @if (mode === "loading") {
+        <p class="empty-state">Loading...</p>
+    } @else if (mode === "directory") {
+        @if (entries.length === 0) {
+            <p class="empty-state">No documents in this folder.</p>
+        } @else {
+            <div class="surface-card entry-list">
+                @for (entry of entries; track entry.name) {
+                    <a
+                        [routerLink]="entryLink(entry)"
+                        [queryParams]="entryQueryParams(entry)"
+                        class="entry-row"
+                    >
+                        <i
+                            class="bi"
+                            [class]="iconClass(entry)"
+                            [class.icon-folder]="entry.type === 'directory'"
+                            [class.icon-file]="entry.type === 'file'"
+                        ></i>
+                        <span class="entry-name">{{
+                            formatName(entry.name)
+                        }}</span>
+                        @if (entry.extension && entry.extension !== "md") {
+                            <span class="extension-badge"
+                                >.{{ entry.extension }}</span
+                            >
+                        }
+                    </a>
+                }
+            </div>
+        }
+    } @else if (mode === "file") {
+        <div class="wiki-file-layout" [class.wiki-sidebar-open]="sidebarOpen">
+            <aside class="wiki-sidebar">
+                <div class="wiki-sidebar-header">
+                    <span class="wiki-sidebar-label">In this folder</span>
+                </div>
+                <div class="wiki-sidebar-entries">
+                    @for (entry of sidebarEntries; track entry.name) {
+                        <a
+                            [routerLink]="sidebarEntryLink(entry)"
+                            [queryParams]="entryQueryParams(entry)"
+                            class="wiki-sidebar-item"
+                            [class.wiki-sidebar-item--active]="
+                                isCurrentFile(entry)
+                            "
+                        >
+                            <i
+                                class="bi"
+                                [class]="iconClass(entry)"
+                                [class.icon-folder]="entry.type === 'directory'"
+                                [class.icon-file]="entry.type === 'file'"
+                            ></i>
+                            <span>{{ formatName(entry.name) }}</span>
+                        </a>
+                    }
+                </div>
+            </aside>
+
+            <div class="wiki-content wide" (click)="onContentClick($event)">
+                <div>
+                    @switch (fileType) {
+                        @case ("image") {
+                            <img
+                                [src]="mediaUrl"
+                                [alt]="title"
+                                class="media-preview"
+                            />
+                        }
+                        @case ("video") {
+                            <video
+                                [src]="mediaUrl"
+                                controls
+                                class="media-preview"
+                            ></video>
+                        }
+                        @case ("audio") {
+                            <audio
+                                [src]="mediaUrl"
+                                controls
+                                class="media-preview-audio"
+                            ></audio>
+                        }
+                        @case ("pdf") {
+                            <iframe
+                                [src]="safeMediaUrl"
+                                class="media-preview-pdf"
+                            ></iframe>
+                        }
+                        @case ("svg") {
+                            <img
+                                [src]="mediaUrl"
+                                [alt]="title"
+                                class="media-preview"
+                            />
+                            <md-node [markdown]="markdown!" />
+                        }
+                        @default {
+                            <md-node [markdown]="markdown!" />
+                        }
+                    }
+                </div>
+            </div>
+
+            <button
+                class="wiki-sidebar-toggle"
+                (click)="toggleSidebar()"
+                aria-label="Open sidebar"
+            >
+                <i class="bi bi-layout-sidebar"></i>
+            </button>
+        </div>
+    } @else if (mode === "not-found") {
+        <p class="empty-state">Document not found.</p>
     }
-  } @else if (mode === 'file') {
-    <div class="wiki-file-layout" [class.wiki-sidebar-open]="sidebarOpen">
-      <aside class="wiki-sidebar">
-        <div class="wiki-sidebar-header">
-          <span class="wiki-sidebar-label">In this folder</span>
-        </div>
-        <div class="wiki-sidebar-entries">
-          @for (entry of sidebarEntries; track entry.name) {
-            <a [routerLink]="sidebarEntryLink(entry)"
-               [queryParams]="entryQueryParams(entry)"
-               class="wiki-sidebar-item"
-               [class.wiki-sidebar-item--active]="isCurrentFile(entry)">
-              <i class="bi" [class]="iconClass(entry)"
-                 [class.icon-folder]="entry.type === 'directory'"
-                 [class.icon-file]="entry.type === 'file'"></i>
-              <span>{{ formatName(entry.name) }}</span>
-            </a>
-          }
-        </div>
-      </aside>
-
-      <div class="wiki-content wide" (click)="onContentClick($event)">
-        <div>
-        @switch (fileType) {
-          @case ('image') {
-            <img [src]="mediaUrl" [alt]="title" class="media-preview" />
-          }
-          @case ('video') {
-            <video [src]="mediaUrl" controls class="media-preview"></video>
-          }
-          @case ('audio') {
-            <audio [src]="mediaUrl" controls class="media-preview-audio"></audio>
-          }
-          @case ('pdf') {
-            <iframe [src]="safeMediaUrl" class="media-preview-pdf"></iframe>
-          }
-          @case ('svg') {
-            <img [src]="mediaUrl" [alt]="title" class="media-preview" />
-            <md-node [markdown]="markdown!" />
-          }
-          @default {
-            <md-node [markdown]="markdown!" />
-          }
-        }
-        </div>
-      </div>
-
-      <button class="wiki-sidebar-toggle" (click)="toggleSidebar()" aria-label="Open sidebar">
-        <i class="bi bi-layout-sidebar"></i>
-      </button>
-    </div>
-  } @else if (mode === 'not-found') {
-    <p class="empty-state">Document not found.</p>
-  }
 </div>

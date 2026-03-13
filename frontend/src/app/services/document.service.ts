@@ -26,4 +26,8 @@ export class DocumentService {
   getFileContent(path: string, extension: string): Observable<string> {
     return this.http.get(`/documents/${path}.${extension}`, { responseType: 'text' });
   }
+
+  openExternal(action: 'terminal' | 'zed' | 'claude', path: string): Observable<{ ok: boolean }> {
+    return this.http.post<{ ok: boolean }>('/api/open', { action, path });
+  }
 }

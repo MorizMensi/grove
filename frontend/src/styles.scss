@@ -277,3 +277,21 @@ app-root {
 .scrollable {
   overflow-y: auto;
 }
+
+/* ── Print ────────────────────────────────────────────── */
+
+@media print {
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  * {
+    scrollbar-width: none !important;
+    &::-webkit-scrollbar { display: none !important; }
+  }
+
+  .wiki-content > * {
+    max-width: none !important;
+  }
+}

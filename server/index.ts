@@ -2,14 +2,19 @@ import express from 'express';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { documentsRouter } from './documents.js';
+import { openRouter } from './open.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export function createApp(docsDir: string): express.Application {
   const app = express();
 
+  // Parse JSON bodies
+  app.use(express.json());
+
   // API routes
   app.use('/api/documents', documentsRouter(docsDir));
+  app.use('/api/open', openRouter(docsDir));
 
   // Serve Angular frontend
   // __dirname = dist/server/server/, frontend build = dist/frontend/browser/
