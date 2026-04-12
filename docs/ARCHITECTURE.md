@@ -25,7 +25,7 @@ and the static Angular SPA; there is no separate frontend host.
 │      → { platform, supports }     │
 │                                   │
 │  GET  /            (static SPA)   │
-│  GET  /documents/…  (static docs) │
+│  GET  /_content/… (static docs)   │
 │  GET  /{*splat}    (SPA fallback) │
 └──────────────┬────────────────────┘
                │ HTTP / JSON
@@ -33,7 +33,7 @@ and the static Angular SPA; there is no separate frontend host.
 ┌──────────────▼────────────────────┐
 │        Angular 19 SPA             │
 │                                   │
-│  app.routes   → /documents/**     │
+│  app.routes   → /**               │
 │                 → DocumentShell   │
 │                                   │
 │  core/                            │
@@ -80,7 +80,7 @@ server).
 ## Rendering pipeline
 
 1. The document shell fetches markdown content from
-   `/documents/<path>.md`.
+   `_content/<path>.md` (relative URL, resolves via `<base href>`).
 2. `<md-node>` wraps the raw markdown.
 3. `md-to-doclang.ts` parses it with remark (GFM + math extensions)
    and converts the mdast tree to a canonical DocLang (`DlNode`) tree.

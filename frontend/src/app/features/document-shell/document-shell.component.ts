@@ -15,6 +15,7 @@ import {
   previewKindFor,
 } from "../../core/constants/file-types";
 import { titleFromSegment } from "../../core/utils/title-from-segment";
+import { CONTENT_URL_PREFIX } from "@shared/content-url";
 
 @Component({
   selector: "app-document-shell",
@@ -95,7 +96,7 @@ export class DocumentShellComponent implements OnInit {
 
     if (kind && kind !== "svg") {
       this.fileType = kind;
-      this.mediaUrl = `/documents/${filePath}.${extension}`;
+      this.mediaUrl = `${CONTENT_URL_PREFIX}/${filePath}.${extension}`;
       if (kind === "pdf") {
         this.safeMediaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
           this.mediaUrl,
@@ -108,7 +109,7 @@ export class DocumentShellComponent implements OnInit {
 
     if (kind === "svg") {
       this.fileType = "svg";
-      this.mediaUrl = `/documents/${filePath}.${extension}`;
+      this.mediaUrl = `${CONTENT_URL_PREFIX}/${filePath}.${extension}`;
     }
 
     this.documentService
@@ -151,8 +152,8 @@ export class DocumentShellComponent implements OnInit {
 
   private buildBreadcrumbs(filePath: string): void {
     const parts = filePath.split("/").filter(Boolean);
-    this.breadcrumbs = [{ label: "Documents", path: "/documents" }];
-    let accumulated = "/documents";
+    this.breadcrumbs = [{ label: "Documents", path: "/" }];
+    let accumulated = "";
     for (const part of parts) {
       accumulated += "/" + part;
       this.breadcrumbs.push({
@@ -167,9 +168,7 @@ export class DocumentShellComponent implements OnInit {
   }
 
   entryLink(entry: DocumentEntry): string {
-    const base = this.currentPath
-      ? `/documents/${this.currentPath}`
-      : "/documents";
+    const base = this.currentPath ? `/${this.currentPath}` : "";
     return `${base}/${entry.name}`;
   }
 
@@ -185,9 +184,7 @@ export class DocumentShellComponent implements OnInit {
   }
 
   sidebarEntryLink(entry: DocumentEntry): string {
-    const base = this.parentPath
-      ? `/documents/${this.parentPath}`
-      : "/documents";
+    const base = this.parentPath ? `/${this.parentPath}` : "";
     return `${base}/${entry.name}`;
   }
 

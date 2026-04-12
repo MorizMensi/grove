@@ -101,7 +101,7 @@ export class DlNodeComponent implements OnChanges {
 
     const normalized: string[] = [];
     for (const seg of combined) {
-      if (seg === '.') continue;
+      if (seg === '' || seg === '.') continue;
       if (seg === '..') normalized.pop();
       else normalized.push(seg);
     }
@@ -109,11 +109,8 @@ export class DlNodeComponent implements OnChanges {
     const resolved = normalized.join('/');
     const dotIdx = resolved.lastIndexOf('.');
     const slashIdx = resolved.lastIndexOf('/');
-    if (dotIdx > slashIdx) {
-      const withoutExt = resolved.slice(0, dotIdx);
-      return ['/documents', ...withoutExt.split('/')];
-    }
-    return ['/documents', ...resolved.split('/')];
+    const finalPath = dotIdx > slashIdx ? resolved.slice(0, dotIdx) : resolved;
+    return finalPath ? ['/' + finalPath] : ['/'];
   }
 
   get linkQueryParams(): Record<string, string> | null {

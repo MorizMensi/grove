@@ -23,7 +23,7 @@ for (let i = 0; i < args.length; i++) {
   } else if (arg === '--no-open') {
     noOpen = true;
   } else if (arg === '--help' || arg === '-h') {
-    console.log(`Usage: grove <folder> [options]
+    console.log(`Usage: grove [folder] [options]
 
 Options:
   --port <number>  Port to serve on (default: 3000)
@@ -36,8 +36,7 @@ Options:
 }
 
 if (!folderPath) {
-  console.error('Error: Please provide a folder path.\nUsage: grove <folder> [--port 3000] [--no-open]');
-  process.exit(1);
+  folderPath = '.';
 }
 
 const resolvedPath = resolve(folderPath);

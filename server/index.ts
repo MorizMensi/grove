@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { documentsRouter } from './documents.js';
 import { openRouter } from './open.js';
 import { capabilitiesRouter } from './capabilities.js';
+import { CONTENT_URL_PREFIX } from '../shared/content-url.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -23,8 +24,8 @@ export function createApp(docsDir: string): express.Application {
   const frontendDir = join(__dirname, '../frontend/browser');
   app.use(express.static(frontendDir));
 
-  // Serve documents directory for file content fetching
-  app.use('/documents', express.static(docsDir, { redirect: false }));
+  // Serve documents directory for raw file content fetching (internal namespace)
+  app.use(`/${CONTENT_URL_PREFIX}`, express.static(docsDir, { redirect: false }));
 
   // Angular catch-all for client-side routing
   app.get('/{*splat}', (_req, res) => {

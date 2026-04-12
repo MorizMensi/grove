@@ -9,3 +9,4 @@ frontend/.angular/
 .vscode/
 coverage/
 *.tgz
+.playwright-mcp/
