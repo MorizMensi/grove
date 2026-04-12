@@ -17,6 +17,19 @@ npx grovemd ~/Documents/notes
 > (the unscoped name `grove` is held by a dormant package — we're working
 > on it). The installed CLI is named `grove`.
 
+## Documentation
+
+The full Grove wiki is hosted at **<https://morizmensi.github.io/grove/>** —
+served by Grove itself, the exact same renderer you get when you
+`npx grovemd` your own folder.
+
+- [Getting started](https://morizmensi.github.io/grove/getting-started)
+- [Usage](https://morizmensi.github.io/grove/usage)
+- [How it works](https://morizmensi.github.io/grove/how-it-works)
+- [Contributing](https://morizmensi.github.io/grove/contributing)
+- [Use Grove for your own wiki](https://morizmensi.github.io/grove/wiki-for-other-repos)
+- [Architecture reference](https://morizmensi.github.io/grove/ARCHITECTURE)
+
 ## Features today
 
 - **Markdown + GFM** — tables, task lists, strikethrough, footnotes
@@ -45,6 +58,34 @@ local-first editor in the Obsidian family, one feature at a time:
 
 If any of this sounds interesting, open an issue — it's the fastest
 way to nudge the order.
+
+## Use Grove as your wiki
+
+Grove can render **any repo's `docs/` folder** as a static wiki on
+GitHub Pages. Add this single workflow to your repo:
+
+```yaml
+# .github/workflows/docs.yml
+name: docs
+on:
+  push:
+    branches: [main]
+    paths: [docs/**]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  wiki:
+    uses: MorizMensi/grove/.github/workflows/build-wiki.yml@main
+    with:
+      docs: docs
+```
+
+Then enable GitHub Pages in **Settings → Pages → Source: GitHub Actions**
+and push a commit that touches `docs/`. Full walkthrough:
+[wiki-for-other-repos](https://morizmensi.github.io/grove/wiki-for-other-repos).
 
 ## Install
 
@@ -126,8 +167,9 @@ dist/
 └── frontend/browser # Angular SPA
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full project
-layout.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) (or the
+[hosted version](https://morizmensi.github.io/grove/ARCHITECTURE)) for the
+full project layout.
 
 ## Local deploy example (macOS)
 
