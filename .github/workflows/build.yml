@@ -1,0 +1,40 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Install root deps
+        run: npm ci
+
+      - name: Install frontend deps
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build (frontend + server)
+        run: npm run build
+
+      - name: Verify dist layout
+        run: |
+          test -f dist/server/bin/file-viewer.js
+          test -f dist/server/index.js
+          test -f dist/server/documents.js
+          test -f dist/server/open.js
+          test -f dist/server/capabilities.js
+          test -f dist/frontend/browser/index.html
+          test -f dist/shared/types/open.js
