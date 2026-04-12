@@ -1,8 +1,30 @@
 {
   "name": "file-viewer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Standalone CLI tool that serves a folder as a web-based document viewer with markdown rendering, syntax highlighting, math, and diagrams.",
   "type": "module",
+  "license": "MIT",
+  "author": "Moriz Mensi-Klarbach",
+  "homepage": "https://github.com/OWNER/file-viewer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OWNER/file-viewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OWNER/file-viewer/issues"
+  },
+  "keywords": [
+    "markdown",
+    "viewer",
+    "cli",
+    "documentation",
+    "file-browser",
+    "angular",
+    "express"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "bin": {
     "file-serve": "./dist/server/bin/file-viewer.js"
   },
@@ -13,37 +35,15 @@
     "build:frontend": "cd frontend && npx ng build --configuration production",
     "build:server": "tsc -p tsconfig.json",
     "build": "npm run build:frontend && npm run build:server",
-    "restart": "launchctl unload ~/Library/LaunchAgents/com.file-viewer.plist && launchctl load ~/Library/LaunchAgents/com.file-viewer.plist",
-    "deploy": "npm run build && npm run restart",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.2.22",
-    "@angular/cli": "^19.2.22",
-    "@angular/common": "^19.2.0",
-    "@angular/compiler": "^19.2.0",
-    "@angular/compiler-cli": "^19.2.0",
-    "@angular/core": "^19.2.0",
-    "@angular/forms": "^19.2.0",
-    "@angular/platform-browser": "^19.2.0",
-    "@angular/platform-browser-dynamic": "^19.2.0",
-    "@angular/router": "^19.2.0",
     "@types/express": "^5.0.0",
     "@types/node": "^22.0.0",
-    "highlight.js": "^11.11.1",
-    "katex": "^0.16.38",
-    "@types/katex": "^0.16.8",
-    "mermaid": "^11.13.0",
-    "remark-gfm": "^4.0.1",
-    "remark-math": "^6.0.0",
-    "remark-parse": "^11.0.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "typescript": "~5.7.2",
-    "unified": "^11.0.5",
-    "zone.js": "~0.15.0"
+    "typescript": "~5.7.2"
   }
 }

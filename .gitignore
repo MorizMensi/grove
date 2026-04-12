@@ -4,3 +4,8 @@ frontend/node_modules/
 frontend/.angular/
 *.ics
 .DS_Store
+*.log
+.idea/
+.vscode/
+coverage/
+*.tgz

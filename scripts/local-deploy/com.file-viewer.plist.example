@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.file-viewer</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/node</string>
+        <string>/ABSOLUTE/PATH/TO/file-viewer/dist/server/bin/file-viewer.js</string>
+        <string>/ABSOLUTE/PATH/TO/YOUR/DOCS</string>
+        <string>--port</string>
+        <string>3000</string>
+        <string>--no-open</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin</string>
+        <!-- Optional: path to your Zed binary. Fallback is `zed` on PATH. -->
+        <!-- <key>ZED_BIN</key> -->
+        <!-- <string>/usr/local/bin/zed</string> -->
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/file-viewer.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/file-viewer.err.log</string>
+</dict>
+</plist>
