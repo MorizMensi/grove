@@ -7,17 +7,7 @@ import { DlExtendedValue, normalize } from './dl-normalize';
 import { HighlightService } from './highlight.service';
 import { KatexService } from './katex.service';
 import { MermaidService } from './mermaid.service';
-
-const ALLOWED_SCHEME_RE = /^(https?:\/\/|mailto:)/i;
-const HAS_SCHEME_RE = /^[a-zA-Z][a-zA-Z0-9+.-]*:/;
-const CONTROL_CHAR_RE = /[\x00-\x1f\x7f]/;
-
-function isSafeUrl(url: string): boolean {
-  const trimmed = url.trim();
-  if (!trimmed || CONTROL_CHAR_RE.test(trimmed)) return false;
-  if (HAS_SCHEME_RE.test(trimmed)) return ALLOWED_SCHEME_RE.test(trimmed);
-  return true;
-}
+import { HAS_SCHEME_RE, isSafeUrl } from '../../core/utils/url-safety';
 
 const SAFE_ICON_RE = /^[a-z0-9-]+$/;
 const HEX_COLOR_RE = /^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;

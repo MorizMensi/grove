@@ -7,79 +7,11 @@ import {
   DocumentService,
   DocumentEntry,
 } from "../../core/services/document.service";
-
-function titleFromSegment(segment: string): string {
-  return segment
-    .replace(/[_\-]/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-const IMAGE_EXTENSIONS = new Set([
-  "png",
-  "jpg",
-  "jpeg",
-  "gif",
-  "bmp",
-  "heic",
-  "tiff",
-  "raw",
-  "webp",
-]);
-const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "webm"]);
-const AUDIO_EXTENSIONS = new Set(["mp3", "aac", "wav", "m4p", "ogg"]);
-const PDF_EXTENSIONS = new Set(["pdf"]);
-
-const FILETYPE_ICONS = new Set([
-  "aac",
-  "ai",
-  "bmp",
-  "cs",
-  "css",
-  "csv",
-  "doc",
-  "docx",
-  "exe",
-  "gif",
-  "heic",
-  "html",
-  "java",
-  "jpg",
-  "js",
-  "json",
-  "jsx",
-  "key",
-  "md",
-  "mdx",
-  "m4p",
-  "mov",
-  "mp3",
-  "mp4",
-  "otf",
-  "pdf",
-  "php",
-  "png",
-  "ppt",
-  "pptx",
-  "psd",
-  "py",
-  "raw",
-  "rb",
-  "sass",
-  "scss",
-  "sh",
-  "sql",
-  "svg",
-  "tiff",
-  "tsx",
-  "ttf",
-  "txt",
-  "wav",
-  "woff",
-  "xls",
-  "xlsx",
-  "xml",
-  "yml",
-]);
+import {
+  FILETYPE_ICONS,
+  previewKindFor,
+} from "../../core/constants/file-types";
+import { titleFromSegment } from "../../core/utils/title-from-segment";
 
 @Component({
   selector: "app-document-shell",
@@ -153,22 +85,12 @@ export class DocumentShellComponent implements OnInit {
     const filename = filePath.split("/").pop() ?? "";
     this.title = titleFromSegment(filename);
     const ext = extension.toLowerCase();
+    const kind = previewKindFor(ext);
 
-    if (
-      IMAGE_EXTENSIONS.has(ext) ||
-      VIDEO_EXTENSIONS.has(ext) ||
-      AUDIO_EXTENSIONS.has(ext) ||
-      PDF_EXTENSIONS.has(ext)
-    ) {
-      this.fileType = IMAGE_EXTENSIONS.has(ext)
-        ? "image"
-        : VIDEO_EXTENSIONS.has(ext)
-          ? "video"
-          : AUDIO_EXTENSIONS.has(ext)
-            ? "audio"
-            : "pdf";
+    if (kind && kind !== "svg") {
+      this.fileType = kind;
       this.mediaUrl = `/documents/${filePath}.${extension}`;
-      if (this.fileType === "pdf") {
+      if (kind === "pdf") {
         this.safeMediaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
           this.mediaUrl,
         );
@@ -178,7 +100,7 @@ export class DocumentShellComponent implements OnInit {
       return;
     }
 
-    if (ext === "svg") {
+    if (kind === "svg") {
       this.fileType = "svg";
       this.mediaUrl = `/documents/${filePath}.${extension}`;
     }

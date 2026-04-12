@@ -9,6 +9,7 @@
  */
 
 import { DlNode } from './dl-node.model';
+import { isSafeUrl } from '../../core/utils/url-safety';
 
 // ─── Mdast types (inline — no @types dependency) ────────────
 
@@ -30,19 +31,6 @@ interface MdastNode {
 interface MdastRoot extends MdastNode {
   type: 'root';
   children: MdastNode[];
-}
-
-// ─── URL safety ──────────────────────────────────────────────
-
-const ALLOWED_SCHEME_RE = /^(https?:\/\/|mailto:)/i;
-const HAS_SCHEME_RE = /^[a-zA-Z][a-zA-Z0-9+.-]*:/;
-const CONTROL_CHAR_RE = /[\x00-\x1f\x7f]/;
-
-function isSafeUrl(url: string): boolean {
-  const trimmed = url.trim();
-  if (!trimmed || CONTROL_CHAR_RE.test(trimmed)) return false;
-  if (HAS_SCHEME_RE.test(trimmed)) return ALLOWED_SCHEME_RE.test(trimmed);
-  return true;
 }
 
 // ─── Core conversion ─────────────────────────────────────────
