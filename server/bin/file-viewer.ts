@@ -4,8 +4,58 @@ import { resolve } from 'node:path';
 import { stat } from 'node:fs/promises';
 import { exec } from 'node:child_process';
 import { createApp } from '../index.js';
+import { buildWiki } from '../wiki/build.js';
 
 const args = process.argv.slice(2);
+
+// Subcommand dispatch: `grove build-wiki ...`
+if (args[0] === 'build-wiki') {
+  let docsDir: string | null = null;
+  let outDir = 'dist-wiki';
+  let baseHref = '/';
+
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--docs' && args[i + 1]) {
+      docsDir = args[++i];
+    } else if (arg === '--out' && args[i + 1]) {
+      outDir = args[++i];
+    } else if (arg === '--base-href' && args[i + 1]) {
+      baseHref = args[++i];
+    } else if (arg === '--help' || arg === '-h') {
+      console.log(`Usage: grove build-wiki --docs <path> [--out <path>] [--base-href <href>]
+
+Build a static GitHub-Pages-ready wiki from a folder of markdown files,
+rendered by Grove's own frontend.
+
+Options:
+  --docs <path>       Path to the markdown documentation folder (required)
+  --out <path>        Output directory (default: dist-wiki)
+  --base-href <href>  Deploy base path (default: /)
+  -h, --help          Show this help
+
+Example:
+  grove build-wiki --docs docs --out dist-wiki --base-href /my-lib/`);
+      process.exit(0);
+    } else {
+      console.error(`Unknown option: ${arg}`);
+      process.exit(1);
+    }
+  }
+
+  if (!docsDir) {
+    console.error('Error: --docs is required. Run `grove build-wiki --help` for usage.');
+    process.exit(1);
+  }
+
+  try {
+    await buildWiki({ docsDir, outDir, baseHref });
+    process.exit(0);
+  } catch (err) {
+    console.error(`grove build-wiki: ${(err as Error).message}`);
+    process.exit(1);
+  }
+}
 
 let folderPath: string | null = null;
 let port = 3000;
