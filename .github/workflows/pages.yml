@@ -1,0 +1,12 @@
+name: pages
+
+on:
+  workflow_dispatch:
+  # push trigger added once the first manual deploy is green
+
+jobs:
+  wiki:
+    uses: ./.github/workflows/build-wiki.yml
+    with:
+      docs: docs
+      base-href: /grove/
