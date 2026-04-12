@@ -1,11 +1,22 @@
 <div class="document-shell">
     <nav class="breadcrumbs">
-        @for (crumb of breadcrumbs; track crumb.path; let last = $last) {
-            @if (!last) {
-                <a [routerLink]="crumb.path">{{ crumb.label }}</a>
+        <a class="brand" routerLink="/documents">
+            <grove-mark />
+            <span class="brand-text">Grove</span>
+        </a>
+        @for (
+            crumb of breadcrumbs;
+            track crumb.path;
+            let last = $last;
+            let first = $first
+        ) {
+            @if (!first) {
                 <span class="separator">/</span>
-            } @else {
-                <span class="current">{{ crumb.label }}</span>
+                @if (!last) {
+                    <a [routerLink]="crumb.path">{{ crumb.label }}</a>
+                } @else {
+                    <span class="current">{{ crumb.label }}</span>
+                }
             }
         }
         <div class="action-buttons">
@@ -45,6 +56,9 @@
                     <i class="bi bi-pencil"></i>
                 </button>
             }
+        </div>
+        <div class="header-tools">
+            <app-theme-switcher />
         </div>
     </nav>
 

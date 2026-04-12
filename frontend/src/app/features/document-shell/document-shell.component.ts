@@ -3,6 +3,8 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MdNodeComponent } from "../../shared/doclang/md-node.component";
+import { GroveMarkComponent } from "../../shared/grove-mark/grove-mark.component";
+import { ThemeSwitcherComponent } from "../../shared/theme-switcher/theme-switcher.component";
 import {
   DocumentService,
   DocumentEntry,
@@ -17,7 +19,7 @@ import { titleFromSegment } from "../../core/utils/title-from-segment";
 @Component({
   selector: "app-document-shell",
   standalone: true,
-  imports: [MdNodeComponent, RouterLink],
+  imports: [MdNodeComponent, RouterLink, GroveMarkComponent, ThemeSwitcherComponent],
   templateUrl: "./document-shell.component.html",
   styles: [":host { display: block; height: 100%; }"],
   styleUrl: "./document-shell.component.scss",

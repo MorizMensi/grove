@@ -1,0 +1,156 @@
+/* ════════════════════════════════════════════════════════════════
+   Grove – Classic Blue Theme
+
+   The original Grove palette: blue primary on slate neutrals.
+   Preserved as an opt-in theme for users who prefer the blueish
+   look after the rebrand.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Classic Blue Light ──────────────────────────────────────── */
+
+[data-theme="classic-blue"][data-mode="light"] {
+  color-scheme: light;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--slate-50);
+  --color-bg-surface: #ffffff;
+  --color-bg-inset: var(--slate-100);
+  --color-bg-elevated: #ffffff;
+  --color-bg-emphasis: var(--blue-600);
+  --color-bg-code-block: var(--slate-100);
+  --color-bg-code-inline: var(--blue-50);
+  --color-bg-table-header: var(--slate-50);
+  --color-bg-table-stripe: var(--slate-50);
+  --color-bg-blockquote: transparent;
+  --color-bg-hover: rgba(0, 0, 0, 0.04);
+  --color-bg-sidebar: var(--slate-50);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--slate-900);
+  --color-text-secondary: var(--slate-600);
+  --color-text-muted: var(--slate-500);
+  --color-text-heading: var(--slate-800);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--blue-600);
+  --color-text-link-hover: var(--blue-800);
+  --color-text-code: var(--slate-800);
+  --color-text-code-inline: var(--blue-800);
+  --color-border-code-inline: var(--blue-200);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--slate-200);
+  --color-border-strong: var(--slate-300);
+  --color-border-muted: var(--slate-100);
+  --color-border-focus: var(--blue-500);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: #ecfdf5;  --color-success-border: #6ee7b7;
+  --color-success-text: #065f46; --color-success-icon: #059669;
+  --color-warning-bg: #fffbeb;  --color-warning-border: #fcd34d;
+  --color-warning-text: #92400e; --color-warning-icon: #d97706;
+  --color-error-bg: #fef2f2;    --color-error-border: #fca5a5;
+  --color-error-text: #991b1b;   --color-error-icon: #dc2626;
+  --color-info-bg: var(--blue-50); --color-info-border: var(--blue-300);
+  --color-info-text: var(--blue-800); --color-info-icon: var(--blue-600);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  --hljs-base-text: #334155;   --hljs-base-bg: #f1f5f9;
+  --hljs-keyword: #7c3aed;     --hljs-title: #2563eb;
+  --hljs-title-class: #0284c7; --hljs-title-function: #2563eb;
+  --hljs-string: #0d9488;      --hljs-number: #2563eb;
+  --hljs-literal: #7c3aed;     --hljs-regexp: #db2777;
+  --hljs-type: #c2410c;        --hljs-built-in: #0891b2;
+  --hljs-class: #0284c7;       --hljs-attr: #0891b2;
+  --hljs-variable: #b45309;    --hljs-property: #0369a1;
+  --hljs-params: #334155;      --hljs-tag: #059669;
+  --hljs-name: #059669;        --hljs-comment: #94a3b8;
+  --hljs-punctuation: #64748b; --hljs-operator: #64748b;
+  --hljs-meta: #64748b;
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(59, 130, 246, 0.2);
+  --color-link-underline: rgba(37, 99, 235, 0.4);
+  --color-bg-active-item: rgba(59, 130, 246, 0.1);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.4);
+}
+
+/* ── Classic Blue Dark ───────────────────────────────────────── */
+
+[data-theme="classic-blue"][data-mode="dark"] {
+  color-scheme: dark;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: #0f172a;
+  --color-bg-surface: var(--slate-800);
+  --color-bg-inset: #0f172a;
+  --color-bg-elevated: var(--slate-700);
+  --color-bg-emphasis: var(--blue-500);
+  --color-bg-code-block: var(--slate-800);
+  --color-bg-code-inline: var(--slate-700);
+  --color-bg-table-header: var(--slate-700);
+  --color-bg-table-stripe: rgba(255, 255, 255, 0.03);
+  --color-bg-blockquote: rgba(96, 165, 250, 0.08);
+  --color-bg-hover: rgba(255, 255, 255, 0.05);
+  --color-bg-sidebar: var(--slate-900);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--slate-200);
+  --color-text-secondary: var(--slate-400);
+  --color-text-muted: var(--slate-500);
+  --color-text-heading: var(--slate-100);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--blue-400);
+  --color-text-link-hover: var(--blue-300);
+  --color-text-code: var(--slate-200);
+  --color-text-code-inline: var(--blue-300);
+  --color-border-code-inline: rgba(96, 165, 250, 0.3);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--slate-700);
+  --color-border-strong: var(--slate-600);
+  --color-border-muted: var(--slate-800);
+  --color-border-focus: var(--blue-400);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: rgba(5, 150, 105, 0.15);
+  --color-success-border: rgba(52, 211, 153, 0.4);
+  --color-success-text: #6ee7b7;
+  --color-success-icon: #34d399;
+  --color-warning-bg: rgba(217, 119, 6, 0.15);
+  --color-warning-border: rgba(251, 191, 36, 0.4);
+  --color-warning-text: #fcd34d;
+  --color-warning-icon: #fbbf24;
+  --color-error-bg: rgba(220, 38, 38, 0.15);
+  --color-error-border: rgba(248, 113, 113, 0.4);
+  --color-error-text: #fca5a5;
+  --color-error-icon: #f87171;
+  --color-info-bg: rgba(96, 165, 250, 0.15);
+  --color-info-border: rgba(96, 165, 250, 0.4);
+  --color-info-text: var(--blue-300);
+  --color-info-icon: var(--blue-400);
+
+  /* ── Shadows (deeper for dark backgrounds) ────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  --hljs-base-text: #cbd5e1;   --hljs-base-bg: #1e293b;
+  --hljs-keyword: #a78bfa;     --hljs-title: #60a5fa;
+  --hljs-title-class: #38bdf8; --hljs-title-function: #60a5fa;
+  --hljs-string: #86efac;      --hljs-number: #60a5fa;
+  --hljs-literal: #a78bfa;     --hljs-regexp: #f472b6;
+  --hljs-type: #fb923c;        --hljs-built-in: #22d3ee;
+  --hljs-class: #38bdf8;       --hljs-attr: #22d3ee;
+  --hljs-variable: #fbbf24;    --hljs-property: #7dd3fc;
+  --hljs-params: #cbd5e1;      --hljs-tag: #34d399;
+  --hljs-name: #34d399;        --hljs-comment: #64748b;
+  --hljs-punctuation: #94a3b8; --hljs-operator: #94a3b8;
+  --hljs-meta: #94a3b8;
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(96, 165, 250, 0.25);
+  --color-link-underline: rgba(96, 165, 250, 0.4);
+  --color-bg-active-item: rgba(96, 165, 250, 0.15);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.6);
+}

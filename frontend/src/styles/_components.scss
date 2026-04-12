@@ -1,0 +1,47 @@
+/* ════════════════════════════════════════════════════════════════
+   Grove – Global Component Utilities
+
+   Reusable content containers: .wiki-content, .surface-card,
+   .empty-state, .scrollable.
+   ════════════════════════════════════════════════════════════════ */
+
+.wiki-content {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-normal);
+  width: 100%;
+}
+
+.wiki-content > * {
+  width: 100%;
+  max-width: 65ch;
+  margin: 0 auto;
+}
+
+.wiki-content.wide > * {
+  max-width: 100ch;
+}
+
+.surface-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.empty-state {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.scrollable {
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .surface-card {
+    padding: var(--space-3);
+  }
+}

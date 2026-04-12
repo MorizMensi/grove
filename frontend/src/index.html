@@ -5,8 +5,34 @@
   <title>Grove</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="grove-mark.svg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script>
+    // Grove theme bootstrap — sets data-theme/data-mode before CSS paints
+    // to prevent FOUC. Mirrors ThemeService resolution logic (if you touch
+    // one, touch the other).
+    (function () {
+      var root = document.documentElement;
+      var validPalettes = ['grove', 'classic-blue'];
+      var validModes = ['light', 'dark', 'system'];
+      var palette = 'grove';
+      var modeSelection = 'system';
+      try {
+        var storedPalette = localStorage.getItem('grove-theme');
+        var storedMode = localStorage.getItem('grove-mode');
+        if (validPalettes.indexOf(storedPalette) !== -1) palette = storedPalette;
+        if (validModes.indexOf(storedMode) !== -1) modeSelection = storedMode;
+      } catch (e) { /* private mode — fall through to defaults */ }
+      var resolvedMode = modeSelection;
+      if (modeSelection === 'system') {
+        resolvedMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+      }
+      root.setAttribute('data-theme', palette);
+      root.setAttribute('data-mode', resolvedMode);
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>

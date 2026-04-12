@@ -1,0 +1,47 @@
+<button
+  type="button"
+  class="switcher-button"
+  (click)="toggle()"
+  [attr.aria-expanded]="open()"
+  aria-haspopup="dialog"
+  aria-label="Theme settings"
+  title="Theme settings"
+>
+  <i class="bi bi-palette" aria-hidden="true"></i>
+</button>
+
+@if (open()) {
+  <div class="popover" role="dialog" aria-label="Theme settings">
+    <fieldset>
+      <legend>Palette</legend>
+      @for (p of palettes; track p) {
+        <label>
+          <input
+            type="radio"
+            name="palette"
+            [value]="p"
+            [checked]="palette() === p"
+            (change)="selectPalette(p)"
+          />
+          <span>{{ paletteLabels[p] }}</span>
+        </label>
+      }
+    </fieldset>
+
+    <fieldset>
+      <legend>Mode</legend>
+      @for (m of modes; track m) {
+        <label>
+          <input
+            type="radio"
+            name="mode"
+            [value]="m"
+            [checked]="modeSelection() === m"
+            (change)="selectMode(m)"
+          />
+          <span>{{ modeLabels[m] }}</span>
+        </label>
+      }
+    </fieldset>
+  </div>
+}

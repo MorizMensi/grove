@@ -1,0 +1,162 @@
+/* ════════════════════════════════════════════════════════════════
+   Grove – Grove Theme (Emerald + Stone)
+
+   The new default Grove palette: emerald primary on warm stone
+   neutrals. Nature-toned, calm, WCAG AA compliant.
+
+   Phase 2: Defined but dormant — no element matches these
+   selectors until Phase 3 bootstraps `<html data-theme="grove">`.
+   Verify by temporarily setting the attributes in DevTools.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Grove Light ─────────────────────────────────────────────── */
+
+[data-theme="grove"][data-mode="light"] {
+  color-scheme: light;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--stone-50);
+  --color-bg-surface: #ffffff;
+  --color-bg-inset: var(--stone-100);
+  --color-bg-elevated: #ffffff;
+  --color-bg-emphasis: var(--emerald-600);
+  --color-bg-code-block: var(--stone-100);
+  --color-bg-code-inline: var(--emerald-50);
+  --color-bg-table-header: var(--stone-50);
+  --color-bg-table-stripe: var(--stone-50);
+  --color-bg-blockquote: transparent;
+  --color-bg-hover: rgba(0, 0, 0, 0.04);
+  --color-bg-sidebar: var(--stone-50);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--stone-900);
+  --color-text-secondary: var(--stone-600);
+  --color-text-muted: var(--stone-500);
+  --color-text-heading: var(--stone-800);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--emerald-700);
+  --color-text-link-hover: var(--emerald-900);
+  --color-text-code: var(--stone-800);
+  --color-text-code-inline: var(--emerald-800);
+  --color-border-code-inline: var(--emerald-200);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--stone-200);
+  --color-border-strong: var(--stone-300);
+  --color-border-muted: var(--stone-100);
+  --color-border-focus: var(--emerald-500);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: #ecfdf5;   --color-success-border: #6ee7b7;
+  --color-success-text: #065f46;  --color-success-icon: #059669;
+  --color-warning-bg: #fffbeb;   --color-warning-border: #fcd34d;
+  --color-warning-text: #92400e;  --color-warning-icon: #d97706;
+  --color-error-bg: #fef2f2;     --color-error-border: #fca5a5;
+  --color-error-text: #991b1b;    --color-error-icon: #dc2626;
+  --color-info-bg: var(--emerald-50);     --color-info-border: var(--emerald-300);
+  --color-info-text: var(--emerald-800);  --color-info-icon: var(--emerald-600);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  /* Deliberately non-green for keyword/string so tokens remain
+     distinguishable from literal green tags and names. */
+  --hljs-base-text: #44403c;   --hljs-base-bg: #f5f5f4;
+  --hljs-keyword: #7c3aed;     --hljs-title: #047857;
+  --hljs-title-class: #047857; --hljs-title-function: #047857;
+  --hljs-string: #b45309;      --hljs-number: #0891b2;
+  --hljs-literal: #7c3aed;     --hljs-regexp: #db2777;
+  --hljs-type: #c2410c;        --hljs-built-in: #0891b2;
+  --hljs-class: #047857;       --hljs-attr: #0891b2;
+  --hljs-variable: #b45309;    --hljs-property: #0369a1;
+  --hljs-params: #44403c;      --hljs-tag: #0d9488;
+  --hljs-name: #0d9488;        --hljs-comment: #78716c;
+  --hljs-punctuation: #78716c; --hljs-operator: #78716c;
+  --hljs-meta: #78716c;
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(16, 185, 129, 0.2);
+  --color-link-underline: rgba(4, 120, 87, 0.4);
+  --color-bg-active-item: rgba(16, 185, 129, 0.1);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.4);
+}
+
+/* ── Grove Dark ──────────────────────────────────────────────── */
+
+[data-theme="grove"][data-mode="dark"] {
+  color-scheme: dark;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--stone-950);
+  --color-bg-surface: var(--stone-800);
+  --color-bg-inset: var(--stone-950);
+  --color-bg-elevated: var(--stone-700);
+  --color-bg-emphasis: var(--emerald-500);
+  --color-bg-code-block: var(--stone-800);
+  --color-bg-code-inline: var(--stone-700);
+  --color-bg-table-header: var(--stone-700);
+  --color-bg-table-stripe: rgba(255, 255, 255, 0.03);
+  --color-bg-blockquote: rgba(52, 211, 153, 0.08);
+  --color-bg-hover: rgba(255, 255, 255, 0.05);
+  --color-bg-sidebar: var(--stone-900);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--stone-200);
+  --color-text-secondary: var(--stone-400);
+  --color-text-muted: var(--stone-500);
+  --color-text-heading: var(--stone-100);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--emerald-400);
+  --color-text-link-hover: var(--emerald-300);
+  --color-text-code: var(--stone-200);
+  --color-text-code-inline: var(--emerald-300);
+  --color-border-code-inline: rgba(52, 211, 153, 0.3);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--stone-700);
+  --color-border-strong: var(--stone-600);
+  --color-border-muted: var(--stone-800);
+  --color-border-focus: var(--emerald-400);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: rgba(5, 150, 105, 0.15);
+  --color-success-border: rgba(52, 211, 153, 0.4);
+  --color-success-text: #6ee7b7;
+  --color-success-icon: #34d399;
+  --color-warning-bg: rgba(217, 119, 6, 0.15);
+  --color-warning-border: rgba(251, 191, 36, 0.4);
+  --color-warning-text: #fcd34d;
+  --color-warning-icon: #fbbf24;
+  --color-error-bg: rgba(220, 38, 38, 0.15);
+  --color-error-border: rgba(248, 113, 113, 0.4);
+  --color-error-text: #fca5a5;
+  --color-error-icon: #f87171;
+  --color-info-bg: rgba(52, 211, 153, 0.15);
+  --color-info-border: rgba(52, 211, 153, 0.4);
+  --color-info-text: var(--emerald-300);
+  --color-info-icon: var(--emerald-400);
+
+  /* ── Shadows (deeper for dark backgrounds) ────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  --hljs-base-text: var(--stone-300); --hljs-base-bg: var(--stone-800);
+  --hljs-keyword: #a78bfa;            --hljs-title: #34d399;
+  --hljs-title-class: #34d399;        --hljs-title-function: #34d399;
+  --hljs-string: #fbbf24;             --hljs-number: #22d3ee;
+  --hljs-literal: #a78bfa;            --hljs-regexp: #f472b6;
+  --hljs-type: #fb923c;               --hljs-built-in: #22d3ee;
+  --hljs-class: #34d399;              --hljs-attr: #22d3ee;
+  --hljs-variable: #fbbf24;           --hljs-property: #38bdf8;
+  --hljs-params: var(--stone-300);    --hljs-tag: #2dd4bf;
+  --hljs-name: #2dd4bf;               --hljs-comment: #78716c;
+  --hljs-punctuation: var(--stone-400);
+  --hljs-operator: var(--stone-400);
+  --hljs-meta: var(--stone-400);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(52, 211, 153, 0.25);
+  --color-link-underline: rgba(52, 211, 153, 0.4);
+  --color-bg-active-item: rgba(52, 211, 153, 0.15);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.6);
+}

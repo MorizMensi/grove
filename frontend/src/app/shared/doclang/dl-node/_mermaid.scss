@@ -15,12 +15,6 @@
   }
 }
 
-:host-context([data-theme="dark"]) .mermaid-diagram ::ng-deep svg {
+:host-context(html[data-mode="dark"]) .mermaid-diagram ::ng-deep svg {
   filter: invert(93%) hue-rotate(180deg);
-}
-
-@media (prefers-color-scheme: dark) {
-  :host-context(:root:not([data-theme="light"])) .mermaid-diagram ::ng-deep svg {
-    filter: invert(93%) hue-rotate(180deg);
-  }
 }
