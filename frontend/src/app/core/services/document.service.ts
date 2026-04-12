@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { EMPTY, Observable, map, of, shareReplay } from 'rxjs';
+import { EMPTY, Observable, map, shareReplay } from 'rxjs';
 import type { DocumentEntry, DocumentListing } from '@shared/types/documents';
 import type { OpenAction } from '@shared/types/open';
 import { CONTENT_URL_PREFIX } from '@shared/content-url';
@@ -10,10 +10,13 @@ import { environment } from '../../../environments/environment';
 // from this service module without needing to know about the alias.
 export type { DocumentEntry, DocumentListing, OpenAction };
 
+const DEFAULT_SITE_NAME = 'Grove';
+
 interface WikiManifest {
   version: number;
   generatedAt: string;
   root: string;
+  siteName?: string;
   directories: Record<string, DocumentListing>;
 }
 
@@ -21,6 +24,19 @@ interface WikiManifest {
 export class DocumentService {
   private readonly http = inject(HttpClient);
   private manifest$?: Observable<WikiManifest>;
+
+  private readonly _siteName = signal(DEFAULT_SITE_NAME);
+  readonly siteName = this._siteName.asReadonly();
+
+  constructor() {
+    if (environment.mode === 'wiki') {
+      this.loadManifest().subscribe({
+        next: (m) => {
+          if (m.siteName) this._siteName.set(m.siteName);
+        },
+      });
+    }
+  }
 
   listDirectory(path: string): Observable<DocumentListing> {
     if (environment.mode === 'wiki') {

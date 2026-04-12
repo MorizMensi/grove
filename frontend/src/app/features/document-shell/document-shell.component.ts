@@ -1,10 +1,11 @@
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, effect, inject, OnInit, signal } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { DomSanitizer, SafeResourceUrl, Title } from "@angular/platform-browser";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MdNodeComponent } from "../../shared/doclang/md-node.component";
 import { GroveMarkComponent } from "../../shared/grove-mark/grove-mark.component";
 import { ThemeSwitcherComponent } from "../../shared/theme-switcher/theme-switcher.component";
+import { WikiFooterComponent } from "../../shared/wiki-footer/wiki-footer.component";
 import {
   DocumentService,
   DocumentEntry,
@@ -16,11 +17,18 @@ import {
 } from "../../core/constants/file-types";
 import { titleFromSegment } from "../../core/utils/title-from-segment";
 import { CONTENT_URL_PREFIX } from "@shared/content-url";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "app-document-shell",
   standalone: true,
-  imports: [MdNodeComponent, RouterLink, GroveMarkComponent, ThemeSwitcherComponent],
+  imports: [
+    MdNodeComponent,
+    RouterLink,
+    GroveMarkComponent,
+    ThemeSwitcherComponent,
+    WikiFooterComponent,
+  ],
   templateUrl: "./document-shell.component.html",
   styles: [":host { display: block; height: 100%; }"],
   styleUrl: "./document-shell.component.scss",
@@ -32,8 +40,11 @@ export class DocumentShellComponent implements OnInit {
   private readonly documentService = inject(DocumentService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly capabilitiesService = inject(CapabilitiesService);
+  private readonly titleService = inject(Title);
 
   readonly capabilities = this.capabilitiesService.capabilities;
+  readonly siteName = this.documentService.siteName;
+  readonly isWikiMode = environment.mode === "wiki";
 
   mode: "loading" | "directory" | "file" | "not-found" = "loading";
   fileType: "text" | "image" | "video" | "audio" | "pdf" | "svg" = "text";
@@ -42,12 +53,21 @@ export class DocumentShellComponent implements OnInit {
   entries: DocumentEntry[] = [];
   breadcrumbs: { label: string; path: string }[] = [];
   title = "";
+  readonly pageTitle = signal("");
   markdown: string | null = null;
   currentPath = "";
   sidebarEntries: DocumentEntry[] = [];
   sidebarOpen = true;
   parentPath = "";
   extension = "";
+
+  constructor() {
+    effect(() => {
+      const site = this.siteName();
+      const page = this.pageTitle();
+      this.titleService.setTitle(page ? `${page} · ${site}` : site);
+    });
+  }
 
   ngOnInit(): void {
     this.route.url
@@ -64,6 +84,7 @@ export class DocumentShellComponent implements OnInit {
         this.safeMediaUrl = "";
         this.entries = [];
         this.sidebarEntries = [];
+        this.pageTitle.set("");
         this.buildBreadcrumbs(filePath);
 
         if (this.extension && this.extension !== "md") {
@@ -78,6 +99,7 @@ export class DocumentShellComponent implements OnInit {
                 this.title = filePath
                   ? titleFromSegment(filePath.split("/").pop()!)
                   : "Documents";
+                this.pageTitle.set(filePath ? this.title : "");
                 this.mode = "directory";
               },
               error: () => {
@@ -91,6 +113,7 @@ export class DocumentShellComponent implements OnInit {
   private loadFileWithExtension(filePath: string, extension: string): void {
     const filename = filePath.split("/").pop() ?? "";
     this.title = titleFromSegment(filename);
+    this.pageTitle.set(this.title);
     const ext = extension.toLowerCase();
     const kind = previewKindFor(ext);
 

@@ -2,7 +2,7 @@
     <nav class="breadcrumbs">
         <a class="brand" routerLink="/">
             <grove-mark />
-            <span class="brand-text">Grove</span>
+            <span class="brand-text">{{ siteName() }}</span>
         </a>
         @for (
             crumb of breadcrumbs;
@@ -176,5 +176,9 @@
         </div>
     } @else if (mode === "not-found") {
         <p class="empty-state">Document not found.</p>
+    }
+
+    @if (isWikiMode && mode === "file") {
+        <wiki-footer />
     }
 </div>
