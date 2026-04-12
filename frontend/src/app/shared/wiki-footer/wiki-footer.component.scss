@@ -1,0 +1,54 @@
+.wiki-attribution {
+  position: fixed;
+  bottom: var(--space-3);
+  left: var(--space-3);
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-bg-page) 70%, transparent);
+  backdrop-filter: blur(6px);
+  border-radius: var(--radius-full);
+  pointer-events: auto;
+  user-select: none;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--space-1) / 2);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: color var(--transition-fast);
+
+    grove-mark {
+      font-size: 1em;
+      color: var(--color-text-link);
+    }
+
+    &:hover {
+      color: var(--color-text-link);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .wiki-attribution {
+    display: none;
+  }
+}
+
+@media print {
+  .wiki-attribution {
+    display: none !important;
+  }
+}
