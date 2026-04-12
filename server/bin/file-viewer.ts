@@ -3,7 +3,7 @@
 import { resolve } from 'node:path';
 import { stat } from 'node:fs/promises';
 import { exec } from 'node:child_process';
-import { createApp } from '../server/index.js';
+import { createApp } from '../index.js';
 
 const args = process.argv.slice(2);
 

@@ -17,8 +17,8 @@ export function createApp(docsDir: string): express.Application {
   app.use('/api/open', openRouter(docsDir));
 
   // Serve Angular frontend
-  // __dirname = dist/server/server/, frontend build = dist/frontend/browser/
-  const frontendDir = join(__dirname, '../../frontend/browser');
+  // __dirname = dist/server/, frontend build = dist/frontend/browser/
+  const frontendDir = join(__dirname, '../frontend/browser');
   app.use(express.static(frontendDir));
 
   // Serve documents directory for file content fetching
