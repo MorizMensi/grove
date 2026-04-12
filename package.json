@@ -31,7 +31,7 @@
     "node": ">=20"
   },
   "bin": {
-    "grove": "./dist/server/bin/file-viewer.js"
+    "grove": "dist/server/bin/file-viewer.js"
   },
   "files": [
     "dist/"
