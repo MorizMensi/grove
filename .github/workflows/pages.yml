@@ -4,6 +4,14 @@ on:
   workflow_dispatch:
   # push trigger added once the first manual deploy is green
 
+# Reusable workflow callers must grant at least the permissions the
+# callee declares. build-wiki.yml needs pages: write + id-token: write
+# to deploy via actions/deploy-pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   wiki:
     uses: ./.github/workflows/build-wiki.yml

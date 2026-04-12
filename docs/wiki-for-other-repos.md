@@ -17,12 +17,21 @@ on:
     branches: [main]
     paths: [docs/**]
   workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 jobs:
   wiki:
     uses: MorizMensi/grove/.github/workflows/build-wiki.yml@main
     with:
       docs: docs
 ```
+
+The `permissions:` block is required — GitHub's reusable-workflow rules
+require the caller to grant at least the permissions the callee
+declares, and `build-wiki.yml` needs `pages: write` + `id-token: write`
+to deploy via `actions/deploy-pages`.
 
 Then enable GitHub Pages:
 
