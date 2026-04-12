@@ -1,0 +1,125 @@
+/* ════════════════════════════════════════════════════════════════
+   DlNode — Inline elements
+   Inline code pill, color swatch, links, emphasis, sup/sub,
+   font-size utilities, Bootstrap-icons integration
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Inline Code (pill style) ───────────────────────────────── */
+
+.dl-code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.15em 0.4em;
+  background: var(--color-bg-code-inline);
+  color: var(--color-text-code-inline);
+  border: 1px solid var(--color-border-code-inline);
+  border-radius: var(--radius-md);
+  white-space: break-spaces;
+  word-wrap: break-word;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* ── Color Swatch (inline hex color indicator) ────────────── */
+
+.color-swatch {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  vertical-align: baseline;
+  margin-left: 0.3em;
+  box-shadow: var(--shadow-xs);
+}
+
+/* ── Links ──────────────────────────────────────────────────── */
+
+a {
+  color: var(--color-text-link);
+  text-decoration: underline;
+  text-decoration-color: var(--color-link-underline);
+  text-underline-offset: 0.15em;
+  text-decoration-skip-ink: auto;
+  transition: color var(--duration-normal) var(--easing-default),
+              text-decoration-color var(--duration-normal) var(--easing-default);
+
+  &:hover {
+    color: var(--color-text-link-hover);
+    text-decoration-color: currentColor;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+    text-decoration: none;
+  }
+
+  &:active {
+    color: var(--blue-900);
+  }
+}
+
+/* Links in headings */
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-text-link);
+    text-decoration: underline;
+  }
+}
+
+/* ── Inline Formatting ──────────────────────────────────────── */
+
+.dl-bold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.dl-italic {
+  font-style: italic;
+}
+
+.dl-underline {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  text-decoration-thickness: 1px;
+  text-decoration-skip-ink: auto;
+}
+
+.dl-strikethrough {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.dl-underline.dl-strikethrough {
+  text-decoration: underline line-through;
+  opacity: 0.7;
+}
+
+/* ── Superscript / Subscript ────────────────────────────────── */
+
+sup { font-size: 0.75em; line-height: 0; vertical-align: super; }
+sub { font-size: 0.75em; line-height: 0; vertical-align: sub; }
+
+/* ── Font Size Utilities ────────────────────────────────────── */
+
+.dl-fs-xs   { font-size: 0.75rem;  line-height: 1rem; }
+.dl-fs-sm   { font-size: 0.875rem; line-height: 1.25rem; }
+.dl-fs-base { font-size: 1rem;     line-height: 1.5rem; }
+.dl-fs-lg   { font-size: 1.125rem; line-height: 1.75rem; }
+.dl-fs-xl   { font-size: 1.25rem;  line-height: 1.75rem; }
+.dl-fs-2xl  { font-size: 1.5rem;   line-height: 2rem; }
+.dl-fs-3xl  { font-size: 1.875rem; line-height: 2.25rem; }
+
+/* ── Bootstrap Icons Integration ────────────────────────────── */
+
+.bi {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  fill: currentColor;
+  flex-shrink: 0;
+}

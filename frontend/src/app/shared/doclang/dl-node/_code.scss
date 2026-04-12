@@ -1,0 +1,246 @@
+/* ════════════════════════════════════════════════════════════════
+   DlNode — Fenced code blocks
+   pre + code, line numbers, highlight.js token colors,
+   .code-block-wrapper / header / copy button / language label,
+   mobile + print overrides
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Code Blocks ────────────────────────────────────────────── */
+
+pre {
+  margin: 0 0 var(--space-4) 0;
+  padding: var(--space-4);
+  background: var(--color-bg-code-block);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  font-size: 85%;
+  line-height: 1.5;
+  tab-size: 2;
+
+  code {
+    display: block;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    white-space: pre;
+    word-wrap: normal;
+    overflow: visible;
+    font-family: var(--font-mono);
+    font-size: 100%;
+    color: var(--color-text-code);
+
+    /* ── Line Numbers ── */
+    &[data-line-numbers] {
+      padding-left: 3.5em;
+      position: relative;
+
+      &::before {
+        content: attr(data-line-numbers);
+        position: absolute;
+        left: 0;
+        top: calc(-1 * var(--space-4));
+        bottom: calc(-1 * var(--space-4));
+        width: 2.5em;
+        text-align: right;
+        color: var(--hljs-comment);
+        font-size: inherit;
+        line-height: inherit;
+        pointer-events: none;
+        user-select: none;
+        border-right: 1px solid var(--color-border-default);
+        padding-top: var(--space-4);
+        padding-right: var(--space-2);
+        overflow: hidden;
+      }
+    }
+
+    /* highlight.js token colors */
+    ::ng-deep {
+
+      /* ── Keywords & Control Flow ── */
+      .hljs-keyword {
+        color: var(--hljs-keyword);
+        font-weight: 500;
+      }
+      .hljs-keyword.hljs-keyword_control { color: var(--hljs-keyword); }
+      .hljs-doctag { color: var(--hljs-doctag); font-weight: 500; }
+      .hljs-formula { color: var(--hljs-formula); }
+
+      /* ── Titles / Definitions ── */
+      .hljs-title { color: var(--hljs-title); font-weight: 600; }
+      .hljs-title.class_ { color: var(--hljs-title-class); font-weight: 600; }
+      .hljs-title.function_ { color: var(--hljs-title-function); font-weight: 600; }
+      .hljs-section { color: var(--hljs-section); font-weight: 600; }
+
+      /* ── Values & Literals ── */
+      .hljs-string { color: var(--hljs-string); }
+      .hljs-number { color: var(--hljs-number); }
+      .hljs-literal { color: var(--hljs-literal); font-weight: 500; }
+      .hljs-regexp { color: var(--hljs-regexp); }
+      .hljs-symbol { color: var(--hljs-symbol); }
+      .hljs-bullet { color: var(--hljs-bullet); }
+      .hljs-link {
+        color: var(--hljs-link);
+        text-decoration: underline;
+        text-decoration-color: var(--color-link-underline);
+      }
+
+      /* ── Types & Built-ins ── */
+      .hljs-type { color: var(--hljs-type); }
+      .hljs-built_in { color: var(--hljs-built-in); }
+
+      /* ── Names, Attributes, Variables ── */
+      .hljs-name { color: var(--hljs-name); }
+      .hljs-tag { color: var(--hljs-punctuation); }
+      .hljs-attr,
+      .hljs-attribute { color: var(--hljs-attr); }
+      .hljs-variable { color: var(--hljs-variable); }
+      .hljs-template-variable { color: var(--hljs-template-variable); }
+      .hljs-subst { color: var(--hljs-subst); }
+
+      /* ── CSS Selectors ── */
+      .hljs-selector-tag { color: var(--hljs-selector-tag); }
+      .hljs-selector-class { color: var(--hljs-selector-class); }
+      .hljs-selector-id { color: var(--hljs-selector-id); font-weight: 500; }
+      .hljs-selector-attr { color: var(--hljs-selector-attr); }
+      .hljs-selector-pseudo { color: var(--hljs-selector-pseudo); }
+
+      /* ── Comments & Ancillary ── */
+      .hljs-comment { color: var(--hljs-comment); font-style: italic; }
+      .hljs-quote { color: var(--hljs-comment); font-style: italic; }
+      .hljs-punctuation { color: var(--hljs-punctuation); }
+      .hljs-operator { color: var(--hljs-operator); }
+      .hljs-meta { color: var(--hljs-meta); }
+      .hljs-meta .hljs-keyword { color: var(--hljs-keyword); font-weight: 500; }
+      .hljs-meta .hljs-string { color: var(--hljs-string); }
+
+      /* ── Diff ── */
+      .hljs-addition {
+        color: var(--hljs-addition);
+        background: var(--hljs-addition-bg);
+        display: inline-block;
+        width: 100%;
+        padding: 0 var(--space-2);
+        border-radius: var(--radius-sm);
+      }
+      .hljs-deletion {
+        color: var(--hljs-deletion);
+        background: var(--hljs-deletion-bg);
+        display: inline-block;
+        width: 100%;
+        padding: 0 var(--space-2);
+        border-radius: var(--radius-sm);
+      }
+
+      /* ── Text Emphasis ── */
+      .hljs-emphasis { font-style: var(--hljs-emphasis); }
+      .hljs-strong { font-weight: var(--hljs-strong); }
+    }
+  }
+}
+
+/* ── Code Block Wrapper (with language header) ─────────────── */
+
+.code-block-wrapper {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border-default);
+  margin-bottom: var(--space-4);
+
+  pre {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg-inset);
+  border-bottom: 1px solid var(--color-border-default);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+}
+
+.language-label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.copy-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  transition: all var(--duration-fast) var(--easing-default);
+
+  &:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-hover);
+  }
+
+  &.copied {
+    color: var(--color-success-icon);
+  }
+}
+
+/* ── Responsive + print overrides for code ────────────────── */
+
+@media (max-width: 480px) {
+  pre { padding: var(--space-2); }
+  pre code[data-line-numbers] {
+    padding-left: 2.5em;
+    &::before { width: 1.8em; }
+  }
+}
+
+@media print {
+  pre {
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    border-radius: 0 !important;
+
+    code {
+      white-space: pre-wrap !important;
+    }
+  }
+
+  .code-block-wrapper {
+    overflow: visible !important;
+    break-inside: avoid;
+    border-radius: 0 !important;
+  }
+
+  .code-block-header {
+    break-after: avoid;
+  }
+
+  pre code[data-line-numbers] {
+    padding-left: 0 !important;
+
+    &::before {
+      display: none !important;
+    }
+  }
+
+  .copy-btn {
+    display: none !important;
+  }
+}

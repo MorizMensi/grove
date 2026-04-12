@@ -1,0 +1,26 @@
+/* ════════════════════════════════════════════════════════════════
+   DlNode — Mermaid diagrams
+   Host, inner <svg>, dark-mode inversion
+   ════════════════════════════════════════════════════════════════ */
+
+.mermaid-diagram {
+  text-align: center;
+  overflow-x: auto;
+  margin: 0 0 var(--space-4) 0;
+  padding: var(--space-4);
+
+  ::ng-deep svg {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+:host-context([data-theme="dark"]) .mermaid-diagram ::ng-deep svg {
+  filter: invert(93%) hue-rotate(180deg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :host-context(:root:not([data-theme="light"])) .mermaid-diagram ::ng-deep svg {
+    filter: invert(93%) hue-rotate(180deg);
+  }
+}
