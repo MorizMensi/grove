@@ -6,6 +6,7 @@ import {
   OpenRequestSchema,
   type OpenAction,
 } from '../shared/types/open.js';
+import { resolveZed } from './zed-resolver.js';
 
 type ExecFileArgs = readonly [file: string, args: readonly string[]];
 
@@ -17,12 +18,11 @@ type ExecFileArgs = readonly [file: string, args: readonly string[]];
  * (see capabilities.ts) reports the same matrix so the frontend can
  * hide buttons that would not work.
  */
-function buildExec(
+async function buildExec(
   action: OpenAction,
   absDir: string,
-): ExecFileArgs | null {
+): Promise<ExecFileArgs | null> {
   const platform = process.platform;
-  const zedBin = process.env['ZED_BIN'] || 'zed';
 
   switch (action) {
     case 'terminal':
@@ -32,8 +32,7 @@ function buildExec(
       return null;
 
     case 'zed':
-      // `zed` is cross-platform (darwin, linux, win32).
-      return [zedBin, [absDir]];
+      return resolveZed(absDir);
 
     case 'claude':
       if (platform === 'darwin') {
@@ -90,7 +89,7 @@ export function openRouter(docsDir: string): Router {
     }
 
     // 4. Platform dispatch. Unsupported combos return 501.
-    const exec = buildExec(action, absDir);
+    const exec = await buildExec(action, absDir);
     if (!exec) {
       res.status(501).json({
         error: `Action "${action}" is not supported on platform "${process.platform}".`,
@@ -101,7 +100,16 @@ export function openRouter(docsDir: string): Router {
     const [file, args] = exec;
     execFile(file, [...args], (err) => {
       if (err) {
-        res.status(500).json({ error: `Failed to open: ${err.message}` });
+        const isMissing =
+          (err as NodeJS.ErrnoException).code === 'ENOENT' ||
+          /ENOENT/.test(err.message);
+        const hint =
+          action === 'zed' && isMissing
+            ? ' — Zed not found. Install Zed or set the ZED_BIN env var.'
+            : '';
+        res
+          .status(500)
+          .json({ error: `Failed to open: ${err.message}${hint}` });
         return;
       }
       res.json({ ok: true });

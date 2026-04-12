@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { canResolveZed } from './zed-resolver.js';
 
 /**
  * Reports which `/api/open` actions are supported on the current
@@ -17,15 +18,13 @@ export interface Capabilities {
 export function capabilitiesRouter(): Router {
   const router = Router();
 
-  router.get('/', (_req, res) => {
+  router.get('/', async (_req, res) => {
     const platform = process.platform;
     const capabilities: Capabilities = {
       platform,
       supports: {
         terminal: platform === 'darwin',
-        // `zed` is cross-platform; we optimistically report true and
-        // let the actual open call fail if the binary is not on PATH.
-        zed: true,
+        zed: await canResolveZed(),
         claude: platform === 'darwin',
       },
     };
