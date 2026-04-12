@@ -1,8 +1,16 @@
 name: pages
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'frontend/**'
+      - 'server/**'
+      - 'shared/**'
+      - '.github/workflows/pages.yml'
+      - '.github/workflows/build-wiki.yml'
   workflow_dispatch:
-  # push trigger added once the first manual deploy is green
 
 # Reusable workflow callers must grant at least the permissions the
 # callee declares. build-wiki.yml needs pages: write + id-token: write
