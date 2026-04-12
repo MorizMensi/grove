@@ -395,7 +395,7 @@ ul, ol {
 li {
   margin-bottom: var(--space-1);
 
-  > p { margin-bottom: var(--space-2); }
+  p { margin-bottom: 0 }
 }
 
 ul ul, ul ol, ol ul, ol ol {

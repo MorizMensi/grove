@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, OnInit } from "@angular/core";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MdNodeComponent } from "../../dl-node/md-node.component";
@@ -91,7 +91,7 @@ const FILETYPE_ICONS = new Set([
 })
 export class DocumentShellComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
+
   private readonly destroyRef = inject(DestroyRef);
   private readonly documentService = inject(DocumentService);
   private readonly sanitizer = inject(DomSanitizer);
@@ -266,62 +266,6 @@ export class DocumentShellComponent implements OnInit {
   isCurrentFile(entry: DocumentEntry): boolean {
     const currentName = this.currentPath.split("/").pop() ?? "";
     return entry.name === currentName;
-  }
-
-  onContentClick(event: MouseEvent): void {
-    const anchor = (event.target as HTMLElement).closest("a");
-    if (!anchor) return;
-
-    const href = anchor.getAttribute("href");
-    if (!href) return;
-
-    // External links or absolute paths — let browser handle
-    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(href) || href.startsWith("/")) return;
-
-    // Fragment-only links — scroll to element
-    if (href.startsWith("#")) {
-      event.preventDefault();
-      const id = href.slice(1);
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-      return;
-    }
-
-    event.preventDefault();
-
-    // Resolve relative path against current document's directory
-    const dirSegments = this.currentPath.split("/").filter(Boolean);
-    dirSegments.pop(); // remove filename
-    const combined = [...dirSegments, ...href.split("/")];
-
-    // Normalize . and .. segments
-    const normalized: string[] = [];
-    for (const seg of combined) {
-      if (seg === ".") continue;
-      if (seg === "..") {
-        normalized.pop();
-      } else {
-        normalized.push(seg);
-      }
-    }
-
-    const resolved = normalized.join("/");
-
-    // Determine navigation target
-    const dotIndex = resolved.lastIndexOf(".");
-    const lastSlash = resolved.lastIndexOf("/");
-    if (dotIndex > lastSlash) {
-      const ext = resolved.slice(dotIndex + 1).toLowerCase();
-      const pathWithoutExt = resolved.slice(0, dotIndex);
-      if (ext === "md") {
-        this.router.navigate(["/documents", ...pathWithoutExt.split("/")]);
-      } else {
-        this.router.navigate(["/documents", ...pathWithoutExt.split("/")], {
-          queryParams: { extension: ext },
-        });
-      }
-    } else {
-      this.router.navigate(["/documents", ...resolved.split("/")]);
-    }
   }
 
   get actionPath(): string {

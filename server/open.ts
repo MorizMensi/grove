@@ -13,7 +13,7 @@ function buildCommand(action: Action, absDir: string): string {
     case "terminal":
       return `open -a Terminal "${escaped}"`;
     case "zed":
-      return `zed "${escaped}"`;
+      return `/usr/local/bin/zed "${escaped}"`;
     case "claude":
       return `osascript -e 'tell app "Terminal" to do script "cd \\"${escaped}\\" && claude"'`;
   }

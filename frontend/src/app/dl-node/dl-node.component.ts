@@ -1,6 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { NgStyle, NgClass, NgTemplateOutlet } from '@angular/common';
 import { SafeHtml } from '@angular/platform-browser';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DlNode } from './dl-node.model';
 import { DlExtendedValue, normalize } from './dl-normalize';
 import { HighlightService } from './highlight.service';
@@ -30,7 +31,7 @@ const FONT_FAMILY_MAP: Record<string, string> = {
 @Component({
   selector: 'dl-node',
   standalone: true,
-  imports: [NgStyle, NgClass, NgTemplateOutlet],
+  imports: [NgStyle, NgClass, NgTemplateOutlet, RouterLink],
   templateUrl: './dl-node.component.html',
   styleUrl: './dl-node.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +41,7 @@ export class DlNodeComponent implements OnChanges {
   private readonly katexService = inject(KatexService);
   private readonly mermaidService = inject(MermaidService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly route = inject(ActivatedRoute);
 
   private static readonly LANG_DISPLAY: Record<string, string> = {
     ts: 'TypeScript', typescript: 'TypeScript',
@@ -84,6 +86,57 @@ export class DlNodeComponent implements OnChanges {
     return this.canonical.link && isSafeUrl(this.canonical.link)
       ? this.canonical.link.trim()
       : null;
+  }
+
+  get isExternalLink(): boolean {
+    return !!this.safeLink && HAS_SCHEME_RE.test(this.safeLink);
+  }
+
+  get linkFragment(): string | undefined {
+    if (!this.safeLink) return undefined;
+    const i = this.safeLink.indexOf('#');
+    return i >= 0 ? this.safeLink.slice(i + 1) || undefined : undefined;
+  }
+
+  get linkPath(): string[] | null {
+    if (!this.safeLink || this.isExternalLink) return null;
+    if (this.safeLink.startsWith('#')) return [];
+
+    const i = this.safeLink.indexOf('#');
+    const rawPath = i >= 0 ? this.safeLink.slice(0, i) : this.safeLink;
+
+    const urlSegments = this.route.snapshot.url.map(s => s.path);
+    const dirSegments = urlSegments.slice(0, -1);
+    const combined = [...dirSegments, ...rawPath.split('/')];
+
+    const normalized: string[] = [];
+    for (const seg of combined) {
+      if (seg === '.') continue;
+      if (seg === '..') normalized.pop();
+      else normalized.push(seg);
+    }
+
+    const resolved = normalized.join('/');
+    const dotIdx = resolved.lastIndexOf('.');
+    const slashIdx = resolved.lastIndexOf('/');
+    if (dotIdx > slashIdx) {
+      const withoutExt = resolved.slice(0, dotIdx);
+      return ['/documents', ...withoutExt.split('/')];
+    }
+    return ['/documents', ...resolved.split('/')];
+  }
+
+  get linkQueryParams(): Record<string, string> | null {
+    if (!this.safeLink || this.isExternalLink || this.safeLink.startsWith('#')) return null;
+    const i = this.safeLink.indexOf('#');
+    const rawPath = i >= 0 ? this.safeLink.slice(0, i) : this.safeLink;
+    const dotIdx = rawPath.lastIndexOf('.');
+    const slashIdx = rawPath.lastIndexOf('/');
+    if (dotIdx > slashIdx) {
+      const ext = rawPath.slice(dotIdx + 1).toLowerCase();
+      if (ext !== 'md') return { extension: ext };
+    }
+    return null;
   }
 
   get safeSrc(): string | null {

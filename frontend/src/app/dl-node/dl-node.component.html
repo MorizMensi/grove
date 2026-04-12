@@ -14,8 +14,14 @@
 </ng-template>
 
 <ng-template #withLink>
-  @if (safeLink) {
-    <a [href]="safeLink"><ng-container [ngTemplateOutlet]="textAndChildren"/></a>
+  @if (safeLink && isExternalLink) {
+    <a [href]="safeLink" target="_blank" rel="noopener noreferrer">
+      <ng-container [ngTemplateOutlet]="textAndChildren"/>
+    </a>
+  } @else if (safeLink) {
+    <a [routerLink]="linkPath" [fragment]="linkFragment" [queryParams]="linkQueryParams">
+      <ng-container [ngTemplateOutlet]="textAndChildren"/>
+    </a>
   } @else {
     <ng-container [ngTemplateOutlet]="textAndChildren"/>
   }
