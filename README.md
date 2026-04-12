@@ -1,17 +1,23 @@
-# file-viewer
+# Grove
 
-A standalone Node CLI that serves any folder as a web-based document
-viewer. Point it at a directory full of notes, docs, or assets, and
-get an Angular SPA with live markdown rendering, syntax highlighting,
-math, diagrams, and media previews — all static, no database, no
-external services.
+**A local markdown wiki for any folder.**
+
+Point Grove at a directory full of notes, docs, or assets and it turns
+the folder into a browseable Angular SPA with live markdown rendering,
+syntax highlighting, math, diagrams, and media previews — all static,
+no database, no external services, no cloud. Every note is a stone;
+your folder is the cairn.
 
 ```bash
-npx file-serve ~/Documents/notes
+npx grovemd ~/Documents/notes
 # → http://localhost:3000
 ```
 
-## Features
+> Grove is published on npm as [`grovemd`](https://www.npmjs.com/package/grovemd)
+> (the unscoped name `grove` is held by a dormant package — we're working
+> on it). The installed CLI is named `grove`.
+
+## Features today
 
 - **Markdown + GFM** — tables, task lists, strikethrough, footnotes
 - **Syntax highlighting** — 190+ languages via highlight.js
@@ -21,19 +27,34 @@ npx file-serve ~/Documents/notes
 - **Anchor navigation** — GFM-style heading IDs with fragment scrolling
 - **Internal links** — relative markdown links route via the Angular
   router (no full page reload)
-- **External tool integration** — one click to open the current
-  folder in Terminal, Zed, or a Claude Code session (macOS; see
-  Configuration below)
+- **External tool integration** — one click to open the current folder
+  in Terminal, Zed, or a Claude Code session (macOS; see Configuration
+  below)
+
+## Roadmap
+
+Grove starts as a viewer. The plan is to grow it into a lightweight
+local-first editor in the Obsidian family, one feature at a time:
+
+- [ ] In-browser markdown editor (CodeMirror 6) with live preview
+- [ ] Save-on-blur / keybinding writes back to the filesystem
+- [ ] `[[wikilinks]]` resolver and back-references pane
+- [ ] Simple graph view of the vault
+- [ ] Daily notes / template snippets
+- [ ] In-app command palette / quick switcher
+
+If any of this sounds interesting, open an issue — it's the fastest
+way to nudge the order.
 
 ## Install
 
 ```bash
 # one-off
-npx file-serve <folder>
+npx grovemd <folder>
 
 # globally
-npm install -g file-viewer
-file-serve <folder>
+npm install -g grovemd
+grove <folder>
 ```
 
 Requires Node 20 or newer.
@@ -41,7 +62,7 @@ Requires Node 20 or newer.
 ## Usage
 
 ```
-file-serve <folder> [options]
+grove <folder> [options]
 
 Options
   --port <number>   Port to serve on (default: 3000)
@@ -52,14 +73,14 @@ Options
 Examples:
 
 ```bash
-file-serve ~/docs
-file-serve ~/docs --port 8080
-file-serve . --no-open
+grove ~/docs
+grove ~/docs --port 8080
+grove . --no-open
 ```
 
 ## Configuration
 
-The CLI is configured entirely through its arguments and a single
+Grove is configured entirely through its arguments and a single
 environment variable:
 
 - **`ZED_BIN`** — path to the Zed binary for the "Open in Zed" action.
@@ -68,22 +89,22 @@ environment variable:
 
 Action support by platform:
 
-| Action   | darwin | linux       | win32       |
-| -------- | ------ | ----------- | ----------- |
-| terminal | yes    | HTTP 501    | HTTP 501    |
-| zed      | yes    | yes         | yes         |
-| claude   | yes    | HTTP 501    | HTTP 501    |
+| Action   | darwin | linux    | win32    |
+| -------- | ------ | -------- | -------- |
+| terminal | yes    | HTTP 501 | HTTP 501 |
+| zed      | yes    | yes      | yes      |
+| claude   | yes    | HTTP 501 | HTTP 501 |
 
 `terminal` and `claude` currently rely on macOS primitives
 (`open -a Terminal`, `osascript` driving Terminal.app). On other
-platforms the corresponding buttons are hidden by the frontend and
-the API returns 501 if called directly.
+platforms the corresponding buttons are hidden by the frontend and the
+API returns 501 if called directly.
 
 ## Build from source
 
 ```bash
-git clone https://github.com/OWNER/file-viewer.git
-cd file-viewer
+git clone https://github.com/MorizMensi/grove.git
+cd grove
 npm ci
 (cd frontend && npm ci)
 npm run build

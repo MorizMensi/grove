@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "file-viewer": {
+    "grove": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "file-viewer:build:production"
+              "buildTarget": "grove:build:production"
             },
             "development": {
-              "buildTarget": "file-viewer:build:development"
+              "buildTarget": "grove:build:development"
             }
           },
           "defaultConfiguration": "development"

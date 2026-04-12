@@ -1,23 +1,28 @@
 {
-  "name": "file-viewer",
+  "name": "grovemd",
   "version": "0.1.0",
-  "description": "Standalone CLI tool that serves a folder as a web-based document viewer with markdown rendering, syntax highlighting, math, and diagrams.",
+  "description": "Grove — a local markdown wiki for any folder. Browse, read, and (soon) edit. Renders GFM, math, mermaid, syntax highlighting, and media previews.",
   "type": "module",
   "license": "MIT",
   "author": "Moriz Mensi-Klarbach",
-  "homepage": "https://github.com/OWNER/file-viewer#readme",
+  "homepage": "https://github.com/MorizMensi/grove#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OWNER/file-viewer.git"
+    "url": "git+https://github.com/MorizMensi/grove.git"
   },
   "bugs": {
-    "url": "https://github.com/OWNER/file-viewer/issues"
+    "url": "https://github.com/MorizMensi/grove/issues"
   },
   "keywords": [
     "markdown",
+    "grove",
+    "wiki",
     "viewer",
+    "editor",
     "cli",
     "documentation",
+    "notes",
+    "obsidian-alternative",
     "file-browser",
     "angular",
     "express"
@@ -26,7 +31,7 @@
     "node": ">=20"
   },
   "bin": {
-    "file-serve": "./dist/server/bin/file-viewer.js"
+    "grove": "./dist/server/bin/file-viewer.js"
   },
   "files": [
     "dist/"

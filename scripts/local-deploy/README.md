@@ -1,15 +1,15 @@
 # Local deploy (macOS / launchctl example)
 
-The `file-viewer` binary is a plain Node CLI — you can run it any way you
-like (`npx file-serve ~/Docs`, a shell alias, a systemd unit, a PM2 entry,
-etc.). This folder contains an **example** of how the original author runs
-it as a persistent background service on macOS using `launchctl`. It is
-deliberately not part of the published package or the top-level npm
-scripts, so nothing here runs unless you opt in.
+Grove ships as a plain Node CLI — you can run it any way you like
+(`npx grovemd ~/Docs`, a shell alias, a systemd unit, a PM2 entry,
+etc.). This folder contains an **example** of how the original author
+runs it as a persistent background service on macOS using `launchctl`.
+It is deliberately not part of the published package or the top-level
+npm scripts, so nothing here runs unless you opt in.
 
 ## Contents
 
-- `com.file-viewer.plist.example` — template launchctl agent plist
+- `com.grove.plist.example` — template launchctl agent plist
 - `restart.sh` — unload + load the agent (reads `PLIST_PATH` env var)
 - `deploy.sh` — `npm run build` then `restart.sh`
 
@@ -18,22 +18,22 @@ scripts, so nothing here runs unless you opt in.
 1. Copy the example and edit the paths:
 
    ```bash
-   cp scripts/local-deploy/com.file-viewer.plist.example \
-      ~/Library/LaunchAgents/com.file-viewer.plist
-   $EDITOR ~/Library/LaunchAgents/com.file-viewer.plist
+   cp scripts/local-deploy/com.grove.plist.example \
+      ~/Library/LaunchAgents/com.grove.plist
+   $EDITOR ~/Library/LaunchAgents/com.grove.plist
    ```
 
 2. Replace the two `/ABSOLUTE/PATH/TO/...` strings with:
    - the path to `dist/server/bin/file-viewer.js` in your local clone,
    - the path to the folder you want to serve.
 
-3. Optionally set `ZED_BIN` inside the `EnvironmentVariables` dict if you
-   want the "open in Zed" action to use a non-default path.
+3. Optionally set `ZED_BIN` inside the `EnvironmentVariables` dict if
+   you want the "open in Zed" action to use a non-default path.
 
 4. Load it:
 
    ```bash
-   launchctl load ~/Library/LaunchAgents/com.file-viewer.plist
+   launchctl load ~/Library/LaunchAgents/com.grove.plist
    ```
 
 5. Visit `http://localhost:3000` (or whichever port you chose).

@@ -23,7 +23,7 @@ for (let i = 0; i < args.length; i++) {
   } else if (arg === '--no-open') {
     noOpen = true;
   } else if (arg === '--help' || arg === '-h') {
-    console.log(`Usage: file-viewer <folder> [options]
+    console.log(`Usage: grove <folder> [options]
 
 Options:
   --port <number>  Port to serve on (default: 3000)
@@ -36,7 +36,7 @@ Options:
 }
 
 if (!folderPath) {
-  console.error('Error: Please provide a folder path.\nUsage: file-viewer <folder> [--port 3000] [--no-open]');
+  console.error('Error: Please provide a folder path.\nUsage: grove <folder> [--port 3000] [--no-open]');
   process.exit(1);
 }
 
@@ -57,7 +57,7 @@ const app = createApp(resolvedPath);
 
 const server = app.listen(port, () => {
   const url = `http://localhost:${port}`;
-  console.log(`File Viewer serving "${resolvedPath}"`);
+  console.log(`Grove serving "${resolvedPath}"`);
   console.log(`Open ${url}`);
 
   if (!noOpen) {

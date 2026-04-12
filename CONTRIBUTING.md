@@ -1,15 +1,16 @@
-# Contributing
+# Contributing to Grove
 
-Thanks for your interest. This project is small and favors stability
-over breadth — the upstream repo is the reference implementation and
-most feature work happens in downstream forks. If you are thinking
-about a large change, open an issue first so we can agree on the scope.
+Thanks for your interest. Grove is a small, focused project — the
+upstream repo is the reference implementation and favors stability
+over breadth. If you are thinking about a large change (especially
+anything on the [roadmap](README.md#roadmap)), open an issue first so
+we can agree on the scope.
 
 ## Getting started
 
 ```bash
-git clone https://github.com/OWNER/file-viewer.git
-cd file-viewer
+git clone https://github.com/MorizMensi/grove.git
+cd grove
 npm ci
 (cd frontend && npm ci)
 npm run build

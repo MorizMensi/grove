@@ -1,9 +1,8 @@
 # Architecture
 
-file-viewer is a monorepo with three TypeScript source roots that
-compile into a single `dist/` tree. The Express server serves both
-the API and the static Angular SPA; there is no separate frontend
-host.
+Grove is a monorepo with three TypeScript source roots that compile
+into a single `dist/` tree. The Express server serves both the API
+and the static Angular SPA; there is no separate frontend host.
 
 ```
 ┌─────────────── CLI ───────────────┐

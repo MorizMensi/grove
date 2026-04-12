@@ -3,12 +3,12 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.file-viewer</string>
+    <string>com.grove</string>
 
     <key>ProgramArguments</key>
     <array>
         <string>/usr/local/bin/node</string>
-        <string>/ABSOLUTE/PATH/TO/file-viewer/dist/server/bin/file-viewer.js</string>
+        <string>/ABSOLUTE/PATH/TO/grove/dist/server/bin/file-viewer.js</string>
         <string>/ABSOLUTE/PATH/TO/YOUR/DOCS</string>
         <string>--port</string>
         <string>3000</string>
@@ -31,9 +31,9 @@
     </dict>
 
     <key>StandardOutPath</key>
-    <string>/tmp/file-viewer.out.log</string>
+    <string>/tmp/grove.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/tmp/file-viewer.err.log</string>
+    <string>/tmp/grove.err.log</string>
 </dict>
 </plist>

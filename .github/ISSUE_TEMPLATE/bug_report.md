@@ -20,7 +20,7 @@ labels: bug
 
 ## Environment
 
-- file-viewer version:
+- Grove version:
 - Node version: `node --version`
 - OS and version:
 - Browser (if the bug is in the SPA):
