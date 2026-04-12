@@ -10,6 +10,7 @@ export interface BuildWikiOptions {
   docsDir: string;
   outDir: string;
   baseHref: string;
+  siteName?: string;
 }
 
 export async function buildWiki(opts: BuildWikiOptions): Promise<void> {
@@ -65,7 +66,7 @@ export async function buildWiki(opts: BuildWikiOptions): Promise<void> {
   await writeFile(join(outDir, '404.html'), rewritten, 'utf-8');
 
   // Write the manifest.
-  const manifest = await buildManifest(docsDir);
+  const manifest = await buildManifest(docsDir, { siteName: opts.siteName });
   await writeFile(
     join(outDir, 'wiki-manifest.json'),
     JSON.stringify(manifest, null, 2) + '\n',
@@ -79,6 +80,7 @@ export async function buildWiki(opts: BuildWikiOptions): Promise<void> {
   console.log(`Grove wiki bundle written to ${outDir}`);
   console.log(`  base-href: ${baseHref}`);
   console.log(`  docs:      ${docsDir}`);
+  if (opts.siteName) console.log(`  site-name: ${opts.siteName}`);
   console.log(
     `  manifest:  ${Object.keys(manifest.directories).length} directories`,
   );

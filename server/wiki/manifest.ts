@@ -6,7 +6,12 @@ export interface WikiManifest {
   version: 1;
   generatedAt: string;
   root: string;
+  siteName?: string;
   directories: Record<string, DocumentListing>;
+}
+
+export interface BuildManifestOptions {
+  siteName?: string;
 }
 
 // KEEP IN SYNC with server/documents.ts sort (documents.ts line ~50).
@@ -39,13 +44,17 @@ async function walk(
   directories[relDir] = { path: relDir, entries: sortEntries(entries) };
 }
 
-export async function buildManifest(docsDir: string): Promise<WikiManifest> {
+export async function buildManifest(
+  docsDir: string,
+  opts: BuildManifestOptions = {},
+): Promise<WikiManifest> {
   const directories: Record<string, DocumentListing> = {};
   await walk(docsDir, '', directories);
   return {
     version: 1,
     generatedAt: new Date().toISOString(),
     root: '',
+    ...(opts.siteName ? { siteName: opts.siteName } : {}),
     directories,
   };
 }
