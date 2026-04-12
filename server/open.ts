@@ -1,67 +1,105 @@
-import { Router } from "express";
-import { exec } from "node:child_process";
-import { stat } from "node:fs/promises";
-import { resolve } from "node:path";
+import { Router } from 'express';
+import { execFile } from 'node:child_process';
+import { stat } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import {
+  OpenRequestSchema,
+  type OpenAction,
+} from '../shared/types/open.js';
 
-type Action = "terminal" | "zed" | "claude";
+type ExecFileArgs = readonly [file: string, args: readonly string[]];
 
-const VALID_ACTIONS = new Set<Action>(["terminal", "zed", "claude"]);
+/**
+ * Build the actual child-process invocation for an action/dir pair.
+ *
+ * Returns `null` when the current platform does not support the action;
+ * the router uses that to return HTTP 501. The capability endpoint
+ * (see capabilities.ts) reports the same matrix so the frontend can
+ * hide buttons that would not work.
+ */
+function buildExec(
+  action: OpenAction,
+  absDir: string,
+): ExecFileArgs | null {
+  const platform = process.platform;
+  const zedBin = process.env['ZED_BIN'] || 'zed';
 
-function buildCommand(action: Action, absDir: string): string {
-  const escaped = absDir.replace(/"/g, '\\"');
   switch (action) {
-    case "terminal":
-      return `open -a Terminal "${escaped}"`;
-    case "zed":
-      return `/usr/local/bin/zed "${escaped}"`;
-    case "claude":
-      return `osascript -e 'tell app "Terminal" to do script "cd \\"${escaped}\\" && claude"'`;
+    case 'terminal':
+      if (platform === 'darwin') {
+        return ['open', ['-a', 'Terminal', absDir]];
+      }
+      return null;
+
+    case 'zed':
+      // `zed` is cross-platform (darwin, linux, win32).
+      return [zedBin, [absDir]];
+
+    case 'claude':
+      if (platform === 'darwin') {
+        // osascript is the only portable way to tell Terminal.app to
+        // run a command in a fresh window on macOS. The AppleScript
+        // string literal requires escaping both backslash and quote.
+        const escapedForAppleScript = absDir
+          .replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"');
+        return [
+          'osascript',
+          [
+            '-e',
+            `tell application "Terminal" to do script "cd \\"${escapedForAppleScript}\\" && claude"`,
+          ],
+        ];
+      }
+      return null;
   }
 }
 
 export function openRouter(docsDir: string): Router {
   const router = Router();
 
-  router.post("/", async (req, res) => {
-    const { action, path: relPath } = req.body ?? {};
+  router.post('/', async (req, res) => {
+    // 1. Validate request with zod (action enum + path string rules).
+    const parsed = OpenRequestSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.format() });
+      return;
+    }
+    const { action, path: relPath } = parsed.data;
 
-    if (!action || !VALID_ACTIONS.has(action)) {
-      res.status(400).json({
-        error: 'Invalid action. Must be "terminal", "zed", or "claude".',
+    // 2. Resolve and containment-check. Zod's .refine cannot fully
+    //    cover symlink / resolved-path edge cases, so still verify
+    //    the resolved absolute path is inside the docs root.
+    const absDir = relPath ? resolve(docsDir, relPath) : docsDir;
+    if (!absDir.startsWith(docsDir)) {
+      res.status(400).json({ error: 'Invalid path' });
+      return;
+    }
+
+    // 3. Stat — every action except `zed` expects a directory. `zed`
+    //    can open files and folders both, so skip the kind check.
+    try {
+      const s = await stat(absDir);
+      if (!s.isDirectory() && action !== 'zed') {
+        res.status(400).json({ error: 'Path is not a directory' });
+        return;
+      }
+    } catch {
+      res.status(404).json({ error: 'Path not found' });
+      return;
+    }
+
+    // 4. Platform dispatch. Unsupported combos return 501.
+    const exec = buildExec(action, absDir);
+    if (!exec) {
+      res.status(501).json({
+        error: `Action "${action}" is not supported on platform "${process.platform}".`,
       });
       return;
     }
 
-    if (typeof relPath !== "string") {
-      res.status(400).json({ error: "Missing path." });
-      return;
-    }
-
-    if (relPath.includes("..") || relPath.startsWith("/")) {
-      res.status(400).json({ error: "Invalid path" });
-      return;
-    }
-
-    const absDir = relPath ? resolve(docsDir, relPath) : docsDir;
-
-    if (!absDir.startsWith(docsDir)) {
-      res.status(400).json({ error: "Invalid path" });
-      return;
-    }
-
-    try {
-      const s = await stat(absDir);
-      if (!s.isDirectory() && action !== "zed") {
-        res.status(400).json({ error: "Path is not a directory" });
-        return;
-      }
-    } catch {
-      res.status(404).json({ error: "Directory not found" });
-      return;
-    }
-
-    const command = buildCommand(action as Action, absDir);
-    exec(command, (err) => {
+    const [file, args] = exec;
+    execFile(file, [...args], (err) => {
       if (err) {
         res.status(500).json({ error: `Failed to open: ${err.message}` });
         return;

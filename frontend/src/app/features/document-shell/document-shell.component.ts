@@ -7,6 +7,7 @@ import {
   DocumentService,
   DocumentEntry,
 } from "../../core/services/document.service";
+import { CapabilitiesService } from "../../core/services/capabilities.service";
 import {
   FILETYPE_ICONS,
   previewKindFor,
@@ -27,6 +28,9 @@ export class DocumentShellComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly documentService = inject(DocumentService);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly capabilitiesService = inject(CapabilitiesService);
+
+  readonly capabilities = this.capabilitiesService.capabilities;
 
   mode: "loading" | "directory" | "file" | "not-found" = "loading";
   fileType: "text" | "image" | "video" | "audio" | "pdf" | "svg" = "text";
