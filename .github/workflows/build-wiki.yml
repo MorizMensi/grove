@@ -1,0 +1,96 @@
+name: Grove Wiki
+
+on:
+  workflow_call:
+    inputs:
+      docs:
+        description: 'Path to the markdown docs folder'
+        type: string
+        default: docs
+      out:
+        description: 'Output directory'
+        type: string
+        default: dist-wiki
+      base-href:
+        description: 'Deploy base path (defaults to /<repo-name>/)'
+        type: string
+        default: ''
+      grove-ref:
+        description: 'Grove git ref to use (branch, tag, or SHA)'
+        type: string
+        default: main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout consumer repo
+        uses: actions/checkout@v4
+
+      - name: Checkout Grove
+        uses: actions/checkout@v4
+        with:
+          repository: MorizMensi/grove
+          ref: ${{ inputs.grove-ref }}
+          path: .grove
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .grove/.nvmrc
+          cache: npm
+          cache-dependency-path: |
+            .grove/package-lock.json
+            .grove/frontend/package-lock.json
+
+      - name: Install Grove root deps
+        run: npm ci
+        working-directory: .grove
+
+      - name: Install Grove frontend deps
+        run: npm ci
+        working-directory: .grove/frontend
+
+      - name: Build Grove (server + production + wiki bundles)
+        run: npm run build:all
+        working-directory: .grove
+
+      - name: Resolve base-href
+        id: base
+        run: |
+          BASE_HREF="${{ inputs.base-href }}"
+          if [ -z "$BASE_HREF" ]; then
+            BASE_HREF="/${{ github.event.repository.name }}/"
+          fi
+          echo "base_href=$BASE_HREF" >> "$GITHUB_OUTPUT"
+
+      - name: Build wiki site
+        run: |
+          node .grove/dist/server/bin/file-viewer.js build-wiki \
+            --docs "${{ inputs.docs }}" \
+            --out "${{ inputs.out }}" \
+            --base-href "${{ steps.base.outputs.base_href }}"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ inputs.out }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
