@@ -56,6 +56,32 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "wiki": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "16kB",
+                  "maximumError": "32kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.wiki.ts"
+                }
+              ],
+              "baseHref": "/__GROVE_BASE__/",
+              "outputPath": {
+                "base": "../dist/frontend/wiki",
+                "browser": ""
+              }
             }
           },
           "defaultConfiguration": "production"

@@ -1,4 +1,4 @@
-export interface Environment {
+interface Environment {
   readonly mode: 'server' | 'wiki';
   readonly manifestUrl: string;
 }
