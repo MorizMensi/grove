@@ -19,6 +19,10 @@ on:
         description: 'Grove git ref to use (branch, tag, or SHA)'
         type: string
         default: main
+      site-name:
+        description: 'Site name shown in the breadcrumb brand and browser title (defaults to the repo name)'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -73,12 +77,22 @@ jobs:
           fi
           echo "base_href=$BASE_HREF" >> "$GITHUB_OUTPUT"
 
+      - name: Resolve site-name
+        id: site
+        run: |
+          SITE_NAME="${{ inputs.site-name }}"
+          if [ -z "$SITE_NAME" ]; then
+            SITE_NAME="${{ github.event.repository.name }}"
+          fi
+          echo "site_name=$SITE_NAME" >> "$GITHUB_OUTPUT"
+
       - name: Build wiki site
         run: |
           node .grove/dist/server/bin/file-viewer.js build-wiki \
             --docs "${{ inputs.docs }}" \
             --out "${{ inputs.out }}" \
-            --base-href "${{ steps.base.outputs.base_href }}"
+            --base-href "${{ steps.base.outputs.base_href }}" \
+            --site-name "${{ steps.site.outputs.site_name }}"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
