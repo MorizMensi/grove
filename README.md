@@ -81,6 +81,7 @@ jobs:
     uses: MorizMensi/grove/.github/workflows/build-wiki.yml@main
     with:
       docs: docs
+      site-name: My Cool Library   # optional — defaults to the repo name
 ```
 
 Then enable GitHub Pages in **Settings → Pages → Source: GitHub Actions**

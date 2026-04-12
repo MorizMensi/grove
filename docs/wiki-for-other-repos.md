@@ -58,7 +58,7 @@ on GitHub-hosted runners. Node module caching (via
 
 ## Inputs
 
-The workflow accepts four optional inputs:
+The workflow accepts five optional inputs:
 
 | Input       | Default            | What it does                                         |
 | ----------- | ------------------ | ---------------------------------------------------- |
@@ -66,8 +66,13 @@ The workflow accepts four optional inputs:
 | `out`       | `dist-wiki`        | Output directory (rarely worth changing)             |
 | `base-href` | `/<repo-name>/`    | Base path for Pages — defaults match the repo name   |
 | `grove-ref` | `main`             | Grove git ref to build against (branch, tag, or SHA) |
+| `site-name` | `<repo-name>`      | Brand text shown in the breadcrumb bar + browser tab title |
 
-Example with custom paths:
+`site-name` only affects what your readers see — it's not
+functional. Lowercase repo names like `my-lib` show up as-is; pass a
+prettier value if you want proper capitalization or spaces.
+
+Example with custom paths and a branded site name:
 
 ```yaml
 jobs:
@@ -76,6 +81,7 @@ jobs:
     with:
       docs: documentation
       base-href: /my-lib/
+      site-name: My Cool Library
       grove-ref: main
 ```
 
