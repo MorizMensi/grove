@@ -34,17 +34,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout consumer repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Checkout Grove
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: MorizMensi/grove
           ref: ${{ inputs.grove-ref }}
           path: .grove
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .grove/.nvmrc
           cache: npm
@@ -81,7 +81,7 @@ jobs:
             --base-href "${{ steps.base.outputs.base_href }}"
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ${{ inputs.out }}
 
