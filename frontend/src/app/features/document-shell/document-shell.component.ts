@@ -2,11 +2,11 @@ import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { MdNodeComponent } from "../../dl-node/md-node.component";
+import { MdNodeComponent } from "../../shared/doclang/md-node.component";
 import {
   DocumentService,
   DocumentEntry,
-} from "../../services/document.service";
+} from "../../core/services/document.service";
 
 function titleFromSegment(segment: string): string {
   return segment

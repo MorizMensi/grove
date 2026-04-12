@@ -12,7 +12,7 @@ export const routes: Routes = [
       {
         path: '**',
         loadComponent: () =>
-          import('./components/document-shell/document-shell.component').then(m => m.DocumentShellComponent),
+          import('./features/document-shell/document-shell.component').then(m => m.DocumentShellComponent),
       },
     ],
   },
