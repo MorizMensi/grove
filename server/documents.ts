@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { readdir, stat } from 'node:fs/promises';
 import { resolve, extname, basename } from 'node:path';
+import type { DocumentEntry, DocumentListing } from '../shared/types/documents.js';
 
 export function documentsRouter(docsDir: string): Router {
   const router = Router();
@@ -31,18 +32,18 @@ export function documentsRouter(docsDir: string): Router {
       }
 
       const entries = await readdir(absPath, { withFileTypes: true });
-      const result = entries
+      const result: DocumentEntry[] = entries
         .filter(e => !e.name.startsWith('.'))
         .filter(e => e.isDirectory() || e.isFile())
-        .map(e => {
+        .map((e): DocumentEntry => {
           if (e.isDirectory()) {
-            return { name: e.name, type: 'directory' as const };
+            return { name: e.name, type: 'directory' };
           }
           const ext = extname(e.name);
           const stem = basename(e.name, ext);
           return {
             name: stem,
-            type: 'file' as const,
+            type: 'file',
             extension: ext.replace(/^\./, '') || undefined,
           };
         })
@@ -51,7 +52,8 @@ export function documentsRouter(docsDir: string): Router {
           return a.name.localeCompare(b.name);
         });
 
-      res.json({ path: relPath, entries: result });
+      const listing: DocumentListing = { path: relPath, entries: result };
+      res.json(listing);
     } catch {
       res.status(404).json({ error: 'Directory not found' });
     }

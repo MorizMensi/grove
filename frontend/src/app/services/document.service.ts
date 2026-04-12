@@ -1,17 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import type { DocumentEntry, DocumentListing } from '@shared/types/documents';
+import type { OpenAction } from '@shared/types/open';
 
-export interface DocumentEntry {
-  name: string;
-  type: 'file' | 'directory';
-  extension?: string;
-}
-
-export interface DocumentListing {
-  path: string;
-  entries: DocumentEntry[];
-}
+// Re-export the shared types so existing consumers can keep importing them
+// from this service module without needing to know about the alias.
+export type { DocumentEntry, DocumentListing, OpenAction };
 
 @Injectable({ providedIn: 'root' })
 export class DocumentService {
@@ -27,7 +22,7 @@ export class DocumentService {
     return this.http.get(`/documents/${path}.${extension}`, { responseType: 'text' });
   }
 
-  openExternal(action: 'terminal' | 'zed' | 'claude', path: string): Observable<{ ok: boolean }> {
+  openExternal(action: OpenAction, path: string): Observable<{ ok: boolean }> {
     return this.http.post<{ ok: boolean }>('/api/open', { action, path });
   }
 }
