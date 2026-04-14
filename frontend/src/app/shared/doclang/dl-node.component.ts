@@ -8,6 +8,7 @@ import { HighlightService } from './highlight.service';
 import { KatexService } from './katex.service';
 import { MermaidService } from './mermaid.service';
 import { HAS_SCHEME_RE, isSafeUrl } from '../../core/utils/url-safety';
+import { CONTENT_URL_PREFIX } from '@shared/content-url';
 
 const SAFE_ICON_RE = /^[a-z0-9-]+$/;
 const HEX_COLOR_RE = /^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
@@ -95,6 +96,14 @@ export class DlNodeComponent implements OnChanges {
     const i = this.safeLink.indexOf('#');
     const rawPath = i >= 0 ? this.safeLink.slice(0, i) : this.safeLink;
 
+    const resolved = this.resolveRelativeToDoc(rawPath);
+    const dotIdx = resolved.lastIndexOf('.');
+    const slashIdx = resolved.lastIndexOf('/');
+    const finalPath = dotIdx > slashIdx ? resolved.slice(0, dotIdx) : resolved;
+    return finalPath ? ['/' + finalPath] : ['/'];
+  }
+
+  private resolveRelativeToDoc(rawPath: string): string {
     const urlSegments = this.route.snapshot.url.map(s => s.path);
     const dirSegments = urlSegments.slice(0, -1);
     const combined = [...dirSegments, ...rawPath.split('/')];
@@ -105,12 +114,7 @@ export class DlNodeComponent implements OnChanges {
       if (seg === '..') normalized.pop();
       else normalized.push(seg);
     }
-
-    const resolved = normalized.join('/');
-    const dotIdx = resolved.lastIndexOf('.');
-    const slashIdx = resolved.lastIndexOf('/');
-    const finalPath = dotIdx > slashIdx ? resolved.slice(0, dotIdx) : resolved;
-    return finalPath ? ['/' + finalPath] : ['/'];
+    return normalized.join('/');
   }
 
   get linkQueryParams(): Record<string, string> | null {
@@ -127,9 +131,16 @@ export class DlNodeComponent implements OnChanges {
   }
 
   get safeSrc(): string | null {
-    return this.canonical.src && isSafeUrl(this.canonical.src)
-      ? this.canonical.src.trim()
-      : null;
+    const raw = this.canonical.src;
+    if (!raw || !isSafeUrl(raw)) return null;
+    const trimmed = raw.trim();
+
+    if (HAS_SCHEME_RE.test(trimmed) || trimmed.startsWith('/')) {
+      return trimmed;
+    }
+
+    const resolved = this.resolveRelativeToDoc(trimmed);
+    return resolved ? `/${CONTENT_URL_PREFIX}/${resolved}` : null;
   }
 
   get safeIcon(): string | null {
@@ -218,6 +229,16 @@ export class DlNodeComponent implements OnChanges {
   get mathHtml(): SafeHtml | null {
     if (this.canonical.type !== 'math' || !this.canonical.text) return null;
     return this.katexService.render(this.canonical.text, this.canonical.displayMode ?? false);
+  }
+
+  onFragmentClick(event: MouseEvent): void {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey ||
+        event.shiftKey || event.altKey) {
+      return;
+    }
+    const fragment = this.linkFragment;
+    if (!fragment) return;
+    document.getElementById(fragment)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async copyCode(): Promise<void> {

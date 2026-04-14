@@ -148,11 +148,28 @@ export class DocumentShellComponent implements OnInit {
           }
           this.mode = "file";
           this.loadSidebarEntries(filePath);
+          const fragment = this.route.snapshot.fragment;
+          if (fragment) this.scrollToFragment(fragment);
         },
         error: () => {
           this.mode = "not-found";
         },
       });
+  }
+
+  private scrollToFragment(fragment: string): void {
+    const deadline = performance.now() + 2000;
+    const tryScroll = () => {
+      const el = document.getElementById(fragment);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      if (performance.now() < deadline) {
+        requestAnimationFrame(tryScroll);
+      }
+    };
+    requestAnimationFrame(tryScroll);
   }
 
   private loadSidebarEntries(filePath: string): void {

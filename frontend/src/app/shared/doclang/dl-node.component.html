@@ -19,9 +19,21 @@
       <ng-container [ngTemplateOutlet]="textAndChildren"/>
     </a>
   } @else if (safeLink) {
-    <a [routerLink]="linkPath" [fragment]="linkFragment" [queryParams]="linkQueryParams">
+    <a [routerLink]="linkPath"
+       [fragment]="linkFragment"
+       [queryParams]="linkQueryParams"
+       class="dl-link-screen"
+       (click)="onFragmentClick($event)">
       <ng-container [ngTemplateOutlet]="textAndChildren"/>
     </a>
+    @if (linkFragment) {
+      <a [attr.href]="'#' + linkFragment"
+         class="dl-link-print"
+         aria-hidden="true"
+         tabindex="-1">
+        <ng-container [ngTemplateOutlet]="textAndChildren"/>
+      </a>
+    }
   } @else {
     <ng-container [ngTemplateOutlet]="textAndChildren"/>
   }
