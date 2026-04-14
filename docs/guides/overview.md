@@ -1,8 +1,8 @@
 # Guides
 
 Task-based how-to documentation. For conceptual material see
-[architecture](../architecture/index.md); for mechanical reference
-see [reference](../reference/index.md).
+[architecture](../architecture/overview.md); for mechanical reference
+see [reference](../reference/overview.md).
 
 ## Pages
 
@@ -19,7 +19,7 @@ see [reference](../reference/index.md).
 
 ```mermaid
 flowchart LR
-  IDX[index.md] --> TR[troubleshooting.md]
+  IDX[overview.md] --> TR[troubleshooting.md]
   IDX --> SH[self-hosting.md]
   IDX --> WD[wiki-deployment.md]
 
@@ -33,4 +33,4 @@ flowchart LR
 
 - [Getting started](../getting-started.md)
 - [Usage](../usage.md)
-- [Back to docs home](../index.md)
+- [Back to docs home](../overview.md)

@@ -1,8 +1,8 @@
 # How it works
 
-A conceptual tour. For the low-level source layout, see
-[ARCHITECTURE](./ARCHITECTURE.md). For topic-by-topic deep
-dives, see the [architecture folder](./architecture/index.md).
+A conceptual tour. For topic-by-topic deep dives — server,
+frontend, renderer, wiki mode, themes, security — see the
+[architecture folder](./architecture/overview.md).
 
 ## The four layers
 
@@ -110,10 +110,8 @@ User-facing guide: [wiki-for-other-repos](./wiki-for-other-repos.md).
 
 ## Next
 
-- [Architecture reference](./ARCHITECTURE.md) — source layout
-  and low-level diagram
-- [Architecture deep dives](./architecture/index.md) — per-layer
-  topics with mermaid diagrams
-- [Reference](./reference/index.md) — CLI, HTTP API, env vars,
+- [Architecture overview](./architecture/overview.md) — source
+  layout, per-layer deep dives, and mermaid diagrams
+- [Reference](./reference/overview.md) — CLI, HTTP API, env vars,
   scripts, types, file types
-- [Back to docs home](./index.md)
+- [Back to docs home](./overview.md)

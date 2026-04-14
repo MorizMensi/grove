@@ -136,4 +136,4 @@ behavior (back, forward, anchor scroll, etc.).
 - [DocLang renderer](./architecture/doclang.md) — how
   markdown becomes DOM
 - [Troubleshooting](./guides/troubleshooting.md)
-- [Back to docs home](./index.md)
+- [Back to docs home](./overview.md)

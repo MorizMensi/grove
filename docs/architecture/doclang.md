@@ -251,4 +251,4 @@ so downstream code only ever deals with `DlNode` objects.
 - [Frontend layer](./frontend.md) — where `md-node` is embedded
 - [Rendering pipeline in how-it-works](../how-it-works.md) — the
   narrative version
-- [Back to architecture index](./index.md)
+- [Back to architecture index](./overview.md)

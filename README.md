@@ -28,7 +28,7 @@ served by Grove itself, the exact same renderer you get when you
 - [How it works](https://morizmensi.github.io/grove/how-it-works)
 - [Contributing](https://morizmensi.github.io/grove/contributing)
 - [Use Grove for your own wiki](https://morizmensi.github.io/grove/wiki-for-other-repos)
-- [Architecture reference](https://morizmensi.github.io/grove/ARCHITECTURE)
+- [Architecture overview](https://morizmensi.github.io/grove/architecture/overview)
 
 ## Features today
 
@@ -168,9 +168,10 @@ dist/
 └── frontend/browser # Angular SPA
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) (or the
-[hosted version](https://morizmensi.github.io/grove/ARCHITECTURE)) for the
-full project layout.
+See [docs/architecture/overview.md](docs/architecture/overview.md)
+(or the
+[hosted version](https://morizmensi.github.io/grove/architecture/overview))
+for the full project layout.
 
 ## Local deploy example (macOS)
 

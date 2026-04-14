@@ -89,5 +89,5 @@ output tree. The `pages.yml` workflow runs `build-wiki.yml`
 
 - [CLI reference](./cli.md)
 - [Contributing](../contributing.md)
-- [Architecture overview](../architecture/index.md)
-- [Back to reference index](./index.md)
+- [Architecture overview](../architecture/overview.md)
+- [Back to reference index](./overview.md)

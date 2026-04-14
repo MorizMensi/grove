@@ -54,7 +54,7 @@ grove/
             └── theme-switcher/  theme picker
 ```
 
-See [ARCHITECTURE](./ARCHITECTURE.md) for more.
+See [architecture overview](./architecture/overview.md) for more.
 
 ## Code style
 
@@ -127,10 +127,10 @@ licensed under the
 
 ## See also
 
-- [Architecture reference](./ARCHITECTURE.md) — flat single-page
-- [Architecture deep dives](./architecture/index.md) — per-layer
+- [Architecture overview](./architecture/overview.md) — per-layer
+  deep dives
 - [CLI reference](./reference/cli.md)
 - [HTTP API reference](./reference/http-api.md)
 - [npm scripts reference](./reference/scripts.md)
 - [Shared types reference](./reference/types.md)
-- [Back to docs home](./index.md)
+- [Back to docs home](./overview.md)

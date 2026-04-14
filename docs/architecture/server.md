@@ -202,4 +202,4 @@ The `build-wiki` subcommand is covered in [wiki-mode](./wiki-mode.md).
 - [Security model](./security.md)
 - [HTTP API reference](../reference/http-api.md)
 - [Shared types reference](../reference/types.md)
-- [Back to architecture index](./index.md)
+- [Back to architecture index](./overview.md)

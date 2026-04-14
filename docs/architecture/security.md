@@ -210,4 +210,4 @@ tries the bare name as a last-ditch effort.
 - [Shared types reference](../reference/types.md)
 - [Server layer](./server.md)
 - [DocLang renderer](./doclang.md)
-- [Back to architecture index](./index.md)
+- [Back to architecture index](./overview.md)

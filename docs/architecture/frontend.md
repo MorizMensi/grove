@@ -245,4 +245,4 @@ elapse, then smooth-scrolls.
   markdown conversion and rendering
 - [HTTP API reference](../reference/http-api.md)
 - [File-types reference](../reference/file-types.md)
-- [Back to architecture index](./index.md)
+- [Back to architecture index](./overview.md)

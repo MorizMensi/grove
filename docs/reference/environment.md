@@ -79,4 +79,4 @@ configuration is selected. See
   `ZED_BIN` surfaces
 - [CLI reference](./cli.md)
 - [Guides: self-hosting](../guides/self-hosting.md)
-- [Back to reference index](./index.md)
+- [Back to reference index](./overview.md)

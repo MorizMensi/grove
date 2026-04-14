@@ -133,4 +133,4 @@ an entry automatically surfaces it in the switcher.
   the component tree
 - [Contributing](../contributing.md) — code style rules for
   theme changes
-- [Back to architecture index](./index.md)
+- [Back to architecture index](./overview.md)

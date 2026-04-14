@@ -183,4 +183,4 @@ See [troubleshooting#wiki-deployment](./troubleshooting.md#wiki-deployment).
   happens internally
 - [CLI reference: build-wiki](../reference/cli.md#build-wiki)
 - [Troubleshooting](./troubleshooting.md)
-- [Back to guides index](./index.md)
+- [Back to guides index](./overview.md)

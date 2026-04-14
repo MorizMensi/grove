@@ -1,8 +1,6 @@
 # Architecture
 
-Deep-dive docs for Grove's internals. For the original flat
-single-page architecture reference, see
-[ARCHITECTURE.md](../ARCHITECTURE.md). For a conceptual tour
+Deep-dive docs for Grove's internals. For a conceptual tour
 written for first-time readers, start with
 [how-it-works](../how-it-works.md).
 
@@ -88,4 +86,4 @@ esbuild pipeline resolves the alias at build time.
 - [CLI reference](../reference/cli.md)
 - [HTTP API reference](../reference/http-api.md)
 - [Shared types reference](../reference/types.md)
-- [Back to docs home](../index.md)
+- [Back to docs home](../overview.md)

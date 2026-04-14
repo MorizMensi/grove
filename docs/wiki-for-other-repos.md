@@ -185,4 +185,4 @@ that case; check the workflow log for the error.
 - [Wiki bundle mode (architecture)](./architecture/wiki-mode.md)
 - [CLI reference: build-wiki](./reference/cli.md#build-wiki)
 - [Troubleshooting](./guides/troubleshooting.md#wiki-deployment)
-- [Back to docs home](./index.md)
+- [Back to docs home](./overview.md)

@@ -192,4 +192,4 @@ Relevant steps:
 - [CLI reference](../reference/cli.md#build-wiki)
 - [HTTP API reference](../reference/http-api.md)
 - [Frontend layer](./frontend.md) — the code path on the SPA side
-- [Back to architecture index](./index.md)
+- [Back to architecture index](./overview.md)

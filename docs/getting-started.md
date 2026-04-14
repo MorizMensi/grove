@@ -109,6 +109,6 @@ ZED_BIN=/opt/zed/zed grove ~/notes
 
 ## See also
 
-- [Architecture overview](./architecture/index.md)
+- [Architecture overview](./architecture/overview.md)
 - [Self-hosting](./guides/self-hosting.md)
-- [Back to docs home](./index.md)
+- [Back to docs home](./overview.md)

@@ -40,6 +40,6 @@ flowchart LR
 
 ## See also
 
-- [Architecture overview](../architecture/index.md)
-- [Guides](../guides/index.md)
-- [Back to docs home](../index.md)
+- [Architecture overview](../architecture/overview.md)
+- [Guides](../guides/overview.md)
+- [Back to docs home](../overview.md)

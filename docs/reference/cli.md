@@ -134,4 +134,4 @@ grove build-wiki --docs docs --out /tmp/preview --base-href /
 - [npm scripts](./scripts.md)
 - [Server layer](../architecture/server.md)
 - [Wiki bundle mode](../architecture/wiki-mode.md)
-- [Back to reference index](./index.md)
+- [Back to reference index](./overview.md)

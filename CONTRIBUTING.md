@@ -29,8 +29,8 @@ npx ng build --configuration development --watch
 
 ## Project layout
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the detailed
-diagram. In short:
+See [docs/architecture/overview.md](docs/architecture/overview.md)
+for the detailed diagram. In short:
 
 - `server/`   — Express app + CLI entry (`server/bin/file-viewer.ts`)
 - `shared/`   — types shared between server and frontend (zod schemas)

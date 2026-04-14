@@ -99,8 +99,8 @@ Causes to check:
 
 1. **The link target doesn't exist.** Relative links resolve
    against the folder containing the current file, not against
-   the file itself. A link from `docs/index.md` to `./usage.md`
-   resolves to `docs/usage.md`, not `docs/index.md/usage.md`.
+   the file itself. A link from `docs/overview.md` to `./usage.md`
+   resolves to `docs/usage.md`, not `docs/overview.md/usage.md`.
 2. **The extension isn't `.md`.** Grove strips `.md` before
    routing but keeps other extensions via `?extension=<ext>`.
    A link to `./diagram.svg` becomes `/diagram?extension=svg`.
@@ -234,4 +234,4 @@ See [self-hosting](./self-hosting.md).
 - [HTTP API reference](../reference/http-api.md)
 - [Environment variables](../reference/environment.md)
 - [Security model](../architecture/security.md)
-- [Back to guides index](./index.md)
+- [Back to guides index](./overview.md)

@@ -174,4 +174,4 @@ bash scripts/local-deploy/deploy.sh  # macOS
 - [Environment variables](../reference/environment.md)
 - [CLI reference](../reference/cli.md)
 - [Security model](../architecture/security.md)
-- [Back to guides index](./index.md)
+- [Back to guides index](./overview.md)

@@ -14,7 +14,7 @@ previews. All static, no database, no cloud.
 
 ```mermaid
 flowchart LR
-  HOME[index.md]:::home
+  HOME[overview.md]:::home
 
   subgraph "Quick start"
     GS[getting-started.md]
@@ -23,14 +23,14 @@ flowchart LR
   end
 
   subgraph "Guides"
-    GI[guides/index.md]
+    GI[guides/overview.md]
     GT[guides/troubleshooting.md]
     GH[guides/self-hosting.md]
     GW[guides/wiki-deployment.md]
   end
 
   subgraph "Architecture"
-    AI[architecture/index.md]
+    AI[architecture/overview.md]
     ASV[architecture/server.md]
     AFE[architecture/frontend.md]
     ADL[architecture/doclang.md]
@@ -40,7 +40,7 @@ flowchart LR
   end
 
   subgraph "Reference"
-    RI[reference/index.md]
+    RI[reference/overview.md]
     RCLI[reference/cli.md]
     RAPI[reference/http-api.md]
     RENV[reference/environment.md]
@@ -53,7 +53,6 @@ flowchart LR
   HOME --> GI & AI & RI
   HOME --> CON[contributing.md]
   HOME --> WIKI[wiki-for-other-repos.md]
-  HOME --> ARCH[ARCHITECTURE.md]
 
   GI --> GT & GH & GW
   AI --> ASV & AFE & ADL & AWM & ATH & ASE
@@ -73,17 +72,14 @@ flowchart LR
 
 ## Deeper dives
 
-- **[Architecture overview](./architecture/index.md)** — layered
+- **[Architecture overview](./architecture/overview.md)** — layered
   tour of the server, frontend, DocLang renderer, wiki bundle,
   theme system, and security model.
-- **[Reference](./reference/index.md)** — mechanical reference for
+- **[Reference](./reference/overview.md)** — mechanical reference for
   the CLI, HTTP API, environment variables, npm scripts, supported
   file types, and shared types.
-- **[Guides](./guides/index.md)** — troubleshooting, self-hosted
+- **[Guides](./guides/overview.md)** — troubleshooting, self-hosted
   deploys, and GitHub Pages wiki deployment.
-- **[Architecture (flat reference)](./ARCHITECTURE.md)** — the
-  original single-page architecture doc; the `architecture/` folder
-  expands on it.
 
 ## Design system
 

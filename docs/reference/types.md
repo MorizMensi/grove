@@ -14,7 +14,7 @@ Angular frontend. Source:
 The frontend alias is declared in `frontend/tsconfig.json`; the
 server uses direct relative imports because `dist/server/*.js`
 and `dist/shared/*.js` are siblings after compilation. See
-[architecture/index](../architecture/index.md#source-roots).
+[architecture/index](../architecture/overview.md#source-roots).
 
 ## Index
 
@@ -191,4 +191,4 @@ once.
 - [File types](./file-types.md)
 - [DocLang renderer](../architecture/doclang.md)
 - [Security model](../architecture/security.md)
-- [Back to reference index](./index.md)
+- [Back to reference index](./overview.md)
