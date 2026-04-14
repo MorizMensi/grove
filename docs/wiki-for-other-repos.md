@@ -178,3 +178,11 @@ log).
 **Empty page or "Failed to fetch manifest"** — your `docs/` folder
 was empty or didn't exist at build time. The CLI fails loudly in
 that case; check the workflow log for the error.
+
+## See also
+
+- [Wiki deployment cookbook](./guides/wiki-deployment.md)
+- [Wiki bundle mode (architecture)](./architecture/wiki-mode.md)
+- [CLI reference: build-wiki](./reference/cli.md#build-wiki)
+- [Troubleshooting](./guides/troubleshooting.md#wiki-deployment)
+- [Back to docs home](./index.md)

@@ -125,3 +125,15 @@ now — a real cross-page search index is on the roadmap.
 The sidebar can be toggled with the collapse button at the right
 edge of the file view. All other navigation is standard browser
 behavior (back, forward, anchor scroll, etc.).
+
+## See also
+
+- [Getting started](./getting-started.md) — install + first run
+- [How it works](./how-it-works.md) — the CLI → Express →
+  Angular flow
+- [File types reference](./reference/file-types.md) — the
+  full preview widget + highlight grammar matrix
+- [DocLang renderer](./architecture/doclang.md) — how
+  markdown becomes DOM
+- [Troubleshooting](./guides/troubleshooting.md)
+- [Back to docs home](./index.md)

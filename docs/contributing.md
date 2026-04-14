@@ -124,3 +124,13 @@ auto-deploys this wiki whenever `docs/**`, `frontend/**`, or
 By contributing, you agree that your contributions will be
 licensed under the
 [MIT license](https://github.com/MorizMensi/grove/blob/main/LICENSE).
+
+## See also
+
+- [Architecture reference](./ARCHITECTURE.md) — flat single-page
+- [Architecture deep dives](./architecture/index.md) — per-layer
+- [CLI reference](./reference/cli.md)
+- [HTTP API reference](./reference/http-api.md)
+- [npm scripts reference](./reference/scripts.md)
+- [Shared types reference](./reference/types.md)
+- [Back to docs home](./index.md)

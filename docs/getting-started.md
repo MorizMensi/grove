@@ -95,5 +95,20 @@ ZED_BIN=/opt/zed/zed grove ~/notes
   renders.
 - Read [how it works](./how-it-works.md) if you're curious about
   the architecture.
-- If you want to host Grove on GitHub Pages for your own repo, see
-  [Use Grove for your own wiki](./wiki-for-other-repos.md).
+- If you want to host Grove on GitHub Pages for your own repo,
+  see [Use Grove for your own wiki](./wiki-for-other-repos.md).
+- Hit a problem? → [troubleshooting guide](./guides/troubleshooting.md).
+
+## Reference
+
+- [CLI reference](./reference/cli.md) — every flag
+- [HTTP API reference](./reference/http-api.md) — every endpoint
+- [Environment variables](./reference/environment.md) — `ZED_BIN`
+- [File types](./reference/file-types.md) — preview + syntax
+  highlighting matrix
+
+## See also
+
+- [Architecture overview](./architecture/index.md)
+- [Self-hosting](./guides/self-hosting.md)
+- [Back to docs home](./index.md)
