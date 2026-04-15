@@ -19,6 +19,7 @@ export const IMAGE_EXTENSIONS = new Set([
 export const VIDEO_EXTENSIONS = new Set(['mp4', 'mov', 'webm']);
 export const AUDIO_EXTENSIONS = new Set(['mp3', 'aac', 'wav', 'm4p', 'ogg']);
 export const PDF_EXTENSIONS = new Set(['pdf']);
+export const HTML_EXTENSIONS = new Set(['html', 'htm']);
 
 /**
  * Extensions for which Bootstrap-icons ships a dedicated `bi-filetype-*`
@@ -76,7 +77,7 @@ export const FILETYPE_ICONS = new Set([
   'yml',
 ]);
 
-export type PreviewKind = 'text' | 'image' | 'video' | 'audio' | 'pdf' | 'svg';
+export type PreviewKind = 'text' | 'image' | 'video' | 'audio' | 'pdf' | 'svg' | 'html';
 
 export function previewKindFor(extension: string): PreviewKind | null {
   const ext = extension.toLowerCase();
@@ -84,6 +85,14 @@ export function previewKindFor(extension: string): PreviewKind | null {
   if (VIDEO_EXTENSIONS.has(ext)) return 'video';
   if (AUDIO_EXTENSIONS.has(ext)) return 'audio';
   if (PDF_EXTENSIONS.has(ext)) return 'pdf';
+  if (HTML_EXTENSIONS.has(ext)) return 'html';
   if (ext === 'svg') return 'svg';
   return null;
+}
+
+export const DUAL_VIEW_KINDS: ReadonlySet<PreviewKind> = new Set<PreviewKind>(['html', 'svg']);
+
+export function hasDualViewFor(extension: string): boolean {
+  const kind = previewKindFor(extension);
+  return kind !== null && DUAL_VIEW_KINDS.has(kind);
 }

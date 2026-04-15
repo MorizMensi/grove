@@ -285,6 +285,34 @@
   border-radius: var(--radius-md);
 }
 
+@media not print {
+  .wiki-content--bleed {
+    padding: 0 !important;
+  }
+
+  @media (max-width: 767px) {
+    .wiki-content--bleed {
+      padding: 0 var(--space-2) !important;
+    }
+  }
+}
+
+.viewer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+
+  .action-btn {
+    border-radius: 0;
+  }
+
+  .viewer-toggle-active {
+    background: var(--color-bg-active-item);
+    color: var(--color-text-link);
+  }
+}
+
 /* ── Mobile Sidebar ──────────────────────────────────────── */
 
 @media (max-width: 767px) {

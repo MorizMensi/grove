@@ -1,0 +1,58 @@
+@switch (kind()) {
+  @case ("html") {
+    @if (mode() === "preview") {
+      @if (sourceText() !== null) {
+        <app-html-preview
+          [html]="sourceText()!"
+          [assetBase]="assetBase()"
+        />
+      }
+    } @else {
+      <md-node [markdown]="fencedSource()" />
+    }
+  }
+  @case ("svg") {
+    @if (mode() === "preview") {
+      <img
+        [src]="mediaUrl()"
+        [alt]="title()"
+        class="svg-bleed"
+      />
+    } @else {
+      <md-node [markdown]="fencedSource()" />
+    }
+  }
+  @case ("image") {
+    <img
+      [src]="mediaUrl()"
+      [alt]="title()"
+      class="media-preview"
+    />
+  }
+  @case ("video") {
+    <video
+      [src]="mediaUrl()"
+      controls
+      class="media-preview"
+    ></video>
+  }
+  @case ("audio") {
+    <audio
+      [src]="mediaUrl()"
+      controls
+      class="media-preview-audio"
+    ></audio>
+  }
+  @case ("pdf") {
+    <iframe
+      [src]="safeMediaUrl()"
+      [title]="'PDF preview: ' + title()"
+      class="media-preview-pdf"
+    ></iframe>
+  }
+  @default {
+    @if (markdown() !== null) {
+      <md-node [markdown]="markdown()!" />
+    }
+  }
+}

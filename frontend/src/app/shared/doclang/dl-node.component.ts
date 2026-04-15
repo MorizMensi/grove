@@ -8,6 +8,7 @@ import { HighlightService } from './highlight.service';
 import { KatexService } from './katex.service';
 import { MermaidService } from './mermaid.service';
 import { HAS_SCHEME_RE, isSafeUrl } from '../../core/utils/url-safety';
+import { resolveRelative } from '../../core/utils/resolve-content-url';
 import { CONTENT_URL_PREFIX } from '@shared/content-url';
 
 const SAFE_ICON_RE = /^[a-z0-9-]+$/;
@@ -104,17 +105,8 @@ export class DlNodeComponent implements OnChanges {
   }
 
   private resolveRelativeToDoc(rawPath: string): string {
-    const urlSegments = this.route.snapshot.url.map(s => s.path);
-    const dirSegments = urlSegments.slice(0, -1);
-    const combined = [...dirSegments, ...rawPath.split('/')];
-
-    const normalized: string[] = [];
-    for (const seg of combined) {
-      if (seg === '' || seg === '.') continue;
-      if (seg === '..') normalized.pop();
-      else normalized.push(seg);
-    }
-    return normalized.join('/');
+    const dirSegments = this.route.snapshot.url.map(s => s.path).slice(0, -1);
+    return resolveRelative(dirSegments, rawPath) ?? '';
   }
 
   get linkQueryParams(): Record<string, string> | null {

@@ -56,6 +56,36 @@
                     <i class="bi bi-pencil"></i>
                 </button>
             }
+            @if (mode === "file" && hasDualView()) {
+              <div class="viewer-toggle" role="radiogroup" aria-label="Viewer mode">
+                <button
+                  class="action-btn"
+                  type="button"
+                  role="radio"
+                  [class.viewer-toggle-active]="viewerMode() === 'preview'"
+                  [attr.aria-checked]="viewerMode() === 'preview'"
+                  [attr.tabindex]="viewerMode() === 'preview' ? 0 : -1"
+                  (click)="setViewerMode('preview')"
+                  aria-label="Show preview"
+                  title="Show preview"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button
+                  class="action-btn"
+                  type="button"
+                  role="radio"
+                  [class.viewer-toggle-active]="viewerMode() === 'source'"
+                  [attr.aria-checked]="viewerMode() === 'source'"
+                  [attr.tabindex]="viewerMode() === 'source' ? 0 : -1"
+                  (click)="setViewerMode('source')"
+                  aria-label="Show source"
+                  title="Show source"
+                >
+                  <i class="bi bi-code-slash"></i>
+                </button>
+              </div>
+            }
         </div>
         <div class="header-tools">
             <app-theme-switcher />
@@ -121,49 +151,18 @@
                 </div>
             </aside>
 
-            <div class="wiki-content wide">
-                <div>
-                    @switch (fileType) {
-                        @case ("image") {
-                            <img
-                                [src]="mediaUrl"
-                                [alt]="title"
-                                class="media-preview"
-                            />
-                        }
-                        @case ("video") {
-                            <video
-                                [src]="mediaUrl"
-                                controls
-                                class="media-preview"
-                            ></video>
-                        }
-                        @case ("audio") {
-                            <audio
-                                [src]="mediaUrl"
-                                controls
-                                class="media-preview-audio"
-                            ></audio>
-                        }
-                        @case ("pdf") {
-                            <iframe
-                                [src]="safeMediaUrl"
-                                class="media-preview-pdf"
-                            ></iframe>
-                        }
-                        @case ("svg") {
-                            <img
-                                [src]="mediaUrl"
-                                [alt]="title"
-                                class="media-preview"
-                            />
-                            <md-node [markdown]="markdown!" />
-                        }
-                        @default {
-                            <md-node [markdown]="markdown!" />
-                        }
-                    }
-                </div>
+            <div class="wiki-content wide" [class.wiki-content--bleed]="viewerMode() === 'preview' && hasDualView()">
+                <app-file-preview
+                    [kind]="fileType === 'text' ? null : fileType"
+                    [mode]="viewerMode()"
+                    [sourceText]="sourceText"
+                    [markdown]="markdown"
+                    [mediaUrl]="mediaUrl"
+                    [safeMediaUrl]="safeMediaUrl"
+                    [title]="title"
+                    [extension]="extension()"
+                    [assetBase]="assetBase()"
+                />
             </div>
 
             <button
