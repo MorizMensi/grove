@@ -1,9 +1,9 @@
 # Theme system
 
-Grove ships with a tiny design-token system: two **palettes**
-(`grove`, `classic-blue`), two **modes** (`light`, `dark`), and a
-`system` mode that tracks `prefers-color-scheme`. All six
-combinations are first-class.
+Grove ships with a tiny design-token system: seven **palettes**
+(`grove`, `classic-blue`, `blossom`, `saffron`, `iris`, `ember`, `cove`),
+two **modes** (`light`, `dark`), and a `system` mode that tracks
+`prefers-color-scheme`. All twenty-one combinations are first-class.
 
 ## Moving parts
 
@@ -25,11 +25,23 @@ flowchart LR
     TOKENS[styles/_tokens.scss]
     THG[styles/themes/_grove.scss]
     THB[styles/themes/_classic-blue.scss]
+    THBL[styles/themes/_blossom.scss]
+    THSF[styles/themes/_saffron.scss]
+    THIR[styles/themes/_iris.scss]
+    THEM[styles/themes/_ember.scss]
+    THCV[styles/themes/_cove.scss]
   end
 
   ATTR1 --> TOKENS
   ATTR2 --> TOKENS
   TOKENS --> BASE
+  TOKENS --> THG
+  TOKENS --> THB
+  TOKENS --> THBL
+  TOKENS --> THSF
+  TOKENS --> THIR
+  TOKENS --> THEM
+  TOKENS --> THCV
 ```
 
 Sources:
@@ -40,8 +52,13 @@ Sources:
 | [`core/services/theme.service.ts`](https://github.com/MorizMensi/grove/blob/main/frontend/src/app/core/services/theme.service.ts) | Signals, effect, localStorage persistence, system listener |
 | [`shared/theme-switcher/`](https://github.com/MorizMensi/grove/tree/main/frontend/src/app/shared/theme-switcher) | Popover UI with click-outside + Escape handling |
 | [`styles/themes/_grove.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/themes/_grove.scss) | Grove palette tokens |
-| [`styles/themes/_classic-blue.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/themes/_classic-blue.scss) | Classic Blue palette tokens |
-| [`styles/_tokens.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/_tokens.scss) | Token variable declarations + `:root[data-theme][data-mode]` selectors |
+  | [`styles/themes/_classic-blue.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/themes/_classic-blue.scss) | Classic Blue palette tokens |
+  | [`styles/themes/_blossom.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/themes/_blossom.scss) | Blossom palette tokens |
+  | [`styles/themes/_saffron.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/themes/_saffron.scss) | Saffron palette tokens |
+  | [`styles/themes/_iris.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/themes/_iris.scss) | Iris palette tokens |
+  | [`styles/themes/_ember.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/themes/_ember.scss) | Ember palette tokens |
+  | [`styles/themes/_cove.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/themes/_cove.scss) | Cove palette tokens |
+  | [`styles/_tokens.scss`](https://github.com/MorizMensi/grove/blob/main/frontend/src/styles/_tokens.scss) | Token variable declarations + `:root[data-theme][data-mode]` selectors |
 
 ## The service
 
@@ -77,7 +94,7 @@ Two `localStorage` keys, defined in `theme.constants.ts`:
 
 | Key | Value |
 | --- | --- |
-| `grove-theme` | `'grove' \| 'classic-blue'` |
+| `grove-theme` | `'grove' \| 'classic-blue' \| 'blossom' \| 'saffron' \| 'iris' \| 'ember' \| 'cove'` |
 | `grove-mode` | `'light' \| 'dark' \| 'system'` |
 
 The defaults (if missing or unreadable) are `grove` and
@@ -124,13 +141,19 @@ an entry automatically surfaces it in the switcher.
 
 ## See also
 
-- [Style guide](../styleguide.md) — narrative reference for the
+- [Design overview](./overview.md) — landing page for the design
+  section
+- [Design spec](./design-spec.md) — designer handoff for proposing
+  a new palette
+- [Adding a theme](./adding-a-theme.md) — developer how-to for
+  wiring a proposed palette into the codebase
+- [Style guide](./styleguide.md) — narrative reference for the
   visual design system
-- [Color schemes](../color-schemes.md) — every palette, every
+- [Color schemes](./color-schemes.md) — every palette, every
   token, every theme × mode combination
-- [Spacing, type, and motion](../spacing.md) — metric reference
-- [Frontend layer](./frontend.md) — where the service fits in
-  the component tree
+- [Spacing, type, and motion](./spacing.md) — metric reference
+- [Frontend layer](../architecture/frontend.md) — where the
+  service fits in the component tree
 - [Contributing](../contributing.md) — code style rules for
   theme changes
 - [Back to architecture index](./overview.md)

@@ -35,8 +35,17 @@ flowchart LR
     AFE[architecture/frontend.md]
     ADL[architecture/doclang.md]
     AWM[architecture/wiki-mode.md]
-    ATH[architecture/themes.md]
     ASE[architecture/security.md]
+  end
+
+  subgraph "Design"
+    DI[design/overview.md]
+    DTH[design/themes.md]
+    DSG[design/styleguide.md]
+    DCS[design/color-schemes.md]
+    DSP[design/spacing.md]
+    DSPEC[design/design-spec.md]
+    DAT[design/adding-a-theme.md]
   end
 
   subgraph "Reference"
@@ -50,13 +59,14 @@ flowchart LR
   end
 
   HOME --> GS & US & HIW
-  HOME --> GI & AI & RI
+  HOME --> GI & AI & RI & DI
   HOME --> CON[contributing.md]
   HOME --> WIKI[wiki-for-other-repos.md]
 
   GI --> GT & GH & GW
-  AI --> ASV & AFE & ADL & AWM & ATH & ASE
+  AI --> ASV & AFE & ADL & AWM & ASE
   RI --> RCLI & RAPI & RENV & RSCR & RFT & RTY
+  DI --> DTH & DSG & DCS & DSP & DSPEC & DAT
 
   classDef home fill:#2f6b4a,stroke:#13331f,color:#fff;
 ```
@@ -83,12 +93,20 @@ flowchart LR
 
 ## Design system
 
-- **[Style guide](./styleguide.md)** — narrative reference for
-  Grove's visual and structural design system
-- **[Color schemes](./color-schemes.md)** — every palette, token,
-  theme × mode combination, and syntax highlight shade
-- **[Spacing, type, and motion](./spacing.md)** — spacing steps,
-  radii, font sizes, shadows, durations, breakpoints
+- **[Design overview](./design/overview.md)** — landing page for
+  the theming and visual-design section
+- **[Design spec](./design/design-spec.md)** — designer handoff:
+  propose a new palette without reading code
+- **[Adding a theme](./design/adding-a-theme.md)** — developer
+  how-to for turning a palette proposal into a working theme
+- **[Themes](./design/themes.md)** — runtime theme architecture
+  (service, signals, DOM attributes, storage)
+- **[Style guide](./design/styleguide.md)** — narrative reference
+  for Grove's visual and structural design system
+- **[Color schemes](./design/color-schemes.md)** — every palette,
+  token, theme × mode combination, and syntax highlight shade
+- **[Spacing, type, and motion](./design/spacing.md)** — spacing
+  steps, radii, font sizes, shadows, durations, breakpoints
 
 ## Highlights
 

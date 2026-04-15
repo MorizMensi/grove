@@ -215,8 +215,8 @@ Two signals — `palette` and `modeSelection` — plus a computed
 `resolvedMode` signal that folds `system` into light/dark via
 `prefers-color-scheme`. Writes apply `data-theme=<palette>` and
 `data-mode=<light|dark>` to `<html>` and persist to
-`localStorage`. See [themes.md](./themes.md) for the palette
-catalog and SCSS token layout.
+`localStorage`. See [design/themes.md](../design/themes.md) for
+the palette catalog and SCSS token layout.
 
 ## Anchor navigation
 
@@ -240,7 +240,7 @@ elapse, then smooth-scrolls.
 
 - [DocLang renderer deep dive](./doclang.md)
 - [Wiki bundle mode](./wiki-mode.md)
-- [Themes](./themes.md)
+- [Themes](../design/themes.md)
 - [Security model](./security.md) — the URL filter used during
   markdown conversion and rendering
 - [HTTP API reference](../reference/http-api.md)

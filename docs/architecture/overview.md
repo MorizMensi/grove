@@ -35,7 +35,7 @@ Each layer has its own deep-dive page:
 
 Cross-cutting:
 
-- [themes.md](./themes.md) — theme / palette / mode system
+- **Theming** — moved to [../design/themes.md](../design/themes.md). The design system has its own section; start at [design/overview.md](../design/overview.md).
 - [security.md](./security.md) — trust boundaries and the URL filter
 
 ## Source roots

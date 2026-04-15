@@ -14,24 +14,20 @@ Grove uses two HTML attributes on `<html>` to select a theme:
 <html data-theme="grove" data-mode="light">
 ```
 
-| Attribute    | Values                    | Effect                               |
-| ------------ | ------------------------- | ------------------------------------ |
-| `data-theme` | `grove`, `classic-blue`   | Picks the palette (hues + neutrals). |
-| `data-mode`  | `light`, `dark`           | Picks the brightness inversion.      |
+| Attribute    | Values                                                                                | Effect                               |
+| ------------ | ------------------------------------------------------------------------------------- | ------------------------------------ |
+| `data-theme` | `grove`, `classic-blue`, `blossom`, `saffron`, `iris`, `ember`, `cove`                | Picks the palette (hues + neutrals). |
+| `data-mode`  | `light`, `dark`                                                                       | Picks the brightness inversion.      |
 
-Semantic tokens are defined under compound selectors:
-
-```scss
-[data-theme="grove"][data-mode="light"]       { /* Grove light */ }
-[data-theme="grove"][data-mode="dark"]        { /* Grove dark  */ }
-[data-theme="classic-blue"][data-mode="light"] { /* Classic Blue light */ }
-[data-theme="classic-blue"][data-mode="dark"]  { /* Classic Blue dark  */ }
-```
-
-Four configurations total. Switching themes is instant and requires no component CSS change because every component reads from semantic tokens only.
+Semantic tokens are defined under compound selectors — one `[data-theme="<name>"][data-mode="light"]` block and one `[data-theme="<name>"][data-mode="dark"]` block per theme. With seven palettes × two modes, there are **fourteen configurations total**. Switching themes is instant and requires no component CSS change because every component reads from semantic tokens only.
 
 - **Grove** (default) — emerald primary on warm stone neutrals. Source: `frontend/src/styles/themes/_grove.scss`.
 - **Classic Blue** (legacy) — blue primary on cool slate neutrals. Preserved as an opt-in theme after the rebrand. Source: `frontend/src/styles/themes/_classic-blue.scss`.
+- **Blossom** — rose primary on pink-tinted mauve neutrals. Soft, editorial. Error state uses pure red for semantic distinction. Source: `frontend/src/styles/themes/_blossom.scss`.
+- **Saffron** — amber primary on yellow-tinted sand neutrals. Kindle-sepia warmth. Warning state overrides to orange to avoid conflation with the accent. Source: `frontend/src/styles/themes/_saffron.scss`.
+- **Iris** — violet primary on deliberately-untinted zinc neutrals. Catppuccin/Dracula purple-pastel energy. Source: `frontend/src/styles/themes/_iris.scss`.
+- **Ember** — orange primary on true-neutral gray. Monokai/Ayu warmth elevated to primary accent status. Source: `frontend/src/styles/themes/_ember.scss`.
+- **Cove** — teal primary on green-tinted sage neutrals. Nord-arctic calm. Info state overrides to indigo to separate info from the teal accent. Source: `frontend/src/styles/themes/_cove.scss`.
 
 ---
 
@@ -74,14 +70,130 @@ Primitive tokens live in `frontend/src/styles/_tokens.scss` and are defined on `
 
 ### Stone (used by Grove neutrals)
 
-| Token          | Hex       | Token          | Hex       |
-| -------------- | --------- | -------------- | --------- |
-| `--stone-50`   | `#fafaf9` | `--stone-500`  | `#78716c` |
-| `--stone-100`  | `#f5f5f4` | `--stone-600`  | `#57534e` |
-| `--stone-200`  | `#e7e5e4` | `--stone-700`  | `#44403c` |
-| `--stone-300`  | `#d6d3d1` | `--stone-800`  | `#292524` |
-| `--stone-400`  | `#a8a29e` | `--stone-900`  | `#1c1917` |
-|                |           | `--stone-950`  | `#0c0a09` |
+  | Token          | Hex       | Token          | Hex       |
+  | -------------- | --------- | -------------- | --------- |
+  | `--stone-50`   | `#fafaf9` | `--stone-500`  | `#78716c` |
+  | `--stone-100`  | `#f5f5f4` | `--stone-600`  | `#57534e` |
+  | `--stone-200`  | `#e7e5e4` | `--stone-700`  | `#44403c` |
+  | `--stone-300`  | `#d6d3d1` | `--stone-800`  | `#292524` |
+  | `--stone-400`  | `#a8a29e` | `--stone-900`  | `#1c1917` |
+  |                |           | `--stone-950`  | `#0c0a09` |
+
+  ### Mauve (used by Blossom neutrals)
+
+  | Token           | Hex       | Token           | Hex       |
+  | --------------- | --------- | --------------- | --------- |
+  | `--mauve-50`    | `#FDF8FD` | `--mauve-500`   | `#B9B4BB` |
+  | `--mauve-100`   | `#F9F4F9` | `--mauve-600`   | `#8E8A93` |
+  | `--mauve-200`   | `#F1EDF1` | `--mauve-700`   | `#6F6B76` |
+  | `--mauve-300`   | `#E8E3E8` | `--mauve-800`   | `#4A4650` |
+  | `--mauve-400`   | `#D5D0D6` | `--mauve-900`   | `#1F1B25` |
+  |                 |           | `--mauve-950`   | `#110E17` |
+
+  Note: Mauve has a dark-mode cascade — see `:root[data-mode="dark"]` in `_tokens.scss` for the dark-mode values.
+
+  ### Rose (used by Blossom accents)
+
+  | Token          | Hex       | Token          | Hex       |
+  | -------------- | --------- | -------------- | --------- |
+  | `--rose-50`    | `#FFF1F2` | `--rose-500`   | `#F43F5E` |
+  | `--rose-100`   | `#FFE4E6` | `--rose-600`   | `#E11D48` |
+  | `--rose-200`   | `#FECDD3` | `--rose-700`   | `#BE123C` |
+  | `--rose-300`   | `#FDA4AF` | `--rose-800`   | `#9F1239` |
+  | `--rose-400`   | `#FB7185` | `--rose-900`   | `#881337` |
+  |                |           | `--rose-950`   | `#4C0519` |
+
+  ### Amber (used by Saffron accents)
+
+  | Token          | Hex       | Token          | Hex       |
+  | -------------- | --------- | -------------- | --------- |
+  | `--amber-50`   | `#FFFBEB` | `--amber-500`  | `#F59E0B` |
+  | `--amber-100`  | `#FEF3C7` | `--amber-600`  | `#D97706` |
+  | `--amber-200`  | `#FDE68A` | `--amber-700`  | `#B45309` |
+  | `--amber-300`  | `#FCD34D` | `--amber-800`  | `#92400E` |
+  | `--amber-400`  | `#FBBF24` | `--amber-900`  | `#78350F` |
+  |                |           | `--amber-950`  | `#451A03` |
+
+  ### Sand (used by Saffron neutrals)
+
+  | Token          | Hex       | Token          | Hex       |
+  | -------------- | --------- | -------------- | --------- |
+  | `--sand-50`    | `#FDFDFB` | `--sand-500`   | `#B8B5AE` |
+  | `--sand-100`   | `#F9F8F5` | `--sand-600`   | `#8D8A84` |
+  | `--sand-200`   | `#F2F0ED` | `--sand-700`   | `#6E6C66` |
+  | `--sand-300`   | `#E9E7E2` | `--sand-800`   | `#49473F` |
+  | `--sand-400`   | `#D6D3CC` | `--sand-900`   | `#1D1C18` |
+  |                |           | `--sand-950`   | `#0E0E0C` |
+
+  Note: Sand has a dark-mode cascade — see `:root[data-mode="dark"]` in `_tokens.scss` for the dark-mode values.
+
+  ### Violet (used by Iris accents)
+
+  | Token            | Hex       | Token            | Hex       |
+  | ---------------- | --------- | ---------------- | --------- |
+  | `--violet-50`    | `#F5F3FF` | `--violet-500`   | `#8B5CF6` |
+  | `--violet-100`   | `#EDE9FE` | `--violet-600`   | `#7C3AED` |
+  | `--violet-200`   | `#DDD6FE` | `--violet-700`   | `#6D28D9` |
+  | `--violet-300`   | `#C4B5FD` | `--violet-800`   | `#5B21B6` |
+  | `--violet-400`   | `#A78BFA` | `--violet-900`   | `#4C1D95` |
+  |                  |           | `--violet-950`   | `#2E1065` |
+
+  ### Zinc (used by Iris neutrals)
+
+  | Token           | Hex       | Token           | Hex       |
+  | --------------- | --------- | --------------- | --------- |
+  | `--zinc-50`     | `#FAFAFA` | `--zinc-500`    | `#71717A` |
+  | `--zinc-100`    | `#F4F4F5` | `--zinc-600`    | `#52525B` |
+  | `--zinc-200`    | `#E4E4E7` | `--zinc-700`    | `#3F3F46` |
+  | `--zinc-300`    | `#D4D4D8` | `--zinc-800`    | `#27272A` |
+  | `--zinc-400`    | `#A1A1AA` | `--zinc-900`    | `#18181B` |
+  |                 |           | `--zinc-950`    | `#09090B` |
+
+  ### Orange (used by Ember accents)
+
+  | Token            | Hex       | Token            | Hex       |
+  | ---------------- | --------- | ---------------- | --------- |
+  | `--orange-50`    | `#FFF7ED` | `--orange-500`   | `#F97316` |
+  | `--orange-100`   | `#FFEDD5` | `--orange-600`   | `#EA580C` |
+  | `--orange-200`   | `#FED7AA` | `--orange-700`   | `#C2410C` |
+  | `--orange-300`   | `#FDBA74` | `--orange-800`   | `#9A3412` |
+  | `--orange-400`   | `#FB923C` | `--orange-900`   | `#7C2D12` |
+  |                  |           | `--orange-950`   | `#431407` |
+
+  ### Neutral (used by Ember neutrals)
+
+  | Token              | Hex       | Token              | Hex       |
+  | ------------------ | --------- | ------------------ | --------- |
+  | `--neutral-50`     | `#FAFAFA` | `--neutral-500`    | `#737373` |
+  | `--neutral-100`    | `#F5F5F5` | `--neutral-600`    | `#525252` |
+  | `--neutral-200`    | `#E5E5E5` | `--neutral-700`    | `#404040` |
+  | `--neutral-300`    | `#D4D4D4` | `--neutral-800`    | `#262626` |
+  | `--neutral-400`    | `#A3A3A3` | `--neutral-900`    | `#171717` |
+  |                    |           | `--neutral-950`    | `#0A0A0A` |
+
+  ### Teal (used by Cove accents)
+
+  | Token          | Hex       | Token          | Hex       |
+  | -------------- | --------- | -------------- | --------- |
+  | `--teal-50`    | `#F0FDFA` | `--teal-500`   | `#14B8A6` |
+  | `--teal-100`   | `#CCFBF1` | `--teal-600`   | `#0D9488` |
+  | `--teal-200`   | `#99F6E4` | `--teal-700`   | `#0F766E` |
+  | `--teal-300`   | `#5EEAD4` | `--teal-800`   | `#115E59` |
+  | `--teal-400`   | `#2DD4BF` | `--teal-900`   | `#134E4A` |
+  |                |           | `--teal-950`   | `#042F2E` |
+
+  ### Sage (used by Cove neutrals)
+
+  | Token          | Hex       | Token          | Hex       |
+  | -------------- | --------- | -------------- | --------- |
+  | `--sage-50`    | `#FBFDFC` | `--sage-500`   | `#A0A5A2` |
+  | `--sage-100`   | `#F7F9F8` | `--sage-600`   | `#7C847F` |
+  | `--sage-200`   | `#EFF1F0` | `--sage-700`   | `#5F6563` |
+  | `--sage-300`   | `#E0E3E1` | `--sage-800`   | `#394139` |
+  | `--sage-400`   | `#C2C6C3` | `--sage-900`   | `#141C18` |
+  |                |           | `--sage-950`   | `#0A0F0D` |
+
+  Note: Sage has a dark-mode cascade — see `:root[data-mode="dark"]` in `_tokens.scss` for the dark-mode values.
 
 ---
 
