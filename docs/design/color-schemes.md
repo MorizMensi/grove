@@ -454,11 +454,607 @@ Selector: `[data-theme="classic-blue"][data-mode="dark"]`. Source: `frontend/src
 
 ---
 
+## Blossom theme (rose + mauve)
+
+Cherry-blossom palette: rose accent on pink-tinted mauve neutrals. Error state uses pure red for semantic distinction from the accent.
+
+### Blossom — light mode
+
+Selector: `[data-theme="blossom"][data-mode="light"]`. Source: `frontend/src/styles/themes/_blossom.scss`.
+
+**Backgrounds**
+
+| Token                        | Resolves to           | Hex       |
+| ---------------------------- | --------------------- | --------- |
+| `--color-bg-page`            | `var(--mauve-50)`     | `#FDF8FD` |
+| `--color-bg-surface`         | —                     | `#ffffff` |
+| `--color-bg-inset`           | `var(--mauve-100)`    | `#F9F4F9` |
+| `--color-bg-elevated`        | —                     | `#ffffff` |
+| `--color-bg-emphasis`        | `var(--rose-600)`     | `#E11D48` |
+| `--color-bg-code-block`      | `var(--mauve-100)`    | `#F9F4F9` |
+| `--color-bg-code-inline`     | `var(--rose-50)`      | `#FFF1F2` |
+| `--color-bg-table-header`    | `var(--mauve-50)`     | `#FDF8FD` |
+| `--color-bg-table-stripe`    | `var(--mauve-50)`     | `#FDF8FD` |
+| `--color-bg-blockquote`      | —                     | `transparent` |
+| `--color-bg-hover`           | —                     | `rgba(0, 0, 0, 0.04)` |
+| `--color-bg-sidebar`         | `var(--mauve-50)`     | `#FDF8FD` |
+
+**Text**
+
+| Token                         | Resolves to         | Hex       |
+| ----------------------------- | ------------------- | --------- |
+| `--color-text-primary`        | `var(--mauve-900)`  | `#1F1B25` |
+| `--color-text-secondary`      | `var(--mauve-600)`  | `#8E8A93` |
+| `--color-text-muted`          | `var(--mauve-500)`  | `#B9B4BB` |
+| `--color-text-heading`        | `var(--mauve-800)`  | `#4A4650` |
+| `--color-text-on-emphasis`    | —                   | `#ffffff` |
+| `--color-text-link`           | `var(--rose-700)`   | `#BE123C` |
+| `--color-text-link-hover`     | `var(--rose-900)`   | `#881337` |
+| `--color-text-code`           | `var(--mauve-800)`  | `#4A4650` |
+| `--color-text-code-inline`    | `var(--rose-800)`   | `#9F1239` |
+
+**Borders**
+
+| Token                          | Resolves to          | Hex       |
+| ------------------------------ | -------------------- | --------- |
+| `--color-border-default`       | `var(--mauve-200)`   | `#F1EDF1` |
+| `--color-border-strong`        | `var(--mauve-300)`   | `#E8E3E8` |
+| `--color-border-muted`         | `var(--mauve-100)`   | `#F9F4F9` |
+| `--color-border-focus`         | `var(--rose-500)`    | `#F43F5E` |
+| `--color-border-code-inline`   | `var(--rose-200)`    | `#FECDD3` |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(244, 63, 94, 0.2)`        |
+| `--color-link-underline`  | `rgba(190, 18, 60, 0.4)`        |
+| `--color-bg-active-item`  | `rgba(244, 63, 94, 0.1)`        |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.4)`            |
+
+### Blossom — dark mode
+
+Selector: `[data-theme="blossom"][data-mode="dark"]`. Source: `frontend/src/styles/themes/_blossom.scss`.
+
+Note: Mauve primitives cascade to their dark values via `:root[data-mode="dark"]`. `var(--mauve-50)` resolves to `#161618` in this block, not the light-mode `#FDF8FD`.
+
+**Backgrounds**
+
+| Token                        | Resolves to           | Hex / value              |
+| ---------------------------- | --------------------- | ------------------------ |
+| `--color-bg-page`            | `var(--mauve-50)`     | `#161618`                |
+| `--color-bg-surface`         | `var(--mauve-200)`    | `#232326`                |
+| `--color-bg-inset`           | `var(--mauve-50)`     | `#161618`                |
+| `--color-bg-elevated`        | `var(--mauve-300)`    | `#2B2B2F`                |
+| `--color-bg-emphasis`        | `var(--rose-500)`     | `#F43F5E`                |
+| `--color-bg-code-block`      | `var(--mauve-200)`    | `#232326`                |
+| `--color-bg-code-inline`     | `var(--mauve-300)`    | `#2B2B2F`                |
+| `--color-bg-table-header`    | `var(--mauve-300)`    | `#2B2B2F`                |
+| `--color-bg-table-stripe`    | —                     | `rgba(255, 255, 255, 0.03)` |
+| `--color-bg-blockquote`      | —                     | `rgba(244, 63, 94, 0.08)`   |
+| `--color-bg-hover`           | —                     | `rgba(255, 255, 255, 0.05)` |
+| `--color-bg-sidebar`         | `var(--mauve-100)`    | `#1C1C1F`                |
+
+**Text**
+
+| Token                         | Resolves to         | Hex       |
+| ----------------------------- | ------------------- | --------- |
+| `--color-text-primary`        | `var(--mauve-900)`  | `#DFDFE1` |
+| `--color-text-secondary`      | `var(--mauve-700)`  | `#A09FA6` |
+| `--color-text-muted`          | `var(--mauve-500)`  | `#504F57` |
+| `--color-text-heading`        | `var(--mauve-950)`  | `#EDEDEF` |
+| `--color-text-on-emphasis`    | —                   | `#ffffff` |
+| `--color-text-link`           | `var(--rose-400)`   | `#FB7185` |
+| `--color-text-link-hover`     | `var(--rose-300)`   | `#FDA4AF` |
+| `--color-text-code`           | `var(--mauve-900)`  | `#DFDFE1` |
+| `--color-text-code-inline`    | `var(--rose-300)`   | `#FDA4AF` |
+
+**Borders**
+
+| Token                          | Resolves to          | Hex / value               |
+| ------------------------------ | -------------------- | ------------------------- |
+| `--color-border-default`       | `var(--mauve-300)`   | `#2B2B2F`                 |
+| `--color-border-strong`        | `var(--mauve-400)`   | `#3E3E44`                 |
+| `--color-border-muted`         | `var(--mauve-200)`   | `#232326`                 |
+| `--color-border-focus`         | `var(--rose-400)`    | `#FB7185`                 |
+| `--color-border-code-inline`   | —                    | `rgba(244, 63, 94, 0.3)`  |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(244, 63, 94, 0.25)`       |
+| `--color-link-underline`  | `rgba(244, 63, 94, 0.4)`        |
+| `--color-bg-active-item`  | `rgba(244, 63, 94, 0.15)`       |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.6)`            |
+
+**Shadows (dark-mode override)** — standard dark shadow stack (`0 1px 2px rgba(0,0,0,0.3)` / `0 4px 6px rgba(0,0,0,0.4)` / `0 10px 15px rgba(0,0,0,0.5)`). Same across all dark themes; see [Grove dark shadows](#grove--dark-mode) for the exact rule.
+
+---
+
+## Saffron theme (amber + sand)
+
+Kindle-sepia warmth elevated with a gold accent. Warning state overrides to orange to avoid conflation with the amber accent.
+
+### Saffron — light mode
+
+Selector: `[data-theme="saffron"][data-mode="light"]`. Source: `frontend/src/styles/themes/_saffron.scss`.
+
+**Backgrounds**
+
+| Token                        | Resolves to          | Hex       |
+| ---------------------------- | -------------------- | --------- |
+| `--color-bg-page`            | `var(--sand-50)`     | `#FDFDFB` |
+| `--color-bg-surface`         | —                    | `#ffffff` |
+| `--color-bg-inset`           | `var(--sand-100)`    | `#F9F8F5` |
+| `--color-bg-elevated`        | —                    | `#ffffff` |
+| `--color-bg-emphasis`        | `var(--amber-700)`   | `#B45309` |
+| `--color-bg-code-block`      | `var(--sand-100)`    | `#F9F8F5` |
+| `--color-bg-code-inline`     | `var(--amber-50)`    | `#FFFBEB` |
+| `--color-bg-table-header`    | `var(--sand-50)`     | `#FDFDFB` |
+| `--color-bg-table-stripe`    | `var(--sand-50)`     | `#FDFDFB` |
+| `--color-bg-blockquote`      | —                    | `transparent` |
+| `--color-bg-hover`           | —                    | `rgba(0, 0, 0, 0.04)` |
+| `--color-bg-sidebar`         | `var(--sand-50)`     | `#FDFDFB` |
+
+**Text**
+
+| Token                         | Resolves to        | Hex       |
+| ----------------------------- | ------------------ | --------- |
+| `--color-text-primary`        | `var(--sand-900)`  | `#1D1C18` |
+| `--color-text-secondary`      | `var(--sand-600)`  | `#8D8A84` |
+| `--color-text-muted`          | `var(--sand-500)`  | `#B8B5AE` |
+| `--color-text-heading`        | `var(--sand-800)`  | `#49473F` |
+| `--color-text-on-emphasis`    | —                  | `#ffffff` |
+| `--color-text-link`           | `var(--amber-700)` | `#B45309` |
+| `--color-text-link-hover`     | `var(--amber-900)` | `#78350F` |
+| `--color-text-code`           | `var(--sand-800)`  | `#49473F` |
+| `--color-text-code-inline`    | `var(--amber-800)` | `#92400E` |
+
+**Borders**
+
+| Token                          | Resolves to         | Hex       |
+| ------------------------------ | ------------------- | --------- |
+| `--color-border-default`       | `var(--sand-200)`   | `#F2F0ED` |
+| `--color-border-strong`        | `var(--sand-300)`   | `#E9E7E2` |
+| `--color-border-muted`         | `var(--sand-100)`   | `#F9F8F5` |
+| `--color-border-focus`         | `var(--amber-600)`  | `#D97706` |
+| `--color-border-code-inline`   | `var(--amber-200)`  | `#FDE68A` |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(217, 119, 6, 0.2)`        |
+| `--color-link-underline`  | `rgba(180, 83, 9, 0.4)`         |
+| `--color-bg-active-item`  | `rgba(217, 119, 6, 0.1)`        |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.4)`            |
+
+### Saffron — dark mode
+
+Selector: `[data-theme="saffron"][data-mode="dark"]`. Source: `frontend/src/styles/themes/_saffron.scss`.
+
+Note: Sand primitives cascade to their dark values via `:root[data-mode="dark"]`. `var(--sand-50)` resolves to `#161615` here.
+
+**Backgrounds**
+
+| Token                        | Resolves to          | Hex / value              |
+| ---------------------------- | -------------------- | ------------------------ |
+| `--color-bg-page`            | `var(--sand-50)`     | `#161615`                |
+| `--color-bg-surface`         | `var(--sand-200)`    | `#232320`                |
+| `--color-bg-inset`           | `var(--sand-50)`     | `#161615`                |
+| `--color-bg-elevated`        | `var(--sand-300)`    | `#2B2B27`                |
+| `--color-bg-emphasis`        | `var(--amber-500)`   | `#F59E0B`                |
+| `--color-bg-code-block`      | `var(--sand-200)`    | `#232320`                |
+| `--color-bg-code-inline`     | `var(--sand-300)`    | `#2B2B27`                |
+| `--color-bg-table-header`    | `var(--sand-300)`    | `#2B2B27`                |
+| `--color-bg-table-stripe`    | —                    | `rgba(255, 255, 255, 0.03)` |
+| `--color-bg-blockquote`      | —                    | `rgba(251, 191, 36, 0.08)`  |
+| `--color-bg-hover`           | —                    | `rgba(255, 255, 255, 0.05)` |
+| `--color-bg-sidebar`         | `var(--sand-100)`    | `#1C1C1A`                |
+
+**Text**
+
+| Token                         | Resolves to        | Hex       |
+| ----------------------------- | ------------------ | --------- |
+| `--color-text-primary`        | `var(--sand-900)`  | `#DCDCD8` |
+| `--color-text-secondary`      | `var(--sand-700)`  | `#A1A09A` |
+| `--color-text-muted`          | `var(--sand-500)`  | `#51504B` |
+| `--color-text-heading`        | `var(--sand-950)`  | `#EDEDEC` |
+| `--color-text-on-emphasis`    | —                  | `#ffffff` |
+| `--color-text-link`           | `var(--amber-400)` | `#FBBF24` |
+| `--color-text-link-hover`     | `var(--amber-300)` | `#FCD34D` |
+| `--color-text-code`           | `var(--sand-900)`  | `#DCDCD8` |
+| `--color-text-code-inline`    | `var(--amber-300)` | `#FCD34D` |
+
+**Borders**
+
+| Token                          | Resolves to         | Hex / value               |
+| ------------------------------ | ------------------- | ------------------------- |
+| `--color-border-default`       | `var(--sand-300)`   | `#2B2B27`                 |
+| `--color-border-strong`        | `var(--sand-400)`   | `#3E3E3A`                 |
+| `--color-border-muted`         | `var(--sand-200)`   | `#232320`                 |
+| `--color-border-focus`         | `var(--amber-400)`  | `#FBBF24`                 |
+| `--color-border-code-inline`   | —                   | `rgba(251, 191, 36, 0.3)` |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(251, 191, 36, 0.25)`      |
+| `--color-link-underline`  | `rgba(251, 191, 36, 0.4)`       |
+| `--color-bg-active-item`  | `rgba(251, 191, 36, 0.15)`      |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.6)`            |
+
+**Shadows (dark-mode override)** — same standard dark shadow stack as other themes.
+
+---
+
+## Iris theme (violet + zinc)
+
+Violet accent on deliberately untinted zinc neutrals. Zinc is symmetric — dark mode references `var(--zinc-900)` directly rather than using a cascade (Grove-style with stone).
+
+### Iris — light mode
+
+Selector: `[data-theme="iris"][data-mode="light"]`. Source: `frontend/src/styles/themes/_iris.scss`.
+
+**Backgrounds**
+
+| Token                        | Resolves to          | Hex       |
+| ---------------------------- | -------------------- | --------- |
+| `--color-bg-page`            | `var(--zinc-50)`     | `#FAFAFA` |
+| `--color-bg-surface`         | —                    | `#ffffff` |
+| `--color-bg-inset`           | `var(--zinc-100)`    | `#F4F4F5` |
+| `--color-bg-elevated`        | —                    | `#ffffff` |
+| `--color-bg-emphasis`        | `var(--violet-600)`  | `#7C3AED` |
+| `--color-bg-code-block`      | `var(--zinc-100)`    | `#F4F4F5` |
+| `--color-bg-code-inline`     | `var(--violet-50)`   | `#F5F3FF` |
+| `--color-bg-table-header`    | `var(--zinc-50)`     | `#FAFAFA` |
+| `--color-bg-table-stripe`    | `var(--zinc-50)`     | `#FAFAFA` |
+| `--color-bg-blockquote`      | —                    | `transparent` |
+| `--color-bg-hover`           | —                    | `rgba(0, 0, 0, 0.04)` |
+| `--color-bg-sidebar`         | `var(--zinc-50)`     | `#FAFAFA` |
+
+**Text**
+
+| Token                         | Resolves to         | Hex       |
+| ----------------------------- | ------------------- | --------- |
+| `--color-text-primary`        | `var(--zinc-900)`   | `#18181B` |
+| `--color-text-secondary`      | `var(--zinc-600)`   | `#52525B` |
+| `--color-text-muted`          | `var(--zinc-500)`   | `#71717A` |
+| `--color-text-heading`        | `var(--zinc-800)`   | `#27272A` |
+| `--color-text-on-emphasis`    | —                   | `#ffffff` |
+| `--color-text-link`           | `var(--violet-700)` | `#6D28D9` |
+| `--color-text-link-hover`     | `var(--violet-900)` | `#4C1D95` |
+| `--color-text-code`           | `var(--zinc-800)`   | `#27272A` |
+| `--color-text-code-inline`    | `var(--violet-800)` | `#5B21B6` |
+
+**Borders**
+
+| Token                          | Resolves to          | Hex       |
+| ------------------------------ | -------------------- | --------- |
+| `--color-border-default`       | `var(--zinc-200)`    | `#E4E4E7` |
+| `--color-border-strong`        | `var(--zinc-300)`    | `#D4D4D8` |
+| `--color-border-muted`         | `var(--zinc-100)`    | `#F4F4F5` |
+| `--color-border-focus`         | `var(--violet-500)`  | `#8B5CF6` |
+| `--color-border-code-inline`   | `var(--violet-200)`  | `#DDD6FE` |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(139, 92, 246, 0.2)`       |
+| `--color-link-underline`  | `rgba(109, 40, 217, 0.4)`       |
+| `--color-bg-active-item`  | `rgba(139, 92, 246, 0.1)`       |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.4)`            |
+
+### Iris — dark mode
+
+Selector: `[data-theme="iris"][data-mode="dark"]`. Source: `frontend/src/styles/themes/_iris.scss`.
+
+**Backgrounds**
+
+| Token                        | Resolves to          | Hex / value              |
+| ---------------------------- | -------------------- | ------------------------ |
+| `--color-bg-page`            | `var(--zinc-900)`    | `#18181B`                |
+| `--color-bg-surface`         | `var(--zinc-800)`    | `#27272A`                |
+| `--color-bg-inset`           | `var(--zinc-950)`    | `#09090B`                |
+| `--color-bg-elevated`        | `var(--zinc-700)`    | `#3F3F46`                |
+| `--color-bg-emphasis`        | `var(--violet-500)`  | `#8B5CF6`                |
+| `--color-bg-code-block`      | `var(--zinc-800)`    | `#27272A`                |
+| `--color-bg-code-inline`     | `var(--zinc-700)`    | `#3F3F46`                |
+| `--color-bg-table-header`    | `var(--zinc-700)`    | `#3F3F46`                |
+| `--color-bg-table-stripe`    | —                    | `rgba(255, 255, 255, 0.03)` |
+| `--color-bg-blockquote`      | —                    | `rgba(167, 139, 250, 0.08)` |
+| `--color-bg-hover`           | —                    | `rgba(255, 255, 255, 0.05)` |
+| `--color-bg-sidebar`         | `var(--zinc-900)`    | `#18181B`                |
+
+**Text**
+
+| Token                         | Resolves to         | Hex       |
+| ----------------------------- | ------------------- | --------- |
+| `--color-text-primary`        | `var(--zinc-200)`   | `#E4E4E7` |
+| `--color-text-secondary`      | `var(--zinc-400)`   | `#A1A1AA` |
+| `--color-text-muted`          | `var(--zinc-500)`   | `#71717A` |
+| `--color-text-heading`        | `var(--zinc-100)`   | `#F4F4F5` |
+| `--color-text-on-emphasis`    | —                   | `#ffffff` |
+| `--color-text-link`           | `var(--violet-400)` | `#A78BFA` |
+| `--color-text-link-hover`     | `var(--violet-300)` | `#C4B5FD` |
+| `--color-text-code`           | `var(--zinc-200)`   | `#E4E4E7` |
+| `--color-text-code-inline`    | `var(--violet-300)` | `#C4B5FD` |
+
+**Borders**
+
+| Token                          | Resolves to          | Hex / value                |
+| ------------------------------ | -------------------- | -------------------------- |
+| `--color-border-default`       | `var(--zinc-700)`    | `#3F3F46`                  |
+| `--color-border-strong`        | `var(--zinc-600)`    | `#52525B`                  |
+| `--color-border-muted`         | `var(--zinc-800)`    | `#27272A`                  |
+| `--color-border-focus`         | `var(--violet-400)`  | `#A78BFA`                  |
+| `--color-border-code-inline`   | —                    | `rgba(167, 139, 250, 0.3)` |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(167, 139, 250, 0.25)`     |
+| `--color-link-underline`  | `rgba(167, 139, 250, 0.4)`      |
+| `--color-bg-active-item`  | `rgba(167, 139, 250, 0.15)`     |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.6)`            |
+
+**Shadows (dark-mode override)** — same standard dark shadow stack as other themes.
+
+---
+
+## Ember theme (orange + neutral)
+
+Orange elevated to primary accent against true-neutral gray. Neutral is symmetric — dark mode references `var(--neutral-950)` directly.
+
+### Ember — light mode
+
+Selector: `[data-theme="ember"][data-mode="light"]`. Source: `frontend/src/styles/themes/_ember.scss`.
+
+**Backgrounds**
+
+| Token                        | Resolves to           | Hex       |
+| ---------------------------- | --------------------- | --------- |
+| `--color-bg-page`            | `var(--neutral-50)`   | `#FAFAFA` |
+| `--color-bg-surface`         | —                     | `#ffffff` |
+| `--color-bg-inset`           | `var(--neutral-100)`  | `#F5F5F5` |
+| `--color-bg-elevated`        | —                     | `#ffffff` |
+| `--color-bg-emphasis`        | `var(--orange-600)`   | `#EA580C` |
+| `--color-bg-code-block`      | `var(--neutral-100)`  | `#F5F5F5` |
+| `--color-bg-code-inline`     | `var(--orange-50)`    | `#FFF7ED` |
+| `--color-bg-table-header`    | `var(--neutral-50)`   | `#FAFAFA` |
+| `--color-bg-table-stripe`    | `var(--neutral-50)`   | `#FAFAFA` |
+| `--color-bg-blockquote`      | —                     | `transparent` |
+| `--color-bg-hover`           | —                     | `rgba(0, 0, 0, 0.04)` |
+| `--color-bg-sidebar`         | `var(--neutral-50)`   | `#FAFAFA` |
+
+**Text**
+
+| Token                         | Resolves to           | Hex       |
+| ----------------------------- | --------------------- | --------- |
+| `--color-text-primary`        | `var(--neutral-900)`  | `#171717` |
+| `--color-text-secondary`      | `var(--neutral-600)`  | `#525252` |
+| `--color-text-muted`          | `var(--neutral-500)`  | `#737373` |
+| `--color-text-heading`        | `var(--neutral-800)`  | `#262626` |
+| `--color-text-on-emphasis`    | —                     | `#ffffff` |
+| `--color-text-link`           | `var(--orange-700)`   | `#C2410C` |
+| `--color-text-link-hover`     | `var(--orange-900)`   | `#7C2D12` |
+| `--color-text-code`           | `var(--neutral-800)`  | `#262626` |
+| `--color-text-code-inline`    | `var(--orange-800)`   | `#9A3412` |
+
+**Borders**
+
+| Token                          | Resolves to            | Hex       |
+| ------------------------------ | ---------------------- | --------- |
+| `--color-border-default`       | `var(--neutral-200)`   | `#E5E5E5` |
+| `--color-border-strong`        | `var(--neutral-300)`   | `#D4D4D4` |
+| `--color-border-muted`         | `var(--neutral-100)`   | `#F5F5F5` |
+| `--color-border-focus`         | `var(--orange-500)`    | `#F97316` |
+| `--color-border-code-inline`   | `var(--orange-200)`    | `#FED7AA` |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(249, 115, 22, 0.2)`       |
+| `--color-link-underline`  | `rgba(194, 65, 12, 0.4)`        |
+| `--color-bg-active-item`  | `rgba(249, 115, 22, 0.1)`       |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.4)`            |
+
+### Ember — dark mode
+
+Selector: `[data-theme="ember"][data-mode="dark"]`. Source: `frontend/src/styles/themes/_ember.scss`.
+
+**Backgrounds**
+
+| Token                        | Resolves to            | Hex / value              |
+| ---------------------------- | ---------------------- | ------------------------ |
+| `--color-bg-page`            | `var(--neutral-950)`   | `#0A0A0A`                |
+| `--color-bg-surface`         | `var(--neutral-800)`   | `#262626`                |
+| `--color-bg-inset`           | `var(--neutral-950)`   | `#0A0A0A`                |
+| `--color-bg-elevated`        | `var(--neutral-700)`   | `#404040`                |
+| `--color-bg-emphasis`        | `var(--orange-500)`    | `#F97316`                |
+| `--color-bg-code-block`      | `var(--neutral-800)`   | `#262626`                |
+| `--color-bg-code-inline`     | `var(--neutral-700)`   | `#404040`                |
+| `--color-bg-table-header`    | `var(--neutral-700)`   | `#404040`                |
+| `--color-bg-table-stripe`    | —                      | `rgba(255, 255, 255, 0.03)` |
+| `--color-bg-blockquote`      | —                      | `rgba(251, 146, 60, 0.08)`  |
+| `--color-bg-hover`           | —                      | `rgba(255, 255, 255, 0.05)` |
+| `--color-bg-sidebar`         | `var(--neutral-900)`   | `#171717`                |
+
+**Text**
+
+| Token                         | Resolves to           | Hex       |
+| ----------------------------- | --------------------- | --------- |
+| `--color-text-primary`        | `var(--neutral-200)`  | `#E5E5E5` |
+| `--color-text-secondary`      | `var(--neutral-400)`  | `#A3A3A3` |
+| `--color-text-muted`          | `var(--neutral-500)`  | `#737373` |
+| `--color-text-heading`        | `var(--neutral-100)`  | `#F5F5F5` |
+| `--color-text-on-emphasis`    | —                     | `#ffffff` |
+| `--color-text-link`           | `var(--orange-400)`   | `#FB923C` |
+| `--color-text-link-hover`     | `var(--orange-300)`   | `#FDBA74` |
+| `--color-text-code`           | `var(--neutral-200)`  | `#E5E5E5` |
+| `--color-text-code-inline`    | `var(--orange-300)`   | `#FDBA74` |
+
+**Borders**
+
+| Token                          | Resolves to            | Hex / value                |
+| ------------------------------ | ---------------------- | -------------------------- |
+| `--color-border-default`       | `var(--neutral-700)`   | `#404040`                  |
+| `--color-border-strong`        | `var(--neutral-600)`   | `#525252`                  |
+| `--color-border-muted`         | `var(--neutral-800)`   | `#262626`                  |
+| `--color-border-focus`         | `var(--orange-400)`    | `#FB923C`                  |
+| `--color-border-code-inline`   | —                      | `rgba(251, 146, 60, 0.3)`  |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(251, 146, 60, 0.25)`      |
+| `--color-link-underline`  | `rgba(251, 146, 60, 0.4)`       |
+| `--color-bg-active-item`  | `rgba(251, 146, 60, 0.15)`      |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.6)`            |
+
+**Shadows (dark-mode override)** — same standard dark shadow stack as other themes.
+
+---
+
+## Cove theme (teal + sage)
+
+Teal accent on green-tinted sage neutrals — the calm, oceanic space between emerald and blue. Info state overrides to indigo to separate it from the teal accent.
+
+### Cove — light mode
+
+Selector: `[data-theme="cove"][data-mode="light"]`. Source: `frontend/src/styles/themes/_cove.scss`.
+
+**Backgrounds**
+
+| Token                        | Resolves to          | Hex       |
+| ---------------------------- | -------------------- | --------- |
+| `--color-bg-page`            | `var(--sage-50)`     | `#FBFDFC` |
+| `--color-bg-surface`         | —                    | `#ffffff` |
+| `--color-bg-inset`           | `var(--sage-100)`    | `#F7F9F8` |
+| `--color-bg-elevated`        | —                    | `#ffffff` |
+| `--color-bg-emphasis`        | `var(--teal-600)`    | `#0D9488` |
+| `--color-bg-code-block`      | `var(--sage-100)`    | `#F7F9F8` |
+| `--color-bg-code-inline`     | `var(--teal-50)`     | `#F0FDFA` |
+| `--color-bg-table-header`    | `var(--sage-50)`     | `#FBFDFC` |
+| `--color-bg-table-stripe`    | `var(--sage-50)`     | `#FBFDFC` |
+| `--color-bg-blockquote`      | —                    | `transparent` |
+| `--color-bg-hover`           | —                    | `rgba(0, 0, 0, 0.04)` |
+| `--color-bg-sidebar`         | `var(--sage-50)`     | `#FBFDFC` |
+
+**Text**
+
+| Token                         | Resolves to        | Hex       |
+| ----------------------------- | ------------------ | --------- |
+| `--color-text-primary`        | `var(--sage-900)`  | `#141C18` |
+| `--color-text-secondary`      | `var(--sage-600)`  | `#7C847F` |
+| `--color-text-muted`          | `var(--sage-500)`  | `#A0A5A2` |
+| `--color-text-heading`        | `var(--sage-800)`  | `#394139` |
+| `--color-text-on-emphasis`    | —                  | `#ffffff` |
+| `--color-text-link`           | `var(--teal-700)`  | `#0F766E` |
+| `--color-text-link-hover`     | `var(--teal-900)`  | `#134E4A` |
+| `--color-text-code`           | `var(--sage-800)`  | `#394139` |
+| `--color-text-code-inline`    | `var(--teal-800)`  | `#115E59` |
+
+**Borders**
+
+| Token                          | Resolves to        | Hex       |
+| ------------------------------ | ------------------ | --------- |
+| `--color-border-default`       | `var(--sage-200)`  | `#EFF1F0` |
+| `--color-border-strong`        | `var(--sage-300)`  | `#E0E3E1` |
+| `--color-border-muted`         | `var(--sage-100)`  | `#F7F9F8` |
+| `--color-border-focus`         | `var(--teal-600)`  | `#0D9488` |
+| `--color-border-code-inline`   | `var(--teal-200)`  | `#99F6E4` |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(20, 184, 166, 0.2)`       |
+| `--color-link-underline`  | `rgba(15, 118, 110, 0.4)`       |
+| `--color-bg-active-item`  | `rgba(20, 184, 166, 0.1)`       |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.4)`            |
+
+### Cove — dark mode
+
+Selector: `[data-theme="cove"][data-mode="dark"]`. Source: `frontend/src/styles/themes/_cove.scss`.
+
+Note: Sage primitives cascade to their dark values via `:root[data-mode="dark"]`. `var(--sage-50)` resolves to `#141716` here.
+
+**Backgrounds**
+
+| Token                        | Resolves to         | Hex / value              |
+| ---------------------------- | ------------------- | ------------------------ |
+| `--color-bg-page`            | `var(--sage-50)`    | `#141716`                |
+| `--color-bg-surface`         | `var(--sage-200)`   | `#222623`                |
+| `--color-bg-inset`           | `var(--sage-50)`    | `#141716`                |
+| `--color-bg-elevated`        | `var(--sage-300)`   | `#2D312E`                |
+| `--color-bg-emphasis`        | `var(--teal-500)`   | `#14B8A6`                |
+| `--color-bg-code-block`      | `var(--sage-200)`   | `#222623`                |
+| `--color-bg-code-inline`     | `var(--sage-300)`   | `#2D312E`                |
+| `--color-bg-table-header`    | `var(--sage-300)`   | `#2D312E`                |
+| `--color-bg-table-stripe`    | —                   | `rgba(255, 255, 255, 0.03)` |
+| `--color-bg-blockquote`      | —                   | `rgba(45, 212, 191, 0.08)`  |
+| `--color-bg-hover`           | —                   | `rgba(255, 255, 255, 0.05)` |
+| `--color-bg-sidebar`         | `var(--sage-100)`   | `#191D1B`                |
+
+**Text**
+
+| Token                         | Resolves to        | Hex       |
+| ----------------------------- | ------------------ | --------- |
+| `--color-text-primary`        | `var(--sage-900)`  | `#DAE0DD` |
+| `--color-text-secondary`      | `var(--sage-700)`  | `#99A29E` |
+| `--color-text-muted`          | `var(--sage-500)`  | `#4F5553` |
+| `--color-text-heading`        | `var(--sage-950)`  | `#ECF0EE` |
+| `--color-text-on-emphasis`    | —                  | `#ffffff` |
+| `--color-text-link`           | `var(--teal-400)`  | `#2DD4BF` |
+| `--color-text-link-hover`     | `var(--teal-300)`  | `#5EEAD4` |
+| `--color-text-code`           | `var(--sage-900)`  | `#DAE0DD` |
+| `--color-text-code-inline`    | `var(--teal-300)`  | `#5EEAD4` |
+
+**Borders**
+
+| Token                          | Resolves to        | Hex / value               |
+| ------------------------------ | ------------------ | ------------------------- |
+| `--color-border-default`       | `var(--sage-300)`  | `#2D312E`                 |
+| `--color-border-strong`        | `var(--sage-400)`  | `#3B403D`                 |
+| `--color-border-muted`         | `var(--sage-200)`  | `#222623`                 |
+| `--color-border-focus`         | `var(--teal-400)`  | `#2DD4BF`                 |
+| `--color-border-code-inline`   | —                  | `rgba(45, 212, 191, 0.3)` |
+
+**Accent overlays**
+
+| Token                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `--color-focus-ring`      | `rgba(45, 212, 191, 0.25)`      |
+| `--color-link-underline`  | `rgba(45, 212, 191, 0.4)`       |
+| `--color-bg-active-item`  | `rgba(45, 212, 191, 0.15)`      |
+| `--color-bg-backdrop`     | `rgba(0, 0, 0, 0.6)`            |
+
+**Shadows (dark-mode override)** — same standard dark shadow stack as other themes.
+
+---
+
 ## Status colors
 
-Both themes define the four status colors (success, warning, error, info) in both modes. In light mode they're flat Tailwind hex values. In dark mode they're `rgba(…)` overlays with semi-transparent fills so the tint picks up whatever dark background sits under them.
+Every theme defines the four status colors (success, warning, error, info) in both modes. In light mode they're flat Tailwind hex values. In dark mode they're `rgba(…)` overlays with semi-transparent fills so the tint picks up whatever dark background sits under them.
 
-### Light mode (both themes share these values)
+**Per-theme overrides** — three themes deliberately replace one status family to preserve semantic distinction from their accent:
+
+| Theme   | Overridden status | Replacement  | Why |
+| ------- | ----------------- | ------------ | --- |
+| Blossom | `--color-error-*` | Pure Red     | Keeps "something went wrong" visually distinct from the rose accent. |
+| Saffron | `--color-warning-*` | Orange primitives | Amber warning would blur with the amber accent — switch to orange (`#EA580C` family). |
+| Cove    | `--color-info-*` | Indigo (raw hex) | Teal info would blur with the teal accent — switch to indigo (`#6366F1` family). |
+
+Grove, Classic Blue, Iris, and Ember use the baseline status hues described below without overrides.
+
+### Light mode (shared across themes)
 
 | Token                     | Hex       |
 | ------------------------- | --------- |
@@ -475,16 +1071,21 @@ Both themes define the four status colors (success, warning, error, info) in bot
 | `--color-error-text`      | `#991b1b` |
 | `--color-error-icon`      | `#dc2626` |
 
-`--color-info-*` is theme-dependent in light mode:
+Notes on the overrides in light mode:
 
-| Token                     | Grove light           | Classic Blue light    |
-| ------------------------- | --------------------- | --------------------- |
-| `--color-info-bg`         | `#ecfdf5` (emerald-50)| `#eff6ff` (blue-50)   |
-| `--color-info-border`     | `#6ee7b7` (emerald-300)| `#93c5fd` (blue-300) |
-| `--color-info-text`       | `#065f46` (emerald-800)| `#1e40af` (blue-800) |
-| `--color-info-icon`       | `#059669` (emerald-600)| `#2563eb` (blue-600) |
+- **Saffron** warning uses Orange primitives: `--color-warning-bg: var(--orange-50)` (`#FFF7ED`), `--color-warning-border: var(--orange-300)` (`#FDBA74`), `--color-warning-text: var(--orange-800)` (`#9A3412`), `--color-warning-icon: var(--orange-600)` (`#EA580C`).
+- **Blossom** error keeps the same hex as other themes — the override is semantic, not chromatic. A load-bearing comment in `_blossom.scss` flags that this is deliberately NOT `rose`.
 
-### Dark mode (both themes share most values)
+`--color-info-*` is theme-dependent in light mode (each theme tints info with its accent family):
+
+| Token             | Grove        | Classic Blue | Blossom     | Saffron     | Iris         | Ember         | Cove (Indigo) |
+| ----------------- | ------------ | ------------ | ----------- | ----------- | ------------ | ------------- | ------------- |
+| `--color-info-bg`       | `#ecfdf5` (emerald-50) | `#eff6ff` (blue-50)  | `#FFF1F2` (rose-50)  | `#FFFBEB` (amber-50) | `#F5F3FF` (violet-50) | `#FFF7ED` (orange-50) | `#eef2ff` |
+| `--color-info-border`   | `#6ee7b7` (emerald-300) | `#93c5fd` (blue-300) | `#FDA4AF` (rose-300) | `#FCD34D` (amber-300) | `#C4B5FD` (violet-300) | `#FDBA74` (orange-300) | `#c7d2fe` |
+| `--color-info-text`     | `#065f46` (emerald-800) | `#1e40af` (blue-800) | `#9F1239` (rose-800) | `#92400E` (amber-800) | `#5B21B6` (violet-800) | `#9A3412` (orange-800) | `#3730a3` |
+| `--color-info-icon`     | `#059669` (emerald-600) | `#2563eb` (blue-600) | `#E11D48` (rose-600) | `#D97706` (amber-600) | `#7C3AED` (violet-600) | `#EA580C` (orange-600) | `#6366f1` |
+
+### Dark mode (shared across themes, with per-theme overrides)
 
 | Token                     | Value                           |
 | ------------------------- | ------------------------------- |
@@ -501,14 +1102,19 @@ Both themes define the four status colors (success, warning, error, info) in bot
 | `--color-error-text`      | `#fca5a5`                       |
 | `--color-error-icon`      | `#f87171`                       |
 
+Dark-mode overrides:
+
+- **Saffron** warning dark: `--color-warning-bg: rgba(234, 88, 12, 0.15)`, `--color-warning-border: rgba(251, 146, 60, 0.4)`, `--color-warning-text: #fdba74` (orange-300), `--color-warning-icon: #fb923c` (orange-400).
+- **Blossom** error dark: same translucent red as the baseline (the override is semantic only).
+
 `--color-info-*` is theme-dependent in dark mode:
 
-| Token                     | Grove dark                      | Classic Blue dark               |
-| ------------------------- | ------------------------------- | ------------------------------- |
-| `--color-info-bg`         | `rgba(52, 211, 153, 0.15)`      | `rgba(96, 165, 250, 0.15)`      |
-| `--color-info-border`     | `rgba(52, 211, 153, 0.4)`       | `rgba(96, 165, 250, 0.4)`       |
-| `--color-info-text`       | `#6ee7b7` (emerald-300)         | `#93c5fd` (blue-300)            |
-| `--color-info-icon`       | `#34d399` (emerald-400)         | `#60a5fa` (blue-400)            |
+| Token                     | Grove dark                       | Classic Blue dark                | Blossom dark                     | Saffron dark                     | Iris dark                        | Ember dark                       | Cove dark (Indigo)              |
+| ------------------------- | -------------------------------- | -------------------------------- | -------------------------------- | -------------------------------- | -------------------------------- | -------------------------------- | ------------------------------- |
+| `--color-info-bg`         | `rgba(52, 211, 153, 0.15)`       | `rgba(96, 165, 250, 0.15)`       | `rgba(244, 63, 94, 0.15)`        | `rgba(251, 191, 36, 0.15)`       | `rgba(167, 139, 250, 0.15)`      | `rgba(251, 146, 60, 0.15)`       | `rgba(99, 102, 241, 0.15)`      |
+| `--color-info-border`     | `rgba(52, 211, 153, 0.4)`        | `rgba(96, 165, 250, 0.4)`        | `rgba(244, 63, 94, 0.4)`         | `rgba(251, 191, 36, 0.4)`        | `rgba(167, 139, 250, 0.4)`       | `rgba(251, 146, 60, 0.4)`        | `rgba(129, 140, 248, 0.4)`      |
+| `--color-info-text`       | `#6ee7b7` (emerald-300)          | `#93c5fd` (blue-300)             | `#FDA4AF` (rose-300)             | `#FCD34D` (amber-300)            | `#C4B5FD` (violet-300)           | `#FDBA74` (orange-300)           | `#a5b4fc` (indigo-300)          |
+| `--color-info-icon`       | `#34d399` (emerald-400)          | `#60a5fa` (blue-400)             | `#FB7185` (rose-400)             | `#FBBF24` (amber-400)            | `#A78BFA` (violet-400)           | `#FB923C` (orange-400)           | `#818cf8` (indigo-400)          |
 
 ---
 
@@ -668,11 +1274,32 @@ Color palettes are chosen deliberately non-green for keyword/string tokens in th
 | `--hljs-operator`        | `#94a3b8` |
 | `--hljs-meta`            | `#94a3b8` |
 
+### hljs for Blossom, Saffron, Iris, Ember, Cove
+
+Each new theme ships a hand-tuned hljs block following the same **deliberately non-accent** rule Grove uses: `keyword` and `string` tokens avoid the theme's accent family so that language keywords stay visually distinct from literal tags and names. For the full per-token list, read the `hljs` block inside each theme's source file — it's the section starting with the comment `/* Deliberately non-<accent> for keyword/string */`.
+
+| Theme   | Accent family avoided in keyword/string | Keyword choice (light / dark) | String choice (light / dark) |
+| ------- | ---------------------------------------- | ----------------------------- | ---------------------------- |
+| Blossom | rose                                     | `#7c3aed` / `#a78bfa` (violet) | `#0d9488` / `#2dd4bf` (teal) |
+| Saffron | amber / gold                             | `#7c3aed` / `#a78bfa` (violet) | `#0d9488` / `#2dd4bf` (teal) |
+| Iris    | violet                                   | `#0d9488` / `#2dd4bf` (teal)   | `#b45309` / `#fbbf24` (amber) |
+| Ember   | orange                                   | `#7c3aed` / `#a78bfa` (violet) | `#0d9488` / `#2dd4bf` (teal) |
+| Cove    | teal                                     | `#7c3aed` / `#a78bfa` (violet) | `#b45309` / `#fbbf24` (amber) |
+
+Each theme's **title** / **title-class** / **title-function** tokens use that theme's accent family at step 700 (light) and step 300 (dark) — e.g. Blossom light title is `var(--rose-700)` = `#BE123C`, Blossom dark title is `var(--rose-300)` = `#FDA4AF`. Comment and punctuation tokens use the theme's neutral family at step 500 for visual quietness that still meets 4.5:1 on the code background.
+
+Sources:
+- `frontend/src/styles/themes/_blossom.scss` (hljs blocks inside `[data-theme="blossom"][data-mode="light"]` and `...="dark"]`)
+- `frontend/src/styles/themes/_saffron.scss`
+- `frontend/src/styles/themes/_iris.scss`
+- `frontend/src/styles/themes/_ember.scss`
+- `frontend/src/styles/themes/_cove.scss`
+
 ### Additional hljs tokens
 
 The stylesheet also references a handful of tokens that don't have explicit theme assignments — they fall through to their upstream defaults or are covered by the base text color: `--hljs-doctag`, `--hljs-formula`, `--hljs-section`, `--hljs-symbol`, `--hljs-bullet`, `--hljs-link`, `--hljs-template-variable`, `--hljs-subst`, `--hljs-selector-tag`, `--hljs-selector-class`, `--hljs-selector-id`, `--hljs-selector-attr`, `--hljs-selector-pseudo`, `--hljs-addition`, `--hljs-deletion`, `--hljs-addition-bg`, `--hljs-deletion-bg`, `--hljs-emphasis`, `--hljs-strong`.
 
-If a specific language highlights oddly in a theme, define the missing token under both themes' light and dark blocks.
+If a specific language highlights oddly in a theme, define the missing token under every theme's light and dark blocks (or at least the affected one).
 
 ---
 
@@ -695,8 +1322,8 @@ A short checklist when adding a component:
 
 1. **Start from semantic tokens.** Every `color`, `background`, `border-color` should be a `var(--color-*)` lookup.
 2. **Don't reach for primitives.** `var(--stone-500)` ties your component to one theme. `var(--color-text-muted)` works everywhere.
-3. **Don't inline hex.** `#64748b` breaks both themes at once.
-4. **If you need a shade that doesn't exist**, add a new semantic token. Then add it to **all four** theme × mode blocks (Grove light, Grove dark, Classic Blue light, Classic Blue dark). A missing token falls through to `undefined`, not to a sane default.
+3. **Don't inline hex.** `#64748b` breaks every theme at once.
+4. **If you need a shade that doesn't exist**, add a new semantic token. Then add it to **all fourteen** theme × mode blocks (Grove, Classic Blue, Blossom, Saffron, Iris, Ember, Cove × light, dark). A missing token falls through to `undefined`, not to a sane default.
 5. **If it affects printing**, add a print override in `_base.scss` under `@media print html[data-mode="dark"]`.
 6. **Focus rings** use `--color-border-focus`. **Active nav items** use `--color-bg-active-item`. **Modal backdrops** use `--color-bg-backdrop`. Don't invent parallel overlays.
 7. **Status** (success, warning, error, info) uses the four status token families. Don't pick fresh red/green hex values for one component.

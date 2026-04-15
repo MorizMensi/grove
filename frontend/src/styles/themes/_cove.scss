@@ -1,0 +1,164 @@
+/* ════════════════════════════════════════════════════════════════
+   Grove – Cove Theme (Teal + Sage)
+
+   The calm, oceanic space between Grove's emerald and blue themes.
+   Like Nord's arctic frost palette, teal (shifted ~20° toward blue
+   from pure green) paired with sage neutrals (green-tinted gray)
+   evokes ocean and coastal mist rather than forest or sky. Calm,
+   zen-oriented, perfect for long reading sessions. WCAG AAA.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Cove Light ─────────────────────────────────────────────── */
+
+[data-theme="cove"][data-mode="light"] {
+  color-scheme: light;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--sage-50);
+  --color-bg-surface: #ffffff;
+  --color-bg-inset: var(--sage-100);
+  --color-bg-elevated: #ffffff;
+  --color-bg-emphasis: var(--teal-600);
+  --color-bg-code-block: var(--sage-100);
+  --color-bg-code-inline: var(--teal-50);
+  --color-bg-table-header: var(--sage-50);
+  --color-bg-table-stripe: var(--sage-50);
+  --color-bg-blockquote: transparent;
+  --color-bg-hover: rgba(0, 0, 0, 0.04);
+  --color-bg-sidebar: var(--sage-50);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--sage-900);
+  --color-text-secondary: var(--sage-600);
+  --color-text-muted: var(--sage-500);
+  --color-text-heading: var(--sage-800);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--teal-700);
+  --color-text-link-hover: var(--teal-900);
+  --color-text-code: var(--sage-800);
+  --color-text-code-inline: var(--teal-800);
+  --color-border-code-inline: var(--teal-200);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--sage-200);
+  --color-border-strong: var(--sage-300);
+  --color-border-muted: var(--sage-100);
+  --color-border-focus: var(--teal-600);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: #ecfdf5;   --color-success-border: #6ee7b7;
+  --color-success-text: #065f46;  --color-success-icon: #059669;
+  --color-warning-bg: #fffbeb;   --color-warning-border: #fcd34d;
+  --color-warning-text: #92400e;  --color-warning-icon: #d97706;
+  --color-error-bg: #fef2f2;     --color-error-border: #fca5a5;
+  --color-error-text: #991b1b;    --color-error-icon: #dc2626;
+  /* Info uses Indigo (not teal) to separate info state from the teal accent. */
+  --color-info-bg: #eef2ff;      --color-info-border: #c7d2fe;
+  --color-info-text: #3730a3;    --color-info-icon: #6366f1;
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  /* Deliberately non-teal for keyword/string so tokens remain
+     distinguishable from literal aqua tags and names. */
+  --hljs-base-text: var(--sage-800);  --hljs-base-bg: var(--sage-100);
+  --hljs-keyword: #7c3aed;            --hljs-title: var(--teal-700);
+  --hljs-title-class: var(--teal-700); --hljs-title-function: var(--teal-700);
+  --hljs-string: #b45309;             --hljs-number: #0891b2;
+  --hljs-literal: #7c3aed;            --hljs-regexp: #db2777;
+  --hljs-type: #c2410c;               --hljs-built-in: #0891b2;
+  --hljs-class: var(--teal-700);      --hljs-attr: #0891b2;
+  --hljs-variable: #be123c;           --hljs-property: #0369a1;
+  --hljs-params: var(--sage-800);     --hljs-tag: #0369a1;
+  --hljs-name: #0369a1;               --hljs-comment: var(--sage-500);
+  --hljs-punctuation: var(--sage-500);
+  --hljs-operator: var(--sage-500);
+  --hljs-meta: var(--sage-500);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(20, 184, 166, 0.2);
+  --color-link-underline: rgba(15, 118, 110, 0.4);
+  --color-bg-active-item: rgba(20, 184, 166, 0.1);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.4);
+}
+
+/* ── Cove Dark ──────────────────────────────────────────────── */
+
+[data-theme="cove"][data-mode="dark"] {
+  color-scheme: dark;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--sage-50);
+  --color-bg-surface: var(--sage-200);
+  --color-bg-inset: var(--sage-50);
+  --color-bg-elevated: var(--sage-300);
+  --color-bg-emphasis: var(--teal-500);
+  --color-bg-code-block: var(--sage-200);
+  --color-bg-code-inline: var(--sage-300);
+  --color-bg-table-header: var(--sage-300);
+  --color-bg-table-stripe: rgba(255, 255, 255, 0.03);
+  --color-bg-blockquote: rgba(45, 212, 191, 0.08);
+  --color-bg-hover: rgba(255, 255, 255, 0.05);
+  --color-bg-sidebar: var(--sage-100);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--sage-900);
+  --color-text-secondary: var(--sage-700);
+  --color-text-muted: var(--sage-500);
+  --color-text-heading: var(--sage-950);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--teal-400);
+  --color-text-link-hover: var(--teal-300);
+  --color-text-code: var(--sage-900);
+  --color-text-code-inline: var(--teal-300);
+  --color-border-code-inline: rgba(45, 212, 191, 0.3);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--sage-300);
+  --color-border-strong: var(--sage-400);
+  --color-border-muted: var(--sage-200);
+  --color-border-focus: var(--teal-400);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: rgba(5, 150, 105, 0.15);
+  --color-success-border: rgba(52, 211, 153, 0.4);
+  --color-success-text: #6ee7b7;
+  --color-success-icon: #34d399;
+  --color-warning-bg: rgba(217, 119, 6, 0.15);
+  --color-warning-border: rgba(251, 191, 36, 0.4);
+  --color-warning-text: #fcd34d;
+  --color-warning-icon: #fbbf24;
+  --color-error-bg: rgba(220, 38, 38, 0.15);
+  --color-error-border: rgba(248, 113, 113, 0.4);
+  --color-error-text: #fca5a5;
+  --color-error-icon: #f87171;
+  /* Info uses Indigo (not teal) to separate info state from the teal accent. */
+  --color-info-bg: rgba(99, 102, 241, 0.15);
+  --color-info-border: rgba(129, 140, 248, 0.4);
+  --color-info-text: #a5b4fc;
+  --color-info-icon: #818cf8;
+
+  /* ── Shadows (deeper for dark backgrounds) ────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  --hljs-base-text: var(--sage-800); --hljs-base-bg: var(--sage-200);
+  --hljs-keyword: #a78bfa;           --hljs-title: var(--teal-300);
+  --hljs-title-class: var(--teal-300); --hljs-title-function: var(--teal-300);
+  --hljs-string: #fbbf24;            --hljs-number: #22d3ee;
+  --hljs-literal: #a78bfa;           --hljs-regexp: #f472b6;
+  --hljs-type: #fb923c;              --hljs-built-in: #22d3ee;
+  --hljs-class: var(--teal-300);     --hljs-attr: #22d3ee;
+  --hljs-variable: #fb7185;          --hljs-property: #38bdf8;
+  --hljs-params: var(--sage-800);    --hljs-tag: #38bdf8;
+  --hljs-name: #38bdf8;              --hljs-comment: var(--sage-500);
+  --hljs-punctuation: var(--sage-500);
+  --hljs-operator: var(--sage-500);
+  --hljs-meta: var(--sage-500);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(45, 212, 191, 0.25);
+  --color-link-underline: rgba(45, 212, 191, 0.4);
+  --color-bg-active-item: rgba(45, 212, 191, 0.15);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.6);
+}

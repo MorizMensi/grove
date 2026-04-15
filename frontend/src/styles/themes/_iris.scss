@@ -1,0 +1,162 @@
+/* ════════════════════════════════════════════════════════════════
+   Grove – Iris Theme (Violet + Zinc)
+
+   Inspired by Catppuccin's purple-pastel energy, Dracula's iconic
+   accent work, and Rosé Pine's iris tone. Saturated violet accent
+   against deliberately-clean zinc neutrals — the personality comes
+   entirely from the accent, not from atmospheric neutral tinting.
+   Modern, editorial, creative. WCAG AAA for body text.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Grove Light ─────────────────────────────────────────────── */
+
+[data-theme="iris"][data-mode="light"] {
+  color-scheme: light;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--zinc-50);
+  --color-bg-surface: #ffffff;
+  --color-bg-inset: var(--zinc-100);
+  --color-bg-elevated: #ffffff;
+  --color-bg-emphasis: var(--violet-600);
+  --color-bg-code-block: var(--zinc-100);
+  --color-bg-code-inline: var(--violet-50);
+  --color-bg-table-header: var(--zinc-50);
+  --color-bg-table-stripe: var(--zinc-50);
+  --color-bg-blockquote: transparent;
+  --color-bg-hover: rgba(0, 0, 0, 0.04);
+  --color-bg-sidebar: var(--zinc-50);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--zinc-900);
+  --color-text-secondary: var(--zinc-600);
+  --color-text-muted: var(--zinc-500);
+  --color-text-heading: var(--zinc-800);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--violet-700);
+  --color-text-link-hover: var(--violet-900);
+  --color-text-code: var(--zinc-800);
+  --color-text-code-inline: var(--violet-800);
+  --color-border-code-inline: var(--violet-200);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--zinc-200);
+  --color-border-strong: var(--zinc-300);
+  --color-border-muted: var(--zinc-100);
+  --color-border-focus: var(--violet-500);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: #ecfdf5;   --color-success-border: #6ee7b7;
+  --color-success-text: #065f46;  --color-success-icon: #059669;
+  --color-warning-bg: #fffbeb;   --color-warning-border: #fcd34d;
+  --color-warning-text: #92400e;  --color-warning-icon: #d97706;
+  --color-error-bg: #fef2f2;     --color-error-border: #fca5a5;
+  --color-error-text: #991b1b;    --color-error-icon: #dc2626;
+  --color-info-bg: var(--violet-50);     --color-info-border: var(--violet-300);
+  --color-info-text: var(--violet-800);  --color-info-icon: var(--violet-600);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  /* Deliberately non-violet for keyword/string so tokens remain
+     distinguishable from literal purple tags and names. */
+  --hljs-base-text: var(--zinc-800);  --hljs-base-bg: var(--zinc-100);
+  --hljs-keyword: #0d9488;            --hljs-title: var(--violet-700);
+  --hljs-title-class: var(--violet-700); --hljs-title-function: var(--violet-700);
+  --hljs-string: #b45309;             --hljs-number: #0891b2;
+  --hljs-literal: #0d9488;            --hljs-regexp: #db2777;
+  --hljs-type: #c2410c;               --hljs-built-in: #0891b2;
+  --hljs-class: var(--violet-700);    --hljs-attr: #0891b2;
+  --hljs-variable: #be123c;           --hljs-property: #0369a1;
+  --hljs-params: var(--zinc-800);     --hljs-tag: #0d9488;
+  --hljs-name: #0d9488;               --hljs-comment: var(--zinc-500);
+  --hljs-punctuation: var(--zinc-500);
+  --hljs-operator: var(--zinc-500);
+  --hljs-meta: var(--zinc-500);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(139, 92, 246, 0.2);
+  --color-link-underline: rgba(109, 40, 217, 0.4);
+  --color-bg-active-item: rgba(139, 92, 246, 0.1);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.4);
+}
+
+/* ── Grove Dark ──────────────────────────────────────────────── */
+
+[data-theme="iris"][data-mode="dark"] {
+  color-scheme: dark;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--zinc-900);
+  --color-bg-surface: var(--zinc-800);
+  --color-bg-inset: var(--zinc-950);
+  --color-bg-elevated: var(--zinc-700);
+  --color-bg-emphasis: var(--violet-500);
+  --color-bg-code-block: var(--zinc-800);
+  --color-bg-code-inline: var(--zinc-700);
+  --color-bg-table-header: var(--zinc-700);
+  --color-bg-table-stripe: rgba(255, 255, 255, 0.03);
+  --color-bg-blockquote: rgba(167, 139, 250, 0.08);
+  --color-bg-hover: rgba(255, 255, 255, 0.05);
+  --color-bg-sidebar: var(--zinc-900);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--zinc-200);
+  --color-text-secondary: var(--zinc-400);
+  --color-text-muted: var(--zinc-500);
+  --color-text-heading: var(--zinc-100);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--violet-400);
+  --color-text-link-hover: var(--violet-300);
+  --color-text-code: var(--zinc-200);
+  --color-text-code-inline: var(--violet-300);
+  --color-border-code-inline: rgba(167, 139, 250, 0.3);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--zinc-700);
+  --color-border-strong: var(--zinc-600);
+  --color-border-muted: var(--zinc-800);
+  --color-border-focus: var(--violet-400);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: rgba(5, 150, 105, 0.15);
+  --color-success-border: rgba(52, 211, 153, 0.4);
+  --color-success-text: #6ee7b7;
+  --color-success-icon: #34d399;
+  --color-warning-bg: rgba(217, 119, 6, 0.15);
+  --color-warning-border: rgba(251, 191, 36, 0.4);
+  --color-warning-text: #fcd34d;
+  --color-warning-icon: #fbbf24;
+  --color-error-bg: rgba(220, 38, 38, 0.15);
+  --color-error-border: rgba(248, 113, 113, 0.4);
+  --color-error-text: #fca5a5;
+  --color-error-icon: #f87171;
+  --color-info-bg: rgba(167, 139, 250, 0.15);
+  --color-info-border: rgba(167, 139, 250, 0.4);
+  --color-info-text: var(--violet-300);
+  --color-info-icon: var(--violet-400);
+
+  /* ── Shadows (deeper for dark backgrounds) ────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  --hljs-base-text: var(--zinc-300); --hljs-base-bg: var(--zinc-800);
+  --hljs-keyword: #2dd4bf;           --hljs-title: var(--violet-300);
+  --hljs-title-class: var(--violet-300); --hljs-title-function: var(--violet-300);
+  --hljs-string: #fbbf24;            --hljs-number: #22d3ee;
+  --hljs-literal: #2dd4bf;           --hljs-regexp: #f472b6;
+  --hljs-type: #fb923c;              --hljs-built-in: #22d3ee;
+  --hljs-class: var(--violet-300);   --hljs-attr: #22d3ee;
+  --hljs-variable: #fb7185;          --hljs-property: #38bdf8;
+  --hljs-params: var(--zinc-300);    --hljs-tag: #2dd4bf;
+  --hljs-name: #2dd4bf;              --hljs-comment: var(--zinc-500);
+  --hljs-punctuation: var(--zinc-400);
+  --hljs-operator: var(--zinc-400);
+  --hljs-meta: var(--zinc-400);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(167, 139, 250, 0.25);
+  --color-link-underline: rgba(167, 139, 250, 0.4);
+  --color-bg-active-item: rgba(167, 139, 250, 0.15);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.6);
+}

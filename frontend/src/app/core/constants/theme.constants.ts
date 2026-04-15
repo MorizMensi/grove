@@ -1,4 +1,4 @@
-export const PALETTES = ['grove', 'classic-blue'] as const;
+export const PALETTES = ['grove', 'classic-blue', 'blossom', 'saffron', 'iris', 'ember', 'cove'] as const;
 export type Palette = typeof PALETTES[number];
 
 export const MODE_SELECTIONS = ['light', 'dark', 'system'] as const;
@@ -17,6 +17,11 @@ export const DEFAULT_MODE_SELECTION: ModeSelection = 'system';
 export const PALETTE_LABELS: Record<Palette, string> = {
   grove: 'Grove',
   'classic-blue': 'Classic Blue',
+  blossom: 'Blossom',
+  saffron: 'Saffron',
+  iris: 'Iris',
+  ember: 'Ember',
+  cove: 'Cove',
 };
 
 export const MODE_LABELS: Record<ModeSelection, string> = {

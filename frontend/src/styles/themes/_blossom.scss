@@ -1,0 +1,164 @@
+/* ════════════════════════════════════════════════════════════════
+   Grove – Blossom Theme (Rose + Mauve)
+
+   A cotton-candy palette inspired by Rosé Pine's "love" and "rose"
+   accents and Catppuccin's rosewater tones. Soft, inviting, and
+   grown-up — cherry blossoms rather than bubblegum. Mauve neutrals
+   carry a pink-purple undertone that prevents the clinical feel of
+   pure gray alongside rose accents. WCAG AAA for body text.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Blossom Light ───────────────────────────────────────────── */
+
+[data-theme="blossom"][data-mode="light"] {
+  color-scheme: light;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--mauve-50);
+  --color-bg-surface: #ffffff;
+  --color-bg-inset: var(--mauve-100);
+  --color-bg-elevated: #ffffff;
+  --color-bg-emphasis: var(--rose-600);
+  --color-bg-code-block: var(--mauve-100);
+  --color-bg-code-inline: var(--rose-50);
+  --color-bg-table-header: var(--mauve-50);
+  --color-bg-table-stripe: var(--mauve-50);
+  --color-bg-blockquote: transparent;
+  --color-bg-hover: rgba(0, 0, 0, 0.04);
+  --color-bg-sidebar: var(--mauve-50);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--mauve-900);
+  --color-text-secondary: var(--mauve-600);
+  --color-text-muted: var(--mauve-500);
+  --color-text-heading: var(--mauve-800);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--rose-700);
+  --color-text-link-hover: var(--rose-900);
+  --color-text-code: var(--mauve-800);
+  --color-text-code-inline: var(--rose-800);
+  --color-border-code-inline: var(--rose-200);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--mauve-200);
+  --color-border-strong: var(--mauve-300);
+  --color-border-muted: var(--mauve-100);
+  --color-border-focus: var(--rose-500);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: #ecfdf5;   --color-success-border: #6ee7b7;
+  --color-success-text: #065f46;  --color-success-icon: #059669;
+  --color-warning-bg: #fffbeb;   --color-warning-border: #fcd34d;
+  --color-warning-text: #92400e;  --color-warning-icon: #d97706;
+  /* Error uses pure Red (not rose) for semantic distinction from accent. */
+  --color-error-bg: #fef2f2;     --color-error-border: #fca5a5;
+  --color-error-text: #991b1b;    --color-error-icon: #dc2626;
+  --color-info-bg: var(--rose-50);     --color-info-border: var(--rose-300);
+  --color-info-text: var(--rose-800);  --color-info-icon: var(--rose-600);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  /* Deliberately non-rose for keyword/string so tokens remain
+     distinguishable from literal pink tags and names. */
+  --hljs-base-text: var(--mauve-800);  --hljs-base-bg: var(--mauve-100);
+  --hljs-keyword: #7c3aed;             --hljs-title: var(--rose-700);
+  --hljs-title-class: var(--rose-700); --hljs-title-function: var(--rose-700);
+  --hljs-string: #0d9488;              --hljs-number: #0891b2;
+  --hljs-literal: #7c3aed;             --hljs-regexp: #c2410c;
+  --hljs-type: #c2410c;                --hljs-built-in: #0891b2;
+  --hljs-class: var(--rose-700);       --hljs-attr: #0891b2;
+  --hljs-variable: #b45309;            --hljs-property: #0369a1;
+  --hljs-params: var(--mauve-800);     --hljs-tag: #0d9488;
+  --hljs-name: #0d9488;                --hljs-comment: var(--mauve-500);
+  --hljs-punctuation: var(--mauve-500);
+  --hljs-operator: var(--mauve-500);
+  --hljs-meta: var(--mauve-500);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(244, 63, 94, 0.2);
+  --color-link-underline: rgba(190, 18, 60, 0.4);
+  --color-bg-active-item: rgba(244, 63, 94, 0.1);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.4);
+}
+
+/* ── Blossom Dark ───────────────────────────────────────────── */
+
+[data-theme="blossom"][data-mode="dark"] {
+  color-scheme: dark;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--mauve-50);
+  --color-bg-surface: var(--mauve-200);
+  --color-bg-inset: var(--mauve-50);
+  --color-bg-elevated: var(--mauve-300);
+  --color-bg-emphasis: var(--rose-500);
+  --color-bg-code-block: var(--mauve-200);
+  --color-bg-code-inline: var(--mauve-300);
+  --color-bg-table-header: var(--mauve-300);
+  --color-bg-table-stripe: rgba(255, 255, 255, 0.03);
+  --color-bg-blockquote: rgba(244, 63, 94, 0.08);
+  --color-bg-hover: rgba(255, 255, 255, 0.05);
+  --color-bg-sidebar: var(--mauve-100);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--mauve-900);
+  --color-text-secondary: var(--mauve-700);
+  --color-text-muted: var(--mauve-500);
+  --color-text-heading: var(--mauve-950);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--rose-400);
+  --color-text-link-hover: var(--rose-300);
+  --color-text-code: var(--mauve-900);
+  --color-text-code-inline: var(--rose-300);
+  --color-border-code-inline: rgba(244, 63, 94, 0.3);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--mauve-300);
+  --color-border-strong: var(--mauve-400);
+  --color-border-muted: var(--mauve-200);
+  --color-border-focus: var(--rose-400);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: rgba(5, 150, 105, 0.15);
+  --color-success-border: rgba(52, 211, 153, 0.4);
+  --color-success-text: #6ee7b7;
+  --color-success-icon: #34d399;
+  --color-warning-bg: rgba(217, 119, 6, 0.15);
+  --color-warning-border: rgba(251, 191, 36, 0.4);
+  --color-warning-text: #fcd34d;
+  --color-warning-icon: #fbbf24;
+  /* Error uses pure Red (not rose) for semantic distinction from accent. */
+  --color-error-bg: rgba(220, 38, 38, 0.15);
+  --color-error-border: rgba(248, 113, 113, 0.4);
+  --color-error-text: #fca5a5;
+  --color-error-icon: #f87171;
+  --color-info-bg: rgba(244, 63, 94, 0.15);
+  --color-info-border: rgba(244, 63, 94, 0.4);
+  --color-info-text: var(--rose-300);
+  --color-info-icon: var(--rose-400);
+
+  /* ── Shadows (deeper for dark backgrounds) ────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  --hljs-base-text: var(--mauve-800); --hljs-base-bg: var(--mauve-200);
+  --hljs-keyword: #a78bfa;            --hljs-title: var(--rose-300);
+  --hljs-title-class: var(--rose-300); --hljs-title-function: var(--rose-300);
+  --hljs-string: #2dd4bf;             --hljs-number: #22d3ee;
+  --hljs-literal: #a78bfa;            --hljs-regexp: #fb923c;
+  --hljs-type: #fb923c;               --hljs-built-in: #22d3ee;
+  --hljs-class: var(--rose-300);      --hljs-attr: #22d3ee;
+  --hljs-variable: #fbbf24;           --hljs-property: #38bdf8;
+  --hljs-params: var(--mauve-800);    --hljs-tag: #2dd4bf;
+  --hljs-name: #2dd4bf;               --hljs-comment: var(--mauve-500);
+  --hljs-punctuation: var(--mauve-500);
+  --hljs-operator: var(--mauve-500);
+  --hljs-meta: var(--mauve-500);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(244, 63, 94, 0.25);
+  --color-link-underline: rgba(244, 63, 94, 0.4);
+  --color-bg-active-item: rgba(244, 63, 94, 0.15);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.6);
+}

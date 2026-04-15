@@ -1,0 +1,162 @@
+/* ════════════════════════════════════════════════════════════════
+   Grove – Ember Theme (Orange + Neutral)
+
+   Bold warmth from Monokai and Ayu, reimagined with orange as the
+   primary accent (usually a secondary in editor themes). Against a
+   true-neutral gray backdrop, the orange reads as warm and inviting
+   without the "everything warm" saturation of Gruvbox. Energetic
+   clarity rather than retro cozy. WCAG AAA for body text.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Ember Light ─────────────────────────────────────────────── */
+
+[data-theme="ember"][data-mode="light"] {
+  color-scheme: light;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--neutral-50);
+  --color-bg-surface: #ffffff;
+  --color-bg-inset: var(--neutral-100);
+  --color-bg-elevated: #ffffff;
+  --color-bg-emphasis: var(--orange-600);
+  --color-bg-code-block: var(--neutral-100);
+  --color-bg-code-inline: var(--orange-50);
+  --color-bg-table-header: var(--neutral-50);
+  --color-bg-table-stripe: var(--neutral-50);
+  --color-bg-blockquote: transparent;
+  --color-bg-hover: rgba(0, 0, 0, 0.04);
+  --color-bg-sidebar: var(--neutral-50);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--neutral-900);
+  --color-text-secondary: var(--neutral-600);
+  --color-text-muted: var(--neutral-500);
+  --color-text-heading: var(--neutral-800);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--orange-700);
+  --color-text-link-hover: var(--orange-900);
+  --color-text-code: var(--neutral-800);
+  --color-text-code-inline: var(--orange-800);
+  --color-border-code-inline: var(--orange-200);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--neutral-200);
+  --color-border-strong: var(--neutral-300);
+  --color-border-muted: var(--neutral-100);
+  --color-border-focus: var(--orange-500);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: #ecfdf5;   --color-success-border: #6ee7b7;
+  --color-success-text: #065f46;  --color-success-icon: #059669;
+  --color-warning-bg: #fffbeb;   --color-warning-border: #fcd34d;
+  --color-warning-text: #92400e;  --color-warning-icon: #d97706;
+  --color-error-bg: #fef2f2;     --color-error-border: #fca5a5;
+  --color-error-text: #991b1b;    --color-error-icon: #dc2626;
+  --color-info-bg: var(--orange-50);     --color-info-border: var(--orange-300);
+  --color-info-text: var(--orange-800);  --color-info-icon: var(--orange-600);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  /* Deliberately non-orange for keyword/string so tokens remain
+     distinguishable from literal sunset tags and names. */
+  --hljs-base-text: var(--neutral-800); --hljs-base-bg: var(--neutral-100);
+  --hljs-keyword: #7c3aed;              --hljs-title: var(--orange-700);
+  --hljs-title-class: var(--orange-700); --hljs-title-function: var(--orange-700);
+  --hljs-string: #0d9488;               --hljs-number: #0891b2;
+  --hljs-literal: #7c3aed;              --hljs-regexp: #be123c;
+  --hljs-type: #be123c;                 --hljs-built-in: #0891b2;
+  --hljs-class: var(--orange-700);      --hljs-attr: #0891b2;
+  --hljs-variable: #be123c;             --hljs-property: #0369a1;
+  --hljs-params: var(--neutral-800);    --hljs-tag: #0d9488;
+  --hljs-name: #0d9488;                 --hljs-comment: var(--neutral-500);
+  --hljs-punctuation: var(--neutral-500);
+  --hljs-operator: var(--neutral-500);
+  --hljs-meta: var(--neutral-500);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(249, 115, 22, 0.2);
+  --color-link-underline: rgba(194, 65, 12, 0.4);
+  --color-bg-active-item: rgba(249, 115, 22, 0.1);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.4);
+}
+
+/* ── Ember Dark ──────────────────────────────────────────────── */
+
+[data-theme="ember"][data-mode="dark"] {
+  color-scheme: dark;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --color-bg-page: var(--neutral-950);
+  --color-bg-surface: var(--neutral-800);
+  --color-bg-inset: var(--neutral-950);
+  --color-bg-elevated: var(--neutral-700);
+  --color-bg-emphasis: var(--orange-500);
+  --color-bg-code-block: var(--neutral-800);
+  --color-bg-code-inline: var(--neutral-700);
+  --color-bg-table-header: var(--neutral-700);
+  --color-bg-table-stripe: rgba(255, 255, 255, 0.03);
+  --color-bg-blockquote: rgba(251, 146, 60, 0.08);
+  --color-bg-hover: rgba(255, 255, 255, 0.05);
+  --color-bg-sidebar: var(--neutral-900);
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-text-primary: var(--neutral-200);
+  --color-text-secondary: var(--neutral-400);
+  --color-text-muted: var(--neutral-500);
+  --color-text-heading: var(--neutral-100);
+  --color-text-on-emphasis: #ffffff;
+  --color-text-link: var(--orange-400);
+  --color-text-link-hover: var(--orange-300);
+  --color-text-code: var(--neutral-200);
+  --color-text-code-inline: var(--orange-300);
+  --color-border-code-inline: rgba(251, 146, 60, 0.3);
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --color-border-default: var(--neutral-700);
+  --color-border-strong: var(--neutral-600);
+  --color-border-muted: var(--neutral-800);
+  --color-border-focus: var(--orange-400);
+
+  /* ── Status ───────────────────────────────────────────── */
+  --color-success-bg: rgba(5, 150, 105, 0.15);
+  --color-success-border: rgba(52, 211, 153, 0.4);
+  --color-success-text: #6ee7b7;
+  --color-success-icon: #34d399;
+  --color-warning-bg: rgba(217, 119, 6, 0.15);
+  --color-warning-border: rgba(251, 191, 36, 0.4);
+  --color-warning-text: #fcd34d;
+  --color-warning-icon: #fbbf24;
+  --color-error-bg: rgba(220, 38, 38, 0.15);
+  --color-error-border: rgba(248, 113, 113, 0.4);
+  --color-error-text: #fca5a5;
+  --color-error-icon: #f87171;
+  --color-info-bg: rgba(251, 146, 60, 0.15);
+  --color-info-border: rgba(251, 146, 60, 0.4);
+  --color-info-text: var(--orange-300);
+  --color-info-icon: var(--orange-400);
+
+  /* ── Shadows (deeper for dark backgrounds) ────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* ── Syntax highlighting (hljs) ───────────────────────── */
+  --hljs-base-text: var(--neutral-300); --hljs-base-bg: var(--neutral-800);
+  --hljs-keyword: #a78bfa;              --hljs-title: var(--orange-300);
+  --hljs-title-class: var(--orange-300); --hljs-title-function: var(--orange-300);
+  --hljs-string: #2dd4bf;               --hljs-number: #22d3ee;
+  --hljs-literal: #a78bfa;              --hljs-regexp: #f472b6;
+  --hljs-type: #fb7185;                 --hljs-built-in: #22d3ee;
+  --hljs-class: var(--orange-300);      --hljs-attr: #22d3ee;
+  --hljs-variable: #fb7185;             --hljs-property: #38bdf8;
+  --hljs-params: var(--neutral-300);    --hljs-tag: #2dd4bf;
+  --hljs-name: #2dd4bf;                 --hljs-comment: var(--neutral-500);
+  --hljs-punctuation: var(--neutral-400);
+  --hljs-operator: var(--neutral-400);
+  --hljs-meta: var(--neutral-400);
+
+  /* ── Accent overlays ──────────────────────────────────── */
+  --color-focus-ring: rgba(251, 146, 60, 0.25);
+  --color-link-underline: rgba(251, 146, 60, 0.4);
+  --color-bg-active-item: rgba(251, 146, 60, 0.15);
+  --color-bg-backdrop: rgba(0, 0, 0, 0.6);
+}
