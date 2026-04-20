@@ -4,6 +4,18 @@ All notable changes to Grove are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); Grove aims for
 [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Mobile sidebar behavior in the document shell: sidebar now starts
+  closed on viewports below 768px, closes on backdrop tap and on
+  sidebar link tap, and the toggle button is fixed, visible, and
+  accessible (`aria-label`/`aria-expanded` reflect state).
+- Mobile content width: the file view switches from a two-column grid
+  to a single-column block layout on mobile so the content fills the
+  full viewport instead of collapsing into a narrow column. Doubled
+  padding on `.document-shell` was removed.
+
 ## [0.2.0] — 2026-04-20
 
 ### Added

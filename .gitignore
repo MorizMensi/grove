@@ -10,3 +10,4 @@ frontend/.angular/
 coverage/
 *.tgz
 .playwright-mcp/
+CLAUDE.md
