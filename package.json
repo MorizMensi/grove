@@ -37,12 +37,13 @@
     "dist/"
   ],
   "scripts": {
+    "check:sandbox": "node scripts/check-sandbox-invariant.mjs",
     "build:frontend": "cd frontend && npx ng build --configuration production",
     "build:server": "tsc -p tsconfig.json",
     "build": "npm run build:frontend && npm run build:server",
     "build:wiki": "cd frontend && npx ng build --configuration wiki",
     "build:all": "npm run build && npm run build:wiki",
-    "prepublishOnly": "npm run build:all"
+    "prepublishOnly": "npm run check:sandbox && npm run build:all"
   },
   "dependencies": {
     "express": "^5.1.0",
