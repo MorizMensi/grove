@@ -1,4 +1,14 @@
-import { Component, DestroyRef, computed, effect, inject, OnInit, signal } from "@angular/core";
+import {
+  Component,
+  DestroyRef,
+  HostListener,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { DomSanitizer, SafeResourceUrl, Title } from "@angular/platform-browser";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -19,6 +29,12 @@ import { FilePreviewComponent, ViewerMode } from "../../shared/file-preview/file
 import { titleFromSegment } from "../../core/utils/title-from-segment";
 import { CONTENT_URL_PREFIX } from "@shared/content-url";
 import { environment } from "../../../environments/environment";
+import { EditorComponent } from "../editor/editor.component";
+import { SaveService } from "../editor/save.service";
+import { DialogService } from "../../shared/confirm-dialog/dialog.service";
+import { LiveRegionService } from "../../shared/live-region/live-region.service";
+
+type ShellMode = "loading" | "directory" | "file" | "file-edit" | "not-found";
 
 @Component({
   selector: "app-document-shell",
@@ -29,6 +45,7 @@ import { environment } from "../../../environments/environment";
     GroveMarkComponent,
     ThemeSwitcherComponent,
     WikiFooterComponent,
+    EditorComponent,
   ],
   templateUrl: "./document-shell.component.html",
   styles: [":host { display: block; height: 100%; }"],
@@ -42,12 +59,16 @@ export class DocumentShellComponent implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly capabilitiesService = inject(CapabilitiesService);
   private readonly titleService = inject(Title);
+  private readonly saveService = inject(SaveService);
+  private readonly dialog = inject(DialogService);
+  private readonly live = inject(LiveRegionService);
 
   readonly capabilities = this.capabilitiesService.capabilities;
   readonly siteName = this.documentService.siteName;
   readonly isWikiMode = environment.mode === "wiki";
+  readonly save = this.saveService;
 
-  mode: "loading" | "directory" | "file" | "not-found" = "loading";
+  mode: ShellMode = "loading";
   fileType: "text" | "image" | "video" | "audio" | "pdf" | "svg" | "html" = "text";
   mediaUrl = "";
   safeMediaUrl: SafeResourceUrl = "";
@@ -58,12 +79,21 @@ export class DocumentShellComponent implements OnInit {
   markdown: string | null = null;
   readonly currentPath = signal<string>("");
   sidebarEntries: DocumentEntry[] = [];
-  sidebarOpen = true;
+  sidebarOpen = this.isDesktopViewport();
   parentPath = "";
   readonly extension = signal<string>("");
   readonly viewerMode = signal<ViewerMode>("preview");
   readonly hasDualView = computed(() => hasDualViewFor(this.extension()));
   sourceText: string | null = null;
+
+  readonly editBuffer = signal<string>("");
+  readonly isEditableFile = computed(() => {
+    if (this.mode !== "file" && this.mode !== "file-edit") { return false; }
+    const ext = this.extension();
+    return ext === "" || ext === "md";
+  });
+
+  @ViewChild(EditorComponent) editorRef?: EditorComponent;
 
   constructor() {
     effect(() => {
@@ -92,6 +122,8 @@ export class DocumentShellComponent implements OnInit {
         this.pageTitle.set("");
         this.viewerMode.set("preview");
         this.sourceText = null;
+        this.saveService.markDirty(false);
+        this.saveService.clearConflict();
         this.buildBreadcrumbs(filePath);
 
         const ext = this.extension();
@@ -265,6 +297,17 @@ export class DocumentShellComponent implements OnInit {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
+  closeSidebarOnMobile(): void {
+    if (!this.isDesktopViewport()) {
+      this.sidebarOpen = false;
+    }
+  }
+
+  private isDesktopViewport(): boolean {
+    if (typeof window === "undefined" || !window.matchMedia) { return true; }
+    return window.matchMedia("(min-width: 768px)").matches;
+  }
+
   setViewerMode(mode: ViewerMode): void {
     this.viewerMode.set(mode);
   }
@@ -279,5 +322,126 @@ export class DocumentShellComponent implements OnInit {
       return `bi-filetype-${entry.extension}`;
     }
     return "bi-file-earmark";
+  }
+
+  // ---------- Editor integration ----------
+
+  togglePencil(): void {
+    if (this.mode === "file") {
+      void this.enterEditMode();
+    } else if (this.mode === "file-edit") {
+      void this.exitEditMode();
+    }
+  }
+
+  private enterEditMode(): void {
+    const path = this.currentPath();
+    this.documentService
+      .getRawFile(path)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (raw) => {
+          if (this.currentPath() !== path) { return; }
+          this.editBuffer.set(raw.content);
+          this.saveService.reset(raw.mtime);
+          this.mode = "file-edit";
+        },
+        error: () => {
+          this.live.announce("Could not load file for editing");
+        },
+      });
+  }
+
+  async exitEditMode(): Promise<void> {
+    const resolved = await this.resolveDirtyState();
+    if (resolved) {
+      this.mode = "file";
+    }
+  }
+
+  onEditorContentChange(content: string): void {
+    this.editBuffer.set(content);
+  }
+
+  onEditorDirtyChange(isDirty: boolean): void {
+    this.saveService.markDirty(isDirty);
+  }
+
+  async onSaveRequested(event: { content: string }): Promise<void> {
+    const outcome = await this.saveService.save(this.currentPath(), event.content);
+    if (outcome === "ok") {
+      this.editorRef?.markSaved(event.content);
+      // Keep the preview in sync so exiting edit mode shows the saved bytes.
+      this.markdown = event.content;
+    }
+  }
+
+  reloadAfterConflict(): void {
+    const path = this.currentPath();
+    this.documentService
+      .getRawFile(path)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (raw) => {
+          if (this.currentPath() !== path) { return; }
+          this.editorRef?.replaceBuffer(raw.content);
+          this.editBuffer.set(raw.content);
+          this.saveService.reset(raw.mtime);
+          this.live.announce("Reloaded from disk");
+        },
+      });
+  }
+
+  dismissConflict(): void {
+    this.saveService.clearConflict();
+  }
+
+  @HostListener("window:beforeunload", ["$event"])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.saveService.dirty()) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  }
+
+  /** Route guard hook: called by `canDeactivate` in app.routes. */
+  async canDeactivate(): Promise<boolean> {
+    if (this.mode !== "file-edit" || !this.saveService.dirty()) { return true; }
+    return this.resolveDirtyState();
+  }
+
+  /** Returns true if it is safe to exit edit mode, false to stay. */
+  private async resolveDirtyState(): Promise<boolean> {
+    if (!this.saveService.dirty()) {
+      this.saveService.clearConflict();
+      return true;
+    }
+    const choice = await this.dialog.confirm({
+      title: "Unsaved changes",
+      body: "You have unsaved changes. Save, discard, or cancel?",
+      actions: [
+        { id: "save", label: "Save", primary: true },
+        { id: "discard", label: "Discard" },
+        { id: "cancel", label: "Cancel" },
+      ],
+    });
+    if (choice === "save") {
+      const outcome = await this.saveService.save(
+        this.currentPath(),
+        this.editBuffer(),
+      );
+      if (outcome === "ok") {
+        this.editorRef?.markSaved(this.editBuffer());
+        this.markdown = this.editBuffer();
+        return true;
+      }
+      return false;
+    }
+    if (choice === "discard") {
+      this.saveService.markDirty(false);
+      this.saveService.clearConflict();
+      return true;
+    }
+    return false;
   }
 }

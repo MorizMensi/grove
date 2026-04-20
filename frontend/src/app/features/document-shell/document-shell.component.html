@@ -38,6 +38,24 @@
                     <i class="bi bi-braces-asterisk"></i>
                 </button>
             }
+            @if (capabilities().supports.edits && isEditableFile()) {
+                <button
+                    class="action-btn edit-toggle"
+                    type="button"
+                    (click)="togglePencil()"
+                    [class.is-pressed]="mode === 'file-edit'"
+                    [attr.aria-pressed]="mode === 'file-edit'"
+                    [attr.aria-label]="mode === 'file-edit' ? 'Exit edit mode' : 'Enter edit mode'"
+                    [title]="mode === 'file-edit' ? 'Exit edit mode' : 'Enter edit mode'"
+                >
+                    <i
+                        class="bi"
+                        [class.bi-pencil]="mode !== 'file-edit'"
+                        [class.bi-pencil-fill]="mode === 'file-edit'"
+                    ></i>
+                    <span class="edit-toggle-label">{{ mode === "file-edit" ? "Done" : "Edit" }}</span>
+                </button>
+            }
             @if (mode === "file" && hasDualView()) {
               <div class="viewer-toggle" role="radiogroup" aria-label="Viewer mode">
                 <button
@@ -105,8 +123,15 @@
                 }
             </div>
         }
-    } @else if (mode === "file") {
+    } @else if (mode === "file" || mode === "file-edit") {
         <div class="wiki-file-layout" [class.wiki-sidebar-open]="sidebarOpen">
+            @if (sidebarOpen) {
+                <div
+                    class="wiki-sidebar-backdrop"
+                    (click)="closeSidebarOnMobile()"
+                    aria-hidden="true"
+                ></div>
+            }
             <aside class="wiki-sidebar">
                 <div class="wiki-sidebar-header">
                     <span class="wiki-sidebar-label">In this folder</span>
@@ -116,6 +141,7 @@
                         <a
                             [routerLink]="sidebarEntryLink(entry)"
                             [queryParams]="entryQueryParams(entry)"
+                            (click)="closeSidebarOnMobile()"
                             class="wiki-sidebar-item"
                             [class.wiki-sidebar-item--active]="
                                 isCurrentFile(entry)
@@ -134,26 +160,45 @@
             </aside>
 
             <div class="wiki-content wide"
-                 [class.wiki-content--bleed]="viewerMode() === 'preview' && hasDualView()"
-                 [class.wiki-content--html-bleed]="fileType === 'html' && viewerMode() === 'preview'"
-                 [class.wiki-content--md]="fileType === 'text' || viewerMode() === 'source'">
-                <app-file-preview
-                    [kind]="fileType === 'text' ? null : fileType"
-                    [mode]="viewerMode()"
-                    [sourceText]="sourceText"
-                    [markdown]="markdown"
-                    [mediaUrl]="mediaUrl"
-                    [safeMediaUrl]="safeMediaUrl"
-                    [title]="title"
-                    [extension]="extension()"
-                    [assetBase]="assetBase()"
-                />
+                 [class.wiki-content--bleed]="mode === 'file' && viewerMode() === 'preview' && hasDualView()"
+                 [class.wiki-content--html-bleed]="mode === 'file' && fileType === 'html' && viewerMode() === 'preview'"
+                 [class.wiki-content--md]="mode === 'file-edit' || fileType === 'text' || viewerMode() === 'source'">
+                @if (mode === "file-edit") {
+                    @if (save.staleConflict(); as conflict) {
+                        <div class="conflict-banner" role="alert">
+                            <span>This file changed on disk while you were editing.</span>
+                            <button type="button" class="action-btn" (click)="reloadAfterConflict()">Reload</button>
+                            <button type="button" class="action-btn" (click)="dismissConflict()">Dismiss</button>
+                        </div>
+                    }
+                    <grove-editor
+                        [content]="editBuffer()"
+                        [path]="currentPath()"
+                        (contentChange)="onEditorContentChange($event)"
+                        (dirtyChange)="onEditorDirtyChange($event)"
+                        (saveRequested)="onSaveRequested($event)"
+                        (exitRequested)="exitEditMode()"
+                    />
+                } @else {
+                    <app-file-preview
+                        [kind]="fileType === 'text' ? null : fileType"
+                        [mode]="viewerMode()"
+                        [sourceText]="sourceText"
+                        [markdown]="markdown"
+                        [mediaUrl]="mediaUrl"
+                        [safeMediaUrl]="safeMediaUrl"
+                        [title]="title"
+                        [extension]="extension()"
+                        [assetBase]="assetBase()"
+                    />
+                }
             </div>
 
             <button
                 class="wiki-sidebar-toggle"
                 (click)="toggleSidebar()"
-                aria-label="Open sidebar"
+                [attr.aria-label]="sidebarOpen ? 'Close sidebar' : 'Open sidebar'"
+                [attr.aria-expanded]="sidebarOpen"
             >
                 <i class="bi bi-layout-sidebar"></i>
             </button>

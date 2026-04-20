@@ -3,10 +3,6 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-
-  @media (max-width: 767px) {
-    padding: var(--space-4);
-  }
 }
 
 .breadcrumbs {
@@ -21,8 +17,7 @@
   border-bottom: 1px solid var(--color-border-default);
 
   @media (max-width: 767px) {
-    margin: 0 calc(-1 * var(--space-4)) var(--space-4);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--space-8) + var(--space-6));
   }
 
   a {
@@ -107,6 +102,31 @@
     outline: 2px solid var(--color-border-focus);
     outline-offset: 2px;
   }
+}
+
+.edit-toggle {
+  gap: var(--space-1);
+
+  &.is-pressed {
+    color: var(--color-text-link, var(--color-text-secondary));
+  }
+}
+
+.edit-toggle-label {
+  font-size: var(--font-size-sm);
+}
+
+.conflict-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-3);
+  border: 1px solid var(--color-border-warning, #c89500);
+  border-radius: var(--radius-md, 6px);
+  background: var(--color-bg-warning, rgba(255, 196, 0, 0.08));
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
 }
 
 .entry-list {
@@ -321,30 +341,35 @@
 
 @media (max-width: 767px) {
   .wiki-file-layout {
-    grid-template-columns: 0 minmax(0, 1fr) !important;
+    display: block;
+    grid-template-columns: none !important;
+    column-gap: 0 !important;
   }
 
   .wiki-sidebar-toggle {
-    left: 0 !important;
+    position: fixed;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: 102;
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
   }
 
   .wiki-sidebar {
     position: fixed;
     top: 0;
     left: 0;
-    width: 280px;
+    width: min(280px, 80vw);
     height: 100dvh;
     z-index: 101;
     transform: translateX(-100%);
     transition: transform var(--duration-slow) var(--easing-default);
+    border-right: 1px solid var(--color-border-default);
 
     .wiki-sidebar-open & {
       transform: translateX(0);
-    }
-
-    .wiki-file-layout:not(.wiki-sidebar-open) & {
-      width: 280px;
-      border-right: 1px solid var(--color-border-default);
     }
   }
 
@@ -354,10 +379,11 @@
     inset: 0;
     z-index: 100;
     background: var(--color-bg-backdrop);
+    cursor: pointer;
   }
 
   .wiki-content {
-    padding: var(--space-4) var(--space-4);
+    padding: var(--space-4) var(--space-3);
   }
 }
 
