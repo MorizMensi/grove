@@ -38,6 +38,11 @@ export function createApp(docsDir: string): express.Application {
   app.use(`/${CONTENT_URL_PREFIX}`, express.static(docsDir, {
     redirect: false,
     dotfiles: 'deny',
+    // fallthrough: false forwards errors (including the 403 from
+    // dotfiles:'deny') to the Express error handler instead of calling
+    // next() — otherwise the Angular catch-all below would serve
+    // index.html for /_content/.env, turning the 403 into a 200.
+    fallthrough: false,
     setHeaders: (res, filePath) => {
       if (/\.(html?|svg)$/i.test(filePath)) {
         res.setHeader(
