@@ -24,8 +24,30 @@ export function createApp(docsDir: string): express.Application {
   const frontendDir = join(__dirname, '../frontend/browser');
   app.use(express.static(frontendDir));
 
-  // Serve documents directory for raw file content fetching (internal namespace)
-  app.use(`/${CONTENT_URL_PREFIX}`, express.static(docsDir, { redirect: false }));
+  // Serve documents directory for raw file content fetching (internal namespace).
+  //
+  // SECURITY:
+  // - dotfiles: 'deny' — 403 on .env, .git/config, etc. under the docs root.
+  // - setHeaders: add a strict CSP and X-Content-Type-Options on HTML/SVG
+  //   responses. The iframe preview path carries its own
+  //   sandbox="allow-same-origin" attribute; this header hardens direct URL
+  //   access so a raw visit to /_content/foo.html cannot execute scripts.
+  //   Other file types (images, video, audio, markdown, etc.) get no extra
+  //   headers — they already render safely in the browser with the native
+  //   Content-Type.
+  app.use(`/${CONTENT_URL_PREFIX}`, express.static(docsDir, {
+    redirect: false,
+    dotfiles: 'deny',
+    setHeaders: (res, filePath) => {
+      if (/\.(html?|svg)$/i.test(filePath)) {
+        res.setHeader(
+          'Content-Security-Policy',
+          "sandbox; script-src 'none'; object-src 'none'; base-uri 'none'",
+        );
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+      }
+    },
+  }));
 
   // Angular catch-all for client-side routing
   app.get('/{*splat}', (_req, res) => {
