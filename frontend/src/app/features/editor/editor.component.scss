@@ -78,3 +78,43 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
+/* ── Phase 4 block widgets ──────────────────────────────────── */
+
+/* The widget host replaces block-level source (fenced code, tables, block
+   images, Mermaid) with a rendered DocLang subtree. Display:block keeps it
+   in the line flow; margin matches the view-mode spacing for structural
+   parity. */
+
+::ng-deep .cm-dl-widget {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+/* Shown synchronously while `toDocLang` resolves so the widget has a stable
+   height before the Angular component swaps in. The shimmer pulses the
+   surface subtly to signal loading; disabled under prefers-reduced-motion. */
+
+::ng-deep .cm-dl-placeholder {
+  min-height: 2rem;
+  border-radius: var(--radius-md, 4px);
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-code-inline, rgba(0, 0, 0, 0.04)) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    var(--color-bg-code-inline, rgba(0, 0, 0, 0.04)) 100%
+  );
+  background-size: 200% 100%;
+  animation: dl-placeholder-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes dl-placeholder-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::ng-deep .cm-dl-placeholder {
+    animation: none;
+  }
+}

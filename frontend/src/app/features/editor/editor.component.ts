@@ -5,6 +5,7 @@ import {
   ElementRef,
   OnDestroy,
   ViewChild,
+  inject,
   input,
   output,
 } from '@angular/core';
@@ -12,14 +13,17 @@ import { EditorState } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { searchKeymap } from '@codemirror/search';
-import { markdown } from '@codemirror/lang-markdown';
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { Table } from '@lezer/markdown';
 import { hybridMarkdown } from './extensions/hybrid-markdown';
+import { blockWidgets } from './extensions/block-widgets';
+import { BlockRenderService } from './services/block-render.service';
 
 /**
  * Grove's CodeMirror 6 host. Phase 3 adds Typora-style inline reveal decorations
- * for emphasis, strong, inline code, links, and ATX headings via the
- * `hybridMarkdown` StateField. Block widgets (fenced code, tables, Mermaid,
- * images) land in Phase 4.
+ * via the `hybridMarkdown` StateField. Phase 4 adds block widgets (fenced code,
+ * tables, Mermaid, images) via the `blockWidgets` ViewPlugin; math blocks
+ * (`$$…$$`) stay as raw source per §2.2 of editor-design.md.
  */
 @Component({
   selector: 'grove-editor',
@@ -27,8 +31,10 @@ import { hybridMarkdown } from './extensions/hybrid-markdown';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<div class="cm-host" #host></div>',
   styleUrl: './editor.component.scss',
+  providers: [BlockRenderService],
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
+  private readonly blockRender = inject(BlockRenderService);
   readonly content = input.required<string>();
   readonly path = input.required<string>();
 
@@ -98,8 +104,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         ...historyKeymap,
         ...searchKeymap,
       ]),
-      markdown(),
+      markdown({ base: markdownLanguage, extensions: [Table] }),
       hybridMarkdown(),
+      blockWidgets(this.blockRender),
       EditorView.lineWrapping,
       EditorView.updateListener.of((u) => {
         if (!u.docChanged) { return; }

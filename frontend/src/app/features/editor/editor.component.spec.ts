@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 import { EditorComponent } from './editor.component';
 
 describe('EditorComponent', () => {
@@ -16,7 +17,12 @@ describe('EditorComponent', () => {
     saveRequests.length = 0;
     exits.length = 0;
 
-    TestBed.configureTestingModule({ imports: [EditorComponent] });
+    TestBed.configureTestingModule({
+      imports: [EditorComponent],
+      // The editor's BlockRenderService mounts DlNodeComponent for block widgets,
+      // which injects ActivatedRoute. Tests without a router outlet need a stub.
+      providers: [{ provide: ActivatedRoute, useValue: { snapshot: { url: [] } } }],
+    });
     fixture = TestBed.createComponent(EditorComponent);
     fixture.componentRef.setInput('content', '# hello');
     fixture.componentRef.setInput('path', 'notes/hello.md');
@@ -93,5 +99,25 @@ describe('EditorComponent', () => {
     const content = fixture.nativeElement.querySelector('.cm-content') as HTMLElement;
     expect(content.textContent?.includes('fresh content')).toBeTrue();
     expect(dirtyChanges.at(-1)).toBeFalse();
+  });
+
+  it('mounts a .cm-dl-widget for a fenced code block (Phase 4 wiring)', async () => {
+    // Build a fresh fixture with content that contains a block-level construct,
+    // so the block-widgets ViewPlugin emits a decoration synchronously.
+    fixture.destroy();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [EditorComponent],
+      providers: [{ provide: ActivatedRoute, useValue: { snapshot: { url: [] } } }],
+    });
+    const f = TestBed.createComponent(EditorComponent);
+    f.componentRef.setInput('content', 'intro\n\n```\nhello\n```\n\nafter\n');
+    f.componentRef.setInput('path', 'notes/x.md');
+    f.detectChanges();
+
+    const host = f.nativeElement.querySelector('.cm-host') as HTMLElement;
+    const widget = host.querySelector('.cm-dl-widget');
+    expect(widget).toBeTruthy();
+    f.destroy();
   });
 });

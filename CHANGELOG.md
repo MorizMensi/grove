@@ -6,6 +6,16 @@ All notable changes to Grove are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Added
+- Editor Phase 4: block widgets render fenced code, GFM tables, block
+  images, and Mermaid diagrams inline in edit mode. The raw markdown
+  source reveals automatically when the caret enters the block's line
+  range. Math blocks (`$$…$$`) intentionally stay as raw source per
+  editor-design §2.2; revisited for v1.1. Mermaid renders complete
+  even if the widget is destroyed mid-render (`MermaidService` has no
+  AbortSignal support yet, so a tiny offscreen container can leak on
+  rapid destroy — minor, scheduled for the Phase 7 polish pass).
+
 ### Fixed
 - Mobile sidebar behavior in the document shell: sidebar now starts
   closed on viewports below 768px, closes on backdrop tap and on
