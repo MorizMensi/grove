@@ -13,11 +13,13 @@ import { EditorView, keymap } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { searchKeymap } from '@codemirror/search';
 import { markdown } from '@codemirror/lang-markdown';
+import { hybridMarkdown } from './extensions/hybrid-markdown';
 
 /**
- * Grove's CodeMirror 6 host. Phase 2 scope: plain editor with history, default keymaps,
- * markdown language support, line wrapping, and Mod-s / Escape hotkeys. Typora-style
- * decorations land in Phase 3.
+ * Grove's CodeMirror 6 host. Phase 3 adds Typora-style inline reveal decorations
+ * for emphasis, strong, inline code, links, and ATX headings via the
+ * `hybridMarkdown` StateField. Block widgets (fenced code, tables, Mermaid,
+ * images) land in Phase 4.
  */
 @Component({
   selector: 'grove-editor',
@@ -97,6 +99,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         ...searchKeymap,
       ]),
       markdown(),
+      hybridMarkdown(),
       EditorView.lineWrapping,
       EditorView.updateListener.of((u) => {
         if (!u.docChanged) { return; }
