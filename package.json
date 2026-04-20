@@ -1,6 +1,6 @@
 {
   "name": "grovemd",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Grove — a local markdown wiki for any folder. Browse, read, and (soon) edit. Renders GFM, math, mermaid, syntax highlighting, and media previews.",
   "type": "module",
   "license": "MIT",
