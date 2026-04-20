@@ -341,9 +341,15 @@
 
 @media (max-width: 767px) {
   .wiki-file-layout {
-    display: block;
+    display: flex;
+    flex-direction: column;
     grid-template-columns: none !important;
     column-gap: 0 !important;
+  }
+
+  .wiki-content {
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   .wiki-sidebar-toggle {

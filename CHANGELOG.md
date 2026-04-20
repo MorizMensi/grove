@@ -12,9 +12,15 @@ All notable changes to Grove are documented here. Format loosely follows
   sidebar link tap, and the toggle button is fixed, visible, and
   accessible (`aria-label`/`aria-expanded` reflect state).
 - Mobile content width: the file view switches from a two-column grid
-  to a single-column block layout on mobile so the content fills the
+  to a single-column flex column on mobile so the content fills the
   full viewport instead of collapsing into a narrow column. Doubled
   padding on `.document-shell` was removed.
+- Mobile scrolling on file pages: the content area now scrolls on
+  viewports below 768px. The prior mobile layout used `display: block`,
+  which left `.wiki-content` without a height context so `overflow-y: auto`
+  never activated and long documents were silently clipped by the shell.
+  The mobile layout is now a flex column with `.wiki-content` taking the
+  remaining height.
 
 ## [0.2.0] — 2026-04-20
 
