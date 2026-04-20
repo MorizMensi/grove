@@ -7,35 +7,31 @@ export interface Capabilities {
   platform: string;
   supports: {
     terminal: boolean;
-    zed: boolean;
     claude: boolean;
   };
 }
 
 /**
  * Default before the HTTP call completes. Hides everything that is
- * platform-gated so the UI does not flash a disabled button. `zed` is
- * optimistic because it is the only cross-platform action.
+ * platform-gated so the UI does not flash a disabled button.
  */
 const OPTIMISTIC_DEFAULT: Capabilities = {
   platform: 'unknown',
   supports: {
     terminal: false,
-    zed: true,
     claude: false,
   },
 };
 
 /**
  * Static wiki deployments never gain external-tool capabilities — there
- * is no server to run `open`/`zed`/`terminal` against. Seeded up front so
- * the UI never flashes the Zed button before the (nonexistent) HTTP call.
+ * is no server to run `open`/`terminal` against. Seeded up front so the
+ * UI never flashes tool buttons before the (nonexistent) HTTP call.
  */
 const WIKI_CAPABILITIES: Capabilities = {
   platform: 'web',
   supports: {
     terminal: false,
-    zed: false,
     claude: false,
   },
 };

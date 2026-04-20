@@ -43,6 +43,9 @@
     "build": "npm run build:frontend && npm run build:server",
     "build:wiki": "cd frontend && npx ng build --configuration wiki",
     "build:all": "npm run build && npm run build:wiki",
+    "test:server": "node --test --import tsx 'server/**/*.test.ts'",
+    "test:frontend": "npm --prefix frontend test",
+    "test": "npm run test:server && npm run test:frontend",
     "prepublishOnly": "npm run check:sandbox && npm run build:all"
   },
   "dependencies": {
@@ -52,6 +55,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.0.0",
+    "tsx": "^4.21.0",
     "typescript": "~5.7.2"
   }
 }

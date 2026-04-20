@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { readdir, stat } from 'node:fs/promises';
-import { resolve, extname, basename, sep } from 'node:path';
+import { extname, basename } from 'node:path';
 import type { DocumentEntry, DocumentListing } from '../shared/types/documents.js';
+import { ensureInside, PathError } from './path-sandbox.js';
 
 export function documentsRouter(docsDir: string): Router {
   const router = Router();
@@ -10,20 +11,15 @@ export function documentsRouter(docsDir: string): Router {
   router.get('/', async (req, res) => {
     const relPath = (req.query['path'] as string) || '';
 
-    // Reject path traversal
-    if (relPath.includes('..') || relPath.startsWith('/')) {
-      res.status(400).json({ error: 'Invalid path' });
-      return;
-    }
-
-    const absPath = relPath ? resolve(docsDir, relPath) : docsDir;
-
-    // Ensure resolved path is within docsDir. The `sep` guard prevents a
-    // sibling-directory bypass where docsDir="/foo" would wrongly accept
-    // "/foobar": the separator check requires an actual path boundary.
-    if (absPath !== docsDir && !absPath.startsWith(docsDir + sep)) {
-      res.status(400).json({ error: 'Invalid path' });
-      return;
+    let absPath: string;
+    try {
+      absPath = await ensureInside(docsDir, relPath);
+    } catch (err) {
+      if (err instanceof PathError) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+      throw err;
     }
 
     try {

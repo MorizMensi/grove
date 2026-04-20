@@ -1,12 +1,11 @@
 import { Router } from 'express';
 import { execFile } from 'node:child_process';
 import { stat } from 'node:fs/promises';
-import { resolve, sep } from 'node:path';
 import {
   OpenRequestSchema,
   type OpenAction,
 } from '../shared/types/open.js';
-import { resolveZed } from './zed-resolver.js';
+import { ensureInside, PathError } from './path-sandbox.js';
 
 type ExecFileArgs = readonly [file: string, args: readonly string[]];
 
@@ -30,9 +29,6 @@ async function buildExec(
         return ['open', ['-a', 'Terminal', absDir]];
       }
       return null;
-
-    case 'zed':
-      return resolveZed(absDir);
 
     case 'claude':
       if (platform === 'darwin') {
@@ -66,23 +62,23 @@ export function openRouter(docsDir: string): Router {
     }
     const { action, path: relPath } = parsed.data;
 
-    // 2. Resolve and containment-check. Zod's .refine cannot fully
-    //    cover symlink / resolved-path edge cases, so still verify
-    //    the resolved absolute path is inside the docs root.
-    const absDir = relPath ? resolve(docsDir, relPath) : docsDir;
-    // `sep` guard: startsWith alone would wrongly accept a sibling
-    // directory that shares a prefix with docsDir (e.g. docsDir="/foo"
-    // vs absDir="/foobar"). Require a path-boundary separator.
-    if (absDir !== docsDir && !absDir.startsWith(docsDir + sep)) {
-      res.status(400).json({ error: 'Invalid path' });
-      return;
+    // 2. Resolve + realpath containment. Symlinks escaping docsDir are
+    //    rejected here before any child process is spawned.
+    let absDir: string;
+    try {
+      absDir = await ensureInside(docsDir, relPath);
+    } catch (err) {
+      if (err instanceof PathError) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+      throw err;
     }
 
-    // 3. Stat — every action except `zed` expects a directory. `zed`
-    //    can open files and folders both, so skip the kind check.
+    // 3. Both supported actions operate on a directory.
     try {
       const s = await stat(absDir);
-      if (!s.isDirectory() && action !== 'zed') {
+      if (!s.isDirectory()) {
         res.status(400).json({ error: 'Path is not a directory' });
         return;
       }
@@ -103,16 +99,7 @@ export function openRouter(docsDir: string): Router {
     const [file, args] = exec;
     execFile(file, [...args], (err) => {
       if (err) {
-        const isMissing =
-          (err as NodeJS.ErrnoException).code === 'ENOENT' ||
-          /ENOENT/.test(err.message);
-        const hint =
-          action === 'zed' && isMissing
-            ? ' — Zed not found. Install Zed or set the ZED_BIN env var.'
-            : '';
-        res
-          .status(500)
-          .json({ error: `Failed to open: ${err.message}${hint}` });
+        res.status(500).json({ error: `Failed to open: ${err.message}` });
         return;
       }
       res.json({ ok: true });

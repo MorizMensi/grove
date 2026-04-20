@@ -257,30 +257,8 @@ export class DocumentShellComponent implements OnInit {
     return this.mode === "directory" ? this.currentPath() : this.parentPath;
   }
 
-  openExternal(action: "terminal" | "zed" | "claude" | "file"): void {
-    if (action === "file") {
-      this.documentService
-        .openExternal(
-          "zed",
-          this.currentPath() + "." + (this.extension() || "md"),
-        )
-        .subscribe();
-    } else {
-      this.documentService
-        .openExternal(action, this.actionPath)
-        .subscribe(() => {
-          if (action === "zed" && this.mode === "file") {
-            this.documentService
-              .openExternal(
-                "zed",
-                this.currentPath() +
-                  "." +
-                  (this.extension() || "md"),
-              )
-              .subscribe();
-          }
-        });
-    }
+  openExternal(action: "terminal" | "claude"): void {
+    this.documentService.openExternal(action, this.actionPath).subscribe();
   }
 
   toggleSidebar(): void {

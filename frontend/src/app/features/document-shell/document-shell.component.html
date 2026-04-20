@@ -29,15 +29,6 @@
                     <i class="bi bi-terminal"></i>
                 </button>
             }
-            @if (capabilities().supports.zed) {
-                <button
-                    class="action-btn"
-                    (click)="openExternal('zed')"
-                    aria-label="Open in Zed"
-                >
-                    <i class="bi bi-code-slash"></i>
-                </button>
-            }
             @if (capabilities().supports.claude) {
                 <button
                     class="action-btn"
@@ -45,15 +36,6 @@
                     aria-label="Open Claude Code"
                 >
                     <i class="bi bi-braces-asterisk"></i>
-                </button>
-            }
-            @if (mode === "file" && capabilities().supports.zed) {
-                <button
-                    class="action-btn"
-                    (click)="openExternal('file')"
-                    aria-label="Edit file"
-                >
-                    <i class="bi bi-pencil"></i>
                 </button>
             }
             @if (mode === "file" && hasDualView()) {

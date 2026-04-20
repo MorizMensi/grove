@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { canResolveZed } from './zed-resolver.js';
 
 /**
  * Reports which `/api/open` actions are supported on the current
@@ -10,7 +9,6 @@ export interface Capabilities {
   platform: NodeJS.Platform;
   supports: {
     terminal: boolean;
-    zed: boolean;
     claude: boolean;
   };
 }
@@ -24,7 +22,6 @@ export function capabilitiesRouter(): Router {
       platform,
       supports: {
         terminal: platform === 'darwin',
-        zed: await canResolveZed(),
         claude: platform === 'darwin',
       },
     };

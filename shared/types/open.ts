@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const OpenActionSchema = z.enum(['terminal', 'zed', 'claude']);
+export const OpenActionSchema = z.enum(['terminal', 'claude']);
 export type OpenAction = z.infer<typeof OpenActionSchema>;
 
 export const OpenRequestSchema = z.object({

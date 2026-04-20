@@ -9,5 +9,5 @@
     "sourceMap": true
   },
   "include": ["server/**/*.ts", "shared/**/*.ts"],
-  "exclude": ["node_modules", "dist", "frontend"]
+  "exclude": ["node_modules", "dist", "frontend", "server/**/*.test.ts"]
 }
