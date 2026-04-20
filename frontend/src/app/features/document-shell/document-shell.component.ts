@@ -146,6 +146,10 @@ export class DocumentShellComponent implements OnInit {
       this.mediaUrl = `${CONTENT_URL_PREFIX}/${filePath}.${extension}`;
     } else if (kind === "html") {
       this.fileType = "html";
+      this.mediaUrl = `${CONTENT_URL_PREFIX}/${filePath}.${extension}`;
+      this.safeMediaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+        this.mediaUrl,
+      );
     }
 
     this.documentService

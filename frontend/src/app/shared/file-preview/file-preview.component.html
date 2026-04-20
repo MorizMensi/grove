@@ -1,12 +1,23 @@
 @switch (kind()) {
   @case ("html") {
     @if (mode() === "preview") {
-      @if (sourceText() !== null) {
-        <app-html-preview
-          [html]="sourceText()!"
-          [assetBase]="assetBase()"
-        />
-      }
+      <!--
+        SECURITY: sandbox MUST remain "allow-same-origin" without "allow-scripts".
+        The combination allow-same-origin + allow-scripts disables the sandbox
+        entirely (iframe can reach window.parent). Same-origin is required so
+        the parent can inject the theme <style> into contentDocument. Scripts
+        stay blocked, which is what actually prevents XSS here.
+      -->
+      <iframe
+        #htmlFrame
+        [src]="safeMediaUrl()"
+        [title]="'HTML preview: ' + title()"
+        class="html-iframe"
+        sandbox="allow-same-origin"
+        referrerpolicy="no-referrer"
+        loading="lazy"
+        (load)="onHtmlFrameLoad($event)"
+      ></iframe>
     } @else {
       <md-node [markdown]="fencedSource()" />
     }

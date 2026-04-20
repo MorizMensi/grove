@@ -151,7 +151,10 @@
                 </div>
             </aside>
 
-            <div class="wiki-content wide" [class.wiki-content--bleed]="viewerMode() === 'preview' && hasDualView()">
+            <div class="wiki-content wide"
+                 [class.wiki-content--bleed]="viewerMode() === 'preview' && hasDualView()"
+                 [class.wiki-content--html-bleed]="fileType === 'html' && viewerMode() === 'preview'"
+                 [class.wiki-content--md]="fileType === 'text' || viewerMode() === 'source'">
                 <app-file-preview
                     [kind]="fileType === 'text' ? null : fileType"
                     [mode]="viewerMode()"
