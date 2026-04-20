@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { execFile } from 'node:child_process';
 import { stat } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { resolve, sep } from 'node:path';
 import {
   OpenRequestSchema,
   type OpenAction,
@@ -70,7 +70,10 @@ export function openRouter(docsDir: string): Router {
     //    cover symlink / resolved-path edge cases, so still verify
     //    the resolved absolute path is inside the docs root.
     const absDir = relPath ? resolve(docsDir, relPath) : docsDir;
-    if (!absDir.startsWith(docsDir)) {
+    // `sep` guard: startsWith alone would wrongly accept a sibling
+    // directory that shares a prefix with docsDir (e.g. docsDir="/foo"
+    // vs absDir="/foobar"). Require a path-boundary separator.
+    if (absDir !== docsDir && !absDir.startsWith(docsDir + sep)) {
       res.status(400).json({ error: 'Invalid path' });
       return;
     }

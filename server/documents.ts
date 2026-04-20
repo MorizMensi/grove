@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { readdir, stat } from 'node:fs/promises';
-import { resolve, extname, basename } from 'node:path';
+import { resolve, extname, basename, sep } from 'node:path';
 import type { DocumentEntry, DocumentListing } from '../shared/types/documents.js';
 
 export function documentsRouter(docsDir: string): Router {
@@ -18,8 +18,10 @@ export function documentsRouter(docsDir: string): Router {
 
     const absPath = relPath ? resolve(docsDir, relPath) : docsDir;
 
-    // Ensure resolved path is within docsDir
-    if (!absPath.startsWith(docsDir)) {
+    // Ensure resolved path is within docsDir. The `sep` guard prevents a
+    // sibling-directory bypass where docsDir="/foo" would wrongly accept
+    // "/foobar": the separator check requires an actual path boundary.
+    if (absPath !== docsDir && !absPath.startsWith(docsDir + sep)) {
       res.status(400).json({ error: 'Invalid path' });
       return;
     }
