@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.cm-host {
+  height: 100%;
+  min-height: 24rem;
+}
+
+::ng-deep .cm-editor {
+  height: 100%;
+  font: 14px/1.6 var(--font-mono, ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace);
+}
+
+::ng-deep .cm-editor.cm-focused {
+  outline: none;
+}
+
+::ng-deep .cm-scroller {
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+}
+
+::ng-deep .cm-content {
+  caret-color: var(--accent, #2563eb);
+}
