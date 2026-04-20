@@ -8,31 +8,41 @@ export interface Capabilities {
   supports: {
     terminal: boolean;
     claude: boolean;
+    /** Reflects `--allow-edits` on the server. */
+    edits: boolean;
+    /** Reflects `--git-commit` on the server. */
+    gitCommit: boolean;
   };
 }
 
 /**
  * Default before the HTTP call completes. Hides everything that is
- * platform-gated so the UI does not flash a disabled button.
+ * platform-gated so the UI does not flash a disabled button, and keeps
+ * edit affordances hidden until the server confirms the flag is on.
  */
 const OPTIMISTIC_DEFAULT: Capabilities = {
   platform: 'unknown',
   supports: {
     terminal: false,
     claude: false,
+    edits: false,
+    gitCommit: false,
   },
 };
 
 /**
- * Static wiki deployments never gain external-tool capabilities — there
- * is no server to run `open`/`terminal` against. Seeded up front so the
- * UI never flashes tool buttons before the (nonexistent) HTTP call.
+ * Static wiki deployments never gain external-tool or edit
+ * capabilities — there is no server to run `open`/`terminal` or
+ * accept writes against. Seeded up front so the UI never flashes
+ * tool buttons before the (nonexistent) HTTP call.
  */
 const WIKI_CAPABILITIES: Capabilities = {
   platform: 'web',
   supports: {
     terminal: false,
     claude: false,
+    edits: false,
+    gitCommit: false,
   },
 };
 

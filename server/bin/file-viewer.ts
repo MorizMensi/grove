@@ -65,6 +65,7 @@ Example:
 let folderPath: string | null = null;
 let port = 3000;
 let noOpen = false;
+let allowEdits = false;
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
@@ -77,12 +78,15 @@ for (let i = 0; i < args.length; i++) {
     i++;
   } else if (arg === '--no-open') {
     noOpen = true;
+  } else if (arg === '--allow-edits') {
+    allowEdits = true;
   } else if (arg === '--help' || arg === '-h') {
     console.log(`Usage: grove [folder] [options]
 
 Options:
   --port <number>  Port to serve on (default: 3000)
   --no-open        Don't auto-open browser
+  --allow-edits    Enable in-browser editing of .md files
   -h, --help       Show this help`);
     process.exit(0);
   } else if (!arg.startsWith('-')) {
@@ -107,11 +111,14 @@ try {
   process.exit(1);
 }
 
-const app = createApp(resolvedPath);
+const app = createApp(resolvedPath, { allowEdits });
 
 const server = app.listen(port, () => {
   const url = `http://localhost:${port}`;
   console.log(`Grove serving "${resolvedPath}"`);
+  if (allowEdits) {
+    console.log('Editing enabled (--allow-edits).');
+  }
   console.log(`Open ${url}`);
 
   if (!noOpen) {

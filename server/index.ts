@@ -8,16 +8,34 @@ import { CONTENT_URL_PREFIX } from '../shared/content-url.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-export function createApp(docsDir: string): express.Application {
+export interface CreateAppOptions {
+  /** Enables `PUT/POST/DELETE /api/documents` gated by `requireEdits`. */
+  allowEdits?: boolean;
+  /** Enables one commit per successful write. Wired in Phase 6. */
+  gitCommit?: boolean;
+}
+
+export function createApp(
+  docsDir: string,
+  options: CreateAppOptions = {},
+): express.Application {
   const app = express();
 
-  // Parse JSON bodies
-  app.use(express.json());
+  // Per-route body parsers — see documents.ts (10mb on PUT) and
+  // open.ts (default 100kb on POST). No app-level `express.json()` so
+  // each route declares its own limit, and size-cap policy is visible
+  // at the route definition rather than buried in app setup.
 
   // API routes
-  app.use('/api/documents', documentsRouter(docsDir));
+  app.use('/api/documents', documentsRouter(docsDir, { allowEdits: options.allowEdits }));
   app.use('/api/open', openRouter(docsDir));
-  app.use('/api/capabilities', capabilitiesRouter());
+  app.use(
+    '/api/capabilities',
+    capabilitiesRouter({
+      allowEdits: options.allowEdits,
+      gitCommit: options.gitCommit,
+    }),
+  );
 
   // Serve Angular frontend
   // __dirname = dist/server/, frontend build = dist/frontend/browser/

@@ -26,12 +26,15 @@ describe('CapabilitiesService', () => {
     httpMock.verify();
   });
 
-  it('has a default capabilities shape with only terminal and claude', () => {
+  it('has a default capabilities shape with terminal, claude, edits, gitCommit', () => {
     const caps = service.capabilities();
     const keys = Object.keys(caps.supports).sort();
-    expect(keys).toEqual(['claude', 'terminal']);
+    expect(keys).toEqual(['claude', 'edits', 'gitCommit', 'terminal']);
     // Post-Zed-removal regression: the `zed` key must not exist.
     expect('zed' in caps.supports).toBeFalse();
+    // Defaults hide edit affordances until the server confirms the flag.
+    expect(caps.supports.edits).toBeFalse();
+    expect(caps.supports.gitCommit).toBeFalse();
     // The service fires a GET on construction; consume it so verify() passes.
     httpMock.expectOne('/api/capabilities').flush(caps);
   });
@@ -39,7 +42,7 @@ describe('CapabilitiesService', () => {
   it('updates the signal with the server response', () => {
     const response: Capabilities = {
       platform: 'darwin',
-      supports: { terminal: true, claude: true },
+      supports: { terminal: true, claude: true, edits: true, gitCommit: false },
     };
     const req = httpMock.expectOne('/api/capabilities');
     expect(req.request.method).toBe('GET');
@@ -49,5 +52,7 @@ describe('CapabilitiesService', () => {
     expect(caps.platform).toBe('darwin');
     expect(caps.supports.terminal).toBeTrue();
     expect(caps.supports.claude).toBeTrue();
+    expect(caps.supports.edits).toBeTrue();
+    expect(caps.supports.gitCommit).toBeFalse();
   });
 });

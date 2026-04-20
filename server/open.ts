@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import { execFile } from 'node:child_process';
 import { stat } from 'node:fs/promises';
 import {
@@ -53,7 +53,9 @@ async function buildExec(
 export function openRouter(docsDir: string): Router {
   const router = Router();
 
-  router.post('/', async (req, res) => {
+  // `/api/open` accepts a small JSON body. The app-level parser is
+  // gone (see `createApp`) so we attach one per route.
+  router.post('/', express.json(), async (req, res) => {
     // 1. Validate request with zod (action enum + path string rules).
     const parsed = OpenRequestSchema.safeParse(req.body);
     if (!parsed.success) {
