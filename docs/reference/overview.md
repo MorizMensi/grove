@@ -5,17 +5,23 @@ truth in `server/`, `shared/`, `frontend/`, and `package.json`.
 
 ## Pages
 
-- **[CLI](./cli.md)** — `grove` + `grove build-wiki` full flag list
-- **[HTTP API](./http-api.md)** — `/api/documents`, `/api/open`,
-  `/api/capabilities`, `_content/*`
+- **[CLI](./cli.md)** — `grove` + `grove build-wiki` full flag list,
+  including `--allow-edits`, `--git-commit`, and
+  `--disable-security`.
+- **[HTTP API](./http-api.md)** — `/api/documents` (GET listing,
+  GET raw, PUT, POST, DELETE), `/api/open`, `/api/capabilities`,
+  `_content/*`. Includes the middleware chain for write routes
+  and the full error-code vocabulary.
 - **[Environment variables](./environment.md)** — every env var
-  Grove reads
+  Grove (and its helper scripts) read. Short list on purpose.
 - **[npm scripts](./scripts.md)** — every script in the root
-  `package.json`
+  `package.json`.
 - **[File types](./file-types.md)** — preview matrix, icon set,
-  syntax-highlight grammars
+  syntax-highlight grammars.
 - **[Shared types](./types.md)** — the TypeScript contracts
-  shared between server and frontend
+  shared between server and frontend, including the request /
+  response shapes for the write routes and the `Capabilities`
+  type.
 
 ## Where things live
 
@@ -41,5 +47,6 @@ flowchart LR
 ## See also
 
 - [Architecture overview](../architecture/overview.md)
+- [Editor architecture](../architecture/editor.md)
 - [Guides](../guides/overview.md)
 - [Back to docs home](../overview.md)

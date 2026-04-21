@@ -55,29 +55,67 @@ See [architecture/security#external-tools](../architecture/security.md#external-
 
 ### Zed button missing
 
-`GET /api/capabilities` returned `supports.zed: false`. That
-means the Zed resolver couldn't verify an install at any of the
-candidate locations:
+The Zed integration was **removed** when the in-browser editor
+landed. The pencil-toolbar slot is now the edit-mode toggle (see
+`--allow-edits`). `ZED_BIN` is no longer read. Update any
+bookmarks or scripts that relied on `supports.zed`.
 
-1. `ZED_BIN` env var
-2. `/Applications/Zed.app` or `~/Applications/Zed.app` (darwin)
-3. `/usr/local/bin/zed`
-4. `/opt/homebrew/bin/zed`
-5. `~/.local/bin/zed`
+### Edit pencil missing
 
-Fix: install Zed, or set `ZED_BIN` to the exact binary path.
-See [reference/environment#zed_bin](../reference/environment.md#zed_bin).
+Three things have to be true for the pencil to render:
 
-### Zed button present but 500
+1. The server was started with `--allow-edits`. Without the flag
+   the capabilities endpoint reports `supports.edits: false` and
+   the UI hides the button.
+2. The current file is an `.md` file. Other extensions don't
+   support editing in v1.
+3. The capabilities fetch completed before the file loaded. A
+   hard refresh resolves any stale state.
 
-```json
-{ "error": "Failed to open: spawn zed ENOENT — Zed not found. Install Zed or set the ZED_BIN env var." }
+If the server is started with the flag and the button still
+doesn't render, check the browser console — a capabilities fetch
+error falls back to "no edits".
+
+### Save returns 403 `bad-origin`
+
+Your browser is sending a mismatched `Origin` header. Grove's
+CSRF check compares `Origin`'s host:port against `Host` on every
+state-changing verb. A common cause is reaching Grove via
+`127.0.0.1:3000` from a tab served at `localhost:3000` (or vice
+versa). Use the same hostname both places.
+
+### Save returns 409 `stale`
+
+Something modified the file on disk between your last read and
+your save. Grove shows a Reload / Overwrite / Cancel banner. If
+you see this constantly on every save, a backup tool (iCloud
+sync, Spotlight, Time Machine Local Snapshots) is touching the
+file — either exclude the folder or accept the banner workflow.
+
+### `--git-commit` refuses to start
+
+Grove validates the worktree and git identity at boot. The error
+message is actionable:
+
+```
+--git-commit: "…" is not inside a git worktree. Run `git init` there or remove the flag.
+--git-commit: git user.name is not configured. Run `git config --global user.name "Your Name"`.
+--git-commit: git user.email is not configured. Run `git config --global user.email "you@example.com"`.
+--git-commit: `git` binary not found on PATH. Install git or remove the flag.
 ```
 
-The **bare fallback** was hit because nothing else verified.
-The button appears only when a verified path exists, so this
-usually means a Zed install was removed between capability
-probe and click. Refresh the page.
+Run the exact suggested command and retry. Grove does this at
+startup on purpose — silent no-ops at save time are worse than
+refusing to start.
+
+### Save returns 500 `git-failed`
+
+The disk write succeeded; the subsequent `git add` / `git commit`
+failed with something other than "nothing to commit". Typical
+causes: the repo's `HEAD` is detached, a pre-commit hook rejected
+the commit, or the index is locked by another process. The on-disk
+file is up-to-date — the commit is the thing that didn't happen.
+Fix the git state and manually `git add <file> && git commit`.
 
 ### Claude button 501
 

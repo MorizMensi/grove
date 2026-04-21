@@ -67,8 +67,10 @@ Every runtime mode check reads `environment.mode`:
 - [`DocumentService`](https://github.com/MorizMensi/grove/blob/main/frontend/src/app/core/services/document.service.ts)
   branches between `loadManifest()` and `GET /api/documents`.
 - [`CapabilitiesService`](https://github.com/MorizMensi/grove/blob/main/frontend/src/app/core/services/capabilities.service.ts)
-  short-circuits to a seeded `{ terminal: false, zed: false,
-  claude: false }` so the header never flashes a disabled button.
+  short-circuits to a seeded `{ terminal: false, claude: false,
+  edits: false, gitCommit: false }` so the header never flashes a
+  disabled button and the editor pencil / sidebar CRUD affordances
+  never render. Wiki deployments are always read-only.
 - [`DocumentShellComponent`](https://github.com/MorizMensi/grove/blob/main/frontend/src/app/features/document-shell/document-shell.component.ts)
   uses `isWikiMode` to decide whether to render the `<wiki-footer>`
   attribution.

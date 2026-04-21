@@ -1,9 +1,10 @@
 # Frontend layer
 
 Grove's frontend is a single Angular 19 standalone application
-with exactly one route and one feature component. All the
+with exactly one route and one feature component. Rendering
 complexity lives in the **DocLang renderer** — see
-[doclang.md](./doclang.md).
+[doclang.md](./doclang.md). Editing complexity lives in the
+**editor feature** — see [editor.md](./editor.md).
 
 ## Module map
 
@@ -98,9 +99,26 @@ stateDiagram-v2
   loading --> not_found: both failed
   directory --> loading: navigate
   file --> loading: navigate
+  file --> file_edit: click pencil (supports.edits)
+  file_edit --> file: Done / Save + Done
+  file_edit --> loading: canDeactivate (clean)
   not_found --> loading: navigate
   file --> file: fragment scroll
 ```
+
+Modes:
+
+| Mode | Rendered | Source of truth |
+| --- | --- | --- |
+| `loading` | spinner | — |
+| `directory` | entries list | `GET /api/documents` |
+| `file` | `<md-node>` + media viewer | `GET /_content/<path>.<ext>` |
+| `file-edit` | `<grove-editor>` (CodeMirror 6) | `GET /api/documents/raw` |
+| `not_found` | 404 panel | — |
+
+`file-edit` is only reachable when `supports.edits === true`. The
+pencil toggle flips mode between `file` and `file-edit`, running
+the dirty-check modal on the `file-edit → file` transition.
 
 ### Resolution algorithm
 
@@ -148,17 +166,31 @@ matrix.
 
 ### Action buttons
 
-The header shows up to four buttons (Terminal / Zed / Claude /
-Edit file) gated on `capabilities().supports.*`. The
-`CapabilitiesService` either:
+The header shows up to three buttons plus a status-bar pill,
+gated on `capabilities().supports.*`:
+
+| Button / UI | Gate |
+| --- | --- |
+| **Terminal** | `supports.terminal` (darwin only) |
+| **Claude Code** | `supports.claude` (darwin only) |
+| **Edit** (pencil toggle) | `supports.edits` (from `--allow-edits`) |
+| **auto-commit** pill | `supports.gitCommit` (from `--git-commit`) |
+
+The `CapabilitiesService` either:
 
 - Calls `GET /api/capabilities` in server mode.
-- Hard-codes `{ terminal: false, zed: false, claude: false }` in
-  wiki mode — see [wiki-mode.md](./wiki-mode.md).
+- Hard-codes every field to `false` in wiki mode — see
+  [wiki-mode.md](./wiki-mode.md). Wiki deployments are always
+  read-only.
 
-Clicking a button fires `POST /api/open` with
-`{ action, path: <folder or file> }`. In wiki mode the service
-short-circuits to `EMPTY` so no network call is made.
+Terminal / Claude buttons fire `POST /api/open` with
+`{ action, path: <folder> }`. The pencil toggle does **not** hit
+the network — it flips `DocumentShellComponent.mode` between
+`file` and `file-edit`. In wiki mode every capability is false,
+so the buttons never render.
+
+> The previous Zed button was removed when the in-browser editor
+> landed. `supports.zed` is no longer exposed.
 
 ## Services
 
@@ -199,12 +231,39 @@ Source:
 [`core/services/capabilities.service.ts`](https://github.com/MorizMensi/grove/blob/main/frontend/src/app/core/services/capabilities.service.ts)
 
 - **Optimistic default**: hides everything platform-gated and
-  shows `zed` until the HTTP call lands. Prevents a flash of
-  disabled buttons on boot.
-- **Wiki default**: everything off. No HTTP call made.
+  the editor toggle until the HTTP call lands. Prevents a flash
+  of buttons on boot.
+- **Wiki default**: `{ terminal: false, claude: false, edits: false, gitCommit: false }`.
+  No HTTP call made.
 - **On error**: keeps the optimistic default; `POST /api/open`
-  would 501 if a button shouldn't have shown, which the server
-  still validates.
+  would 501 if a button shouldn't have shown, and
+  `PUT/POST/DELETE /api/documents` would 403 `edits-disabled` if
+  edits shouldn't have been available. The server's gates are
+  still load-bearing; the capabilities call is a UI hint.
+
+### DocumentService — write methods
+
+Under `--allow-edits`, the service exposes:
+
+- `getRawFile(path)` → `GET /api/documents/raw` — returns
+  `{ content, mtime }`. Used when entering edit mode so the
+  editor has the canonical `mtime` for the next save.
+- `saveFileContent(path, content, mtime)` → `PUT /api/documents`
+  with `If-Unmodified-Since`. Resolves to `{ mtime }` on 200;
+  rejects with a typed error on 409 / 413 / 415 / 403 / 400.
+- `createFile(path)` → `POST /api/documents?kind=file`.
+- `createDirectory(path)` → `POST /api/documents?kind=dir`.
+- `deleteEntry(path)` → `DELETE /api/documents`.
+
+All write methods throw structured errors that the
+`SaveService` and sidebar CRUD flows discriminate on (`stale`,
+`not-found`, `exists`, `parent-missing`, `edits-disabled`,
+`bad-origin`, etc.).
+
+In wiki mode the write methods are still defined but throw
+`new Error('wiki-read-only')` synchronously — no network call is
+made. Wiki deployments should never reach a write method because
+`supports.edits === false` hides every affordance.
 
 ### ThemeService
 
@@ -236,8 +295,43 @@ asynchronously). `DocumentShellComponent.scrollToFragment()`
 retries `getElementById(fragment)` until it resolves or 2 seconds
 elapse, then smooth-scrolls.
 
+## Sidebar
+
+Under `--allow-edits` the sidebar grows three affordances:
+
+- **Right-click / Shift+F10 context menu** with **New file**,
+  **New folder**, **Delete**. Implemented as a `role="menu"` with
+  `role="menuitem"` children; ArrowUp/Down, Home/End, Esc return
+  focus to the opener.
+- **Inline `+` on directory rows** — focusable via Tab,
+  `aria-label="New file in <folder>"`, `:focus-visible` reveal so
+  keyboard users see the affordance even when not hovering.
+- **Confirm-delete modal** with focus trap, `role="dialog"`, and
+  `aria-modal="true"`. Esc cancels; Enter activates the default
+  (Cancel) to prevent accidental deletes.
+
+All three are hidden (not just disabled) in wiki mode and in
+server mode without `--allow-edits`.
+
+## Live region
+
+A singleton `LiveRegionComponent` with `aria-live="polite"` and
+`aria-atomic="true"` announces editor state transitions and CRUD
+outcomes:
+
+- "Saving…", "Saved", "Could not save"
+- "File changed on disk" (on 409)
+- "Created `<name>`", "Deleted `<name>`"
+- "Rename is not available yet" (on F2)
+
+The region never hijacks focus. It lives under
+`shared/a11y/live-region.component.ts` and is provided at the
+app level so every surface can inject and call it.
+
 ## See also
 
+- [Editor architecture](./editor.md) — CodeMirror 6, StateField,
+  block widgets, SaveService, dirty-navigation guards
 - [DocLang renderer deep dive](./doclang.md)
 - [Wiki bundle mode](./wiki-mode.md)
 - [Themes](../design/themes.md)

@@ -2,7 +2,9 @@
 
 Grove is a single CLI (`grove`) that boots an Express server on
 your local machine and serves an Angular SPA rendered from a
-folder of markdown (and friends).
+folder of markdown (and friends). With `--allow-edits` the same
+SPA becomes a Typora-style editor that writes back to the
+filesystem.
 
 Requires **Node 20 or newer**.
 
@@ -21,7 +23,7 @@ Once installed, the CLI is available as `grove`. The package name
 on npm is [`grovemd`](https://www.npmjs.com/package/grovemd) — the
 bare `grove` name is held by a dormant package.
 
-## First run
+## First run (read-only)
 
 ```bash
 grove ~/notes
@@ -29,12 +31,61 @@ grove ~/notes
 
 This:
 
-1. Boots an Express server on `http://localhost:3000`
-2. Opens your default browser at the listing for `~/notes`
-3. Serves markdown, media, and the SPA from the same port
+1. Boots an Express server on `http://localhost:3000`.
+2. Opens your default browser at the listing for `~/notes`.
+3. Serves markdown, media, and the SPA from the same port.
 
 If no folder is given, Grove defaults to the current directory —
 so `cd ~/notes && grove` is the same as `grove ~/notes`.
+
+Without `--allow-edits`, Grove is a read-only viewer. The pencil
+toggle, sidebar context menu, and inline `+` affordances never
+render, and the server's write routes return `403 edits-disabled`.
+
+## First run (editing)
+
+```bash
+grove ~/vault --allow-edits
+```
+
+Adds:
+
+- A **pencil toggle** on every `.md` file view (Edit / Done).
+- A **right-click / Shift+F10 context menu** on the sidebar
+  (New file, New folder, Delete).
+- An **inline `+`** on directory rows for creating files quickly.
+- A **confirm-delete modal** with focus trap.
+- A **singleton polite live region** for screen-reader
+  announcements.
+
+Saves are **explicit** — `⌘S` / `Ctrl+S` (or the toolbar save
+button) writes atomically to disk. Grove detects concurrent
+modifications via `If-Unmodified-Since` and surfaces a
+Reload / Overwrite / Cancel banner on 409.
+
+Full walkthrough: [Editing guide](./guides/editing.md).
+
+## First run (editing + git)
+
+```bash
+cd ~/vault
+git init
+git add .
+git commit -m "initial"
+grove . --allow-edits --git-commit
+```
+
+Adds one commit per successful edit:
+
+```
+grove: edit docs/2026-04-21.md
+grove: create docs/new.md
+grove: delete docs/old.md
+```
+
+Grove validates the worktree and git identity at startup. If
+`user.name` or `user.email` is missing, or `docsDir` isn't inside
+a git worktree, Grove exits 1 with an actionable message.
 
 ## CLI options
 
@@ -42,9 +93,15 @@ so `cd ~/notes && grove` is the same as `grove ~/notes`.
 grove [folder] [options]
 
 Options
-  --port <number>   Port to serve on (default: 3000)
-  --no-open         Do not auto-open the browser
-  -h, --help        Show this help
+  --port <number>           Port to serve on (default: 3000)
+  --no-open                 Do not auto-open the browser
+  --allow-edits             Enable in-browser editing of .md files
+  --git-commit              Commit every successful write (requires
+                            --allow-edits and a docs folder inside a
+                            git worktree)
+  --disable-security <csv>  UNSAFE. Disable named safety checks.
+                            Valid values: allow-symlinks
+  -h, --help                Show this help
 ```
 
 Examples:
@@ -53,28 +110,28 @@ Examples:
 grove ~/docs
 grove ~/docs --port 8080
 grove . --no-open
+grove ~/vault --allow-edits
+grove ~/vault --allow-edits --git-commit
+grove ~/vault --allow-edits --disable-security allow-symlinks
 ```
+
+Full reference: [CLI reference](./reference/cli.md).
 
 ## External tool integration
 
-Grove has three optional action buttons in the header that open the
-current folder (or file) in an external tool:
+Grove has two optional action buttons in the header that open the
+current folder in an external tool (macOS only):
 
 | Action     | darwin | linux    | win32    |
 | ---------- | ------ | -------- | -------- |
 | `terminal` | yes    | HTTP 501 | HTTP 501 |
-| `zed`      | yes    | yes      | yes      |
 | `claude`   | yes    | HTTP 501 | HTTP 501 |
 
-On non-darwin platforms the `terminal` and `claude` buttons are
-hidden in the UI and the API returns 501 if called directly.
+On non-darwin platforms these buttons are hidden in the UI and
+the API returns 501 if called directly.
 
-The `zed` action uses `zed` on `$PATH` by default. Set the
-`ZED_BIN` environment variable if your Zed binary lives elsewhere:
-
-```bash
-ZED_BIN=/opt/zed/zed grove ~/notes
-```
+> Grove's previous Zed integration was removed when the in-browser
+> editor landed. The pencil-toolbar slot is now the edit toggle.
 
 ## Troubleshooting
 
@@ -85,14 +142,20 @@ ZED_BIN=/opt/zed/zed grove ~/notes
 - **Buttons missing** — they're gated by `GET /api/capabilities`,
   which reports what Grove can actually drive on your platform.
   Missing buttons on linux/win32 are expected.
-- **"docs" button mounted at /_content 404** — that's the raw-file
-  mount. If you moved files around while the server was running,
-  refresh the page.
+- **Pencil missing** — restart with `--allow-edits`. The pencil is
+  gated on `supports.edits`.
+- **`--git-commit` refuses to start** — Grove exits 1 with the
+  exact git command you need to run. Fix the reported issue (init
+  the repo, configure `user.name` / `user.email`) and retry.
+- **"/_content/" 404** — that's the raw-file mount. If you moved
+  files around while the server was running, refresh the page.
 
 ## Next steps
 
 - Read the [usage guide](./usage.md) for a tour of what Grove
   renders.
+- Read the [editing guide](./guides/editing.md) for a tour of the
+  Typora-style editor, sidebar CRUD, and conflict handling.
 - Read [how it works](./how-it-works.md) if you're curious about
   the architecture.
 - If you want to host Grove on GitHub Pages for your own repo,
@@ -103,12 +166,14 @@ ZED_BIN=/opt/zed/zed grove ~/notes
 
 - [CLI reference](./reference/cli.md) — every flag
 - [HTTP API reference](./reference/http-api.md) — every endpoint
-- [Environment variables](./reference/environment.md) — `ZED_BIN`
+- [Environment variables](./reference/environment.md)
 - [File types](./reference/file-types.md) — preview + syntax
   highlighting matrix
 
 ## See also
 
 - [Architecture overview](./architecture/overview.md)
+- [Editor architecture](./architecture/editor.md)
+- [Security model](./architecture/security.md)
 - [Self-hosting](./guides/self-hosting.md)
 - [Back to docs home](./overview.md)

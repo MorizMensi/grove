@@ -54,9 +54,16 @@ Replace the two `/ABSOLUTE/PATH/TO/...` strings with:
   clone, and
 - the path to the folder you want to serve.
 
-Optionally set `ZED_BIN` inside the `EnvironmentVariables` dict
-if you want the Zed action to use a non-default binary — see
-[reference/environment#zed_bin](../reference/environment.md#zed_bin).
+If you want to enable editing from the launch agent, add
+`--allow-edits` (and optionally `--git-commit`) to
+`ProgramArguments`. A launchd-managed editor is single-user and
+localhost-only, same as the on-demand invocation. Note: the
+auto-reopen-on-login behaviour means a mistyped flag will keep
+restarting — use `launchctl unload` while debugging.
+
+> `ZED_BIN` is no longer read by Grove. Any `EnvironmentVariables`
+> entry that set it is harmlessly ignored — the Zed integration was
+> removed when the in-browser editor landed.
 
 Load it:
 
@@ -95,7 +102,6 @@ After=network.target
 Type=simple
 ExecStart=/usr/bin/node /absolute/path/to/dist/server/bin/file-viewer.js /absolute/path/to/docs --port 3000 --no-open
 Restart=on-failure
-Environment=ZED_BIN=/usr/bin/zed
 
 [Install]
 WantedBy=default.target
@@ -150,12 +156,14 @@ docker run --rm -p 3000:3000 -v /path/to/docs:/docs grove
 Caveats:
 
 - You're running as a regular Node process, so no macOS-only
-  actions are supported (Terminal / Claude are hidden; Zed
-  requires `ZED_BIN` pointing at a binary in the image or a
-  mounted volume, which usually doesn't make sense in a
-  container).
+  actions are supported (Terminal / Claude are hidden on Linux).
 - Use a bind mount for the docs folder so edits show up without
-  rebuilding the image.
+  rebuilding the image. With `--allow-edits`, Grove will write
+  back to the mounted volume — make sure the container user has
+  write access to the mounted path.
+- For `--git-commit` in a container, also bind-mount the repo's
+  `.git/` and ensure the container user's git identity is
+  configured (e.g., via a mounted `~/.gitconfig`).
 
 ## Upgrading
 
