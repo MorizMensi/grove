@@ -61,39 +61,60 @@ let uid = 0;
         z-index: 1000;
       }
       .dialog {
-        background: var(--surface, #fff);
-        color: var(--text, #111);
-        border-radius: 6px;
-        padding: 1rem 1.25rem;
+        background: var(--color-bg-surface);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-md);
+        padding: var(--space-5) var(--space-6);
         min-width: 20rem;
         max-width: 32rem;
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-lg);
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: var(--space-4);
       }
-      .title { margin: 0; font-size: 1.1rem; }
-      .body { margin: 0; }
+      .title {
+        margin: 0;
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-heading);
+      }
+      .body {
+        margin: 0;
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+      }
       .actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.5rem;
+        gap: var(--space-2);
       }
       .action {
-        padding: 0.4rem 0.8rem;
-        border-radius: 4px;
-        border: 1px solid var(--border, #ccc);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-border-default);
         background: transparent;
-        color: inherit;
+        color: var(--color-text-primary);
+        font-size: var(--font-size-sm);
         cursor: pointer;
+        transition: background var(--duration-fast) var(--easing-default),
+                    color var(--duration-fast) var(--easing-default),
+                    border-color var(--duration-fast) var(--easing-default);
+      }
+      .action:hover {
+        background: var(--color-bg-hover);
       }
       .action.primary {
-        background: var(--accent, #2563eb);
-        color: var(--accent-text, #fff);
-        border-color: var(--accent, #2563eb);
+        background: var(--color-bg-active-item);
+        color: var(--color-text-link);
+        border-color: var(--color-bg-active-item);
+      }
+      .action.primary:hover {
+        background: var(--color-bg-active-item);
+        color: var(--color-text-link);
       }
       .action:focus-visible {
-        outline: 2px solid var(--focus, #2563eb);
+        outline: 2px solid var(--color-border-focus);
         outline-offset: 2px;
       }
     `,

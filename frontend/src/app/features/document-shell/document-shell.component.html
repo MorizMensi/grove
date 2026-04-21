@@ -43,7 +43,7 @@
                     class="action-btn edit-toggle"
                     type="button"
                     (click)="togglePencil()"
-                    [class.is-pressed]="mode === 'file-edit'"
+                    [class.is-active]="mode === 'file-edit'"
                     [attr.aria-pressed]="mode === 'file-edit'"
                     [attr.aria-label]="mode === 'file-edit' ? 'Exit edit mode' : 'Enter edit mode'"
                     [title]="mode === 'file-edit' ? 'Exit edit mode' : 'Enter edit mode'"
@@ -53,7 +53,9 @@
                         [class.bi-pencil]="mode !== 'file-edit'"
                         [class.bi-pencil-fill]="mode === 'file-edit'"
                     ></i>
-                    <span class="edit-toggle-label">{{ mode === "file-edit" ? "Done" : "Edit" }}</span>
+                    @if (mode === "file-edit") {
+                        <span class="edit-toggle-label">Done</span>
+                    }
                 </button>
             }
             @if (mode === "file" && hasDualView()) {
@@ -62,7 +64,7 @@
                   class="action-btn"
                   type="button"
                   role="radio"
-                  [class.viewer-toggle-active]="viewerMode() === 'preview'"
+                  [class.is-active]="viewerMode() === 'preview'"
                   [attr.aria-checked]="viewerMode() === 'preview'"
                   [attr.tabindex]="viewerMode() === 'preview' ? 0 : -1"
                   (click)="setViewerMode('preview')"
@@ -75,7 +77,7 @@
                   class="action-btn"
                   type="button"
                   role="radio"
-                  [class.viewer-toggle-active]="viewerMode() === 'source'"
+                  [class.is-active]="viewerMode() === 'source'"
                   [attr.aria-checked]="viewerMode() === 'source'"
                   [attr.tabindex]="viewerMode() === 'source' ? 0 : -1"
                   (click)="setViewerMode('source')"

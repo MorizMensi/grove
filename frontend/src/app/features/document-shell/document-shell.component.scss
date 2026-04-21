@@ -85,6 +85,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-1);
   background: transparent;
   border: none;
   border-radius: var(--radius-full);
@@ -92,23 +93,22 @@
   color: var(--color-text-muted);
   cursor: pointer;
   font-size: var(--font-size-sm);
-  transition: color var(--duration-fast) var(--easing-default);
+  transition: background var(--duration-fast) var(--easing-default),
+              color var(--duration-fast) var(--easing-default);
 
   &:hover {
-    color: var(--color-text-secondary);
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+  }
+
+  &.is-active {
+    background: var(--color-bg-active-item);
+    color: var(--color-text-link);
   }
 
   &:focus-visible {
     outline: 2px solid var(--color-border-focus);
     outline-offset: 2px;
-  }
-}
-
-.edit-toggle {
-  gap: var(--space-1);
-
-  &.is-pressed {
-    color: var(--color-text-link, var(--color-text-secondary));
   }
 }
 
@@ -450,17 +450,8 @@
 .viewer-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 0;
+  gap: var(--space-1);
   padding: 0;
-
-  .action-btn {
-    border-radius: 0;
-  }
-
-  .viewer-toggle-active {
-    background: var(--color-bg-active-item);
-    color: var(--color-text-link);
-  }
 }
 
 /* ── Mobile Sidebar ──────────────────────────────────────── */
