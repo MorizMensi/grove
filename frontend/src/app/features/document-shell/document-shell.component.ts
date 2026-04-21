@@ -434,6 +434,17 @@ export class DocumentShellComponent implements OnInit {
     this.saveService.clearConflict();
   }
 
+  async overwriteAfterConflict(): Promise<void> {
+    const outcome = await this.saveService.overwrite(
+      this.currentPath(),
+      this.editBuffer(),
+    );
+    if (outcome === 'ok') {
+      this.editorRef?.markSaved(this.editBuffer());
+      this.markdown = this.editBuffer();
+    }
+  }
+
   // ---------- Sidebar context menu + create/delete ----------
 
   /** Open the context menu for a specific sidebar entry. */
@@ -545,7 +556,30 @@ export class DocumentShellComponent implements OnInit {
     } else if (event.key === "Delete" && this.capabilities().supports.edits) {
       event.preventDefault();
       void this.confirmDelete(entry);
+    } else if (event.key === "F2") {
+      // Rename is out of scope for v1; announce rather than silently ignore
+      // so F2 has a discoverable response and keyboard users understand
+      // the missing capability. Tracked for v1.1.
+      event.preventDefault();
+      this.live.announce("Rename is not available yet");
     }
+  }
+
+  /**
+   * Alt+N creates a new file in the current folder (or the active row's
+   * folder when the sidebar has focus). Cmd+N is reserved by the browser
+   * for "new window" and cannot be reliably intercepted, so Alt+N is the
+   * documented shortcut for v1.
+   */
+  @HostListener("document:keydown", ["$event"])
+  onGlobalKeydown(event: KeyboardEvent): void {
+    if (!this.capabilities().supports.edits) { return; }
+    if (!event.altKey || event.metaKey || event.ctrlKey) { return; }
+    if (event.key !== "n" && event.key !== "N") { return; }
+    if (this.mode !== "file" && this.mode !== "directory") { return; }
+    event.preventDefault();
+    const parent = this.mode === "directory" ? this.currentPath() : this.parentPath;
+    this.beginCreate("file", parent);
   }
 
   beginCreate(kind: "file" | "dir", parentPath: string): void {

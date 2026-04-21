@@ -104,6 +104,46 @@ describe('SaveService', () => {
     httpMock.expectNone((r) => r.method === 'PUT');
   });
 
+  it('overwrite re-saves using the disk mtime after a conflict', async () => {
+    service.reset(1_700_000_000_000);
+    service.markDirty(true);
+
+    // First save conflicts.
+    const firstPending = service.save('notes/a.md', 'mine');
+    const firstReq = httpMock.expectOne((r) => r.method === 'PUT' && r.url === '/api/documents');
+    firstReq.flush(
+      { error: 'stale', mtime: 1_700_000_999_000 },
+      { status: 409, statusText: 'Conflict' },
+    );
+    await firstPending;
+    await flushMicrotasks();
+    expect(service.staleConflict()).toEqual({ diskMtime: 1_700_000_999_000 });
+
+    // Overwrite re-issues PUT with If-Unmodified-Since = disk mtime.
+    const pending = service.overwrite('notes/a.md', 'mine');
+    const req = httpMock.expectOne((r) => r.method === 'PUT' && r.url === '/api/documents');
+    expect(req.request.headers.get('If-Unmodified-Since')).toBe('1700000999000');
+    req.flush({ mtime: 1_700_001_000_000 });
+
+    const outcome = await pending;
+    await flushMicrotasks();
+
+    expect(outcome).toBe('ok');
+    expect(service.staleConflict()).toBeNull();
+    expect(service.lastMtime()).toBe(1_700_001_000_000);
+    expect(service.dirty()).toBeFalse();
+    expect(live.message()).toBe('Saved');
+  });
+
+  it('overwrite without an active conflict falls back to save', async () => {
+    service.reset(1_700_000_000_000);
+    const pending = service.overwrite('notes/a.md', 'x');
+    const req = httpMock.expectOne((r) => r.method === 'PUT' && r.url === '/api/documents');
+    expect(req.request.headers.get('If-Unmodified-Since')).toBe('1700000000000');
+    req.flush({ mtime: 1_700_000_001_000 });
+    expect(await pending).toBe('ok');
+  });
+
   it('clearConflict wipes the stale banner', () => {
     service.reset(1);
     // simulate a stale state

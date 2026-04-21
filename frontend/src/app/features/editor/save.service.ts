@@ -42,6 +42,22 @@ export class SaveService {
     this._stale.set(null);
   }
 
+  /**
+   * Force-save on top of a stale conflict by re-issuing the PUT with the
+   * disk's current mtime as `If-Unmodified-Since`. The user has already
+   * decided to overwrite external changes — see the 409 banner.
+   * Returns 'error' if there is no active conflict to overwrite.
+   */
+  async overwrite(path: string, content: string): Promise<SaveOutcome> {
+    const conflict = this._stale();
+    if (!conflict) {
+      return this.save(path, content);
+    }
+    this._lastMtime.set(conflict.diskMtime);
+    this._stale.set(null);
+    return this.save(path, content);
+  }
+
   async save(path: string, content: string): Promise<SaveOutcome> {
     const mtime = this._lastMtime();
     if (mtime == null) {

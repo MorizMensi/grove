@@ -7,6 +7,20 @@ All notable changes to Grove are documented here. Format loosely follows
 ## [Unreleased]
 
 ### Added
+- Editor Phase 7 polish: the save-conflict banner now offers **Reload**,
+  **Overwrite**, and **Cancel** (previously Reload/Dismiss). Overwrite
+  re-issues the PUT with the disk's current `mtime` as
+  `If-Unmodified-Since`, so the user can intentionally replace external
+  changes without leaving edit mode. Added **F2** on sidebar rows as a
+  discoverable placeholder — rename is still out of scope for v1, so
+  F2 announces "Rename is not available yet" through the live region
+  rather than being silently ignored. Added **Alt+N** (Option+N on
+  macOS) as the global "new file" shortcut, scoped to the current folder
+  when browsing and to the parent folder when viewing a file; `Cmd+N` is
+  reserved by the browser for "new window" and cannot be reliably
+  intercepted, so Alt+N is the documented binding. All animations and
+  transitions already respect `prefers-reduced-motion` via
+  `styles/_base.scss` (verified during the Phase 7 audit).
 - Editor Phase 6: `--git-commit` opt-in auto-commit. When enabled
   alongside `--allow-edits`, every successful write produces one
   commit in the docs folder's worktree: `grove: edit <rel>` for PUT,
