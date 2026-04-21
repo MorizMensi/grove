@@ -7,6 +7,15 @@ All notable changes to Grove are documented here. Format loosely follows
 ## [Unreleased]
 
 ### Added
+- **`--disable-security <csv>` CLI flag.** Comma-separated list of
+  named escape hatches for the server's built-in safety checks. May be
+  repeated. Prints a stderr warning on startup whenever any feature is
+  disabled. Initial value: `allow-symlinks` — lets symlinks inside the
+  docs folder resolve to targets *outside* it on the read/write/open
+  routes. The *addressed* path must still sit inside the docs folder,
+  so `..` traversal and sibling-prefix bypass stay blocked. Unknown
+  values fail startup with a listing of valid flags.
+
 - **In-browser markdown editor** (see `editor-design.md`), gated
   behind two opt-in CLI flags and surfaced as a pencil toggle on every
   `.md` file.

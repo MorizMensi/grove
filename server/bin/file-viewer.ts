@@ -6,6 +6,12 @@ import { exec } from 'node:child_process';
 import { createApp } from '../index.js';
 import { buildWiki } from '../wiki/build.js';
 import { validateGitRepo } from '../git.js';
+import {
+  DISABLED_SECURITY_VALUES,
+  DisabledSecurityParseError,
+  parseDisabledSecurity,
+  type DisabledSecuritySet,
+} from '../security-options.js';
 
 const args = process.argv.slice(2);
 
@@ -68,6 +74,7 @@ let port = 3000;
 let noOpen = false;
 let allowEdits = false;
 let gitCommit = false;
+let disabledSecurity: DisabledSecuritySet = new Set();
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
@@ -84,16 +91,35 @@ for (let i = 0; i < args.length; i++) {
     allowEdits = true;
   } else if (arg === '--git-commit') {
     gitCommit = true;
+  } else if (arg === '--disable-security' && args[i + 1]) {
+    try {
+      disabledSecurity = parseDisabledSecurity(args[i + 1], disabledSecurity);
+    } catch (err) {
+      if (err instanceof DisabledSecurityParseError) {
+        console.error(`Error: ${err.message}`);
+        process.exit(1);
+      }
+      throw err;
+    }
+    i++;
   } else if (arg === '--help' || arg === '-h') {
     console.log(`Usage: grove [folder] [options]
 
 Options:
-  --port <number>  Port to serve on (default: 3000)
-  --no-open        Don't auto-open browser
-  --allow-edits    Enable in-browser editing of .md files
-  --git-commit     Commit every successful write (requires --allow-edits
-                   and a docs folder inside a git worktree)
-  -h, --help       Show this help`);
+  --port <number>             Port to serve on (default: 3000)
+  --no-open                   Don't auto-open browser
+  --allow-edits               Enable in-browser editing of .md files
+  --git-commit                Commit every successful write (requires
+                              --allow-edits and a docs folder inside a
+                              git worktree)
+  --disable-security <csv>    Disable named security checks. UNSAFE.
+                              Comma-separated list; may be repeated.
+                              Valid values: ${DISABLED_SECURITY_VALUES.join(', ')}
+                                allow-symlinks — permit symlinks inside
+                                the docs folder to resolve to targets
+                                outside it. The addressed path must
+                                still be inside the docs folder.
+  -h, --help                  Show this help`);
     process.exit(0);
   } else if (!arg.startsWith('-')) {
     folderPath = arg;
@@ -131,7 +157,7 @@ if (gitCommit) {
   }
 }
 
-const app = createApp(resolvedPath, { allowEdits, gitCommit });
+const app = createApp(resolvedPath, { allowEdits, gitCommit, disabledSecurity });
 
 const server = app.listen(port, () => {
   const url = `http://localhost:${port}`;
@@ -141,6 +167,10 @@ const server = app.listen(port, () => {
   }
   if (gitCommit) {
     console.log('Auto-commit enabled (--git-commit).');
+  }
+  if (disabledSecurity.size > 0) {
+    const names = [...disabledSecurity].join(', ');
+    console.error(`WARNING: security features disabled: ${names}`);
   }
   console.log(`Open ${url}`);
 

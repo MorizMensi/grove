@@ -20,6 +20,15 @@ export interface EnsureInsideOpts {
    * so a missing parent still fails containment.
    */
   allowMissing?: boolean;
+  /**
+   * Skip the realpath containment check, so symlinks inside docsDir
+   * whose targets live outside docsDir will resolve. The *lexical*
+   * containment check (the addressed path must still be inside
+   * docsDir) is always enforced, so `..` traversal and sibling-prefix
+   * bypass are still rejected. Opt-in via the CLI
+   * `--disable-security allow-symlinks` flag.
+   */
+  allowSymlinks?: boolean;
 }
 
 function isENOENT(err: unknown): boolean {
@@ -48,6 +57,15 @@ export async function ensureInside(
 
   const resolved = userPath ? resolve(docsDir, userPath) : docsDir;
 
+  // Lexical containment: the *addressed* path (before any symlink
+  // resolution) must live inside docsDir. `resolve()` collapses `..`
+  // lexically so this catches traversal and sibling-prefix bypass
+  // (`/tmp/foo` vs `/tmp/foobar`) without hitting the filesystem. This
+  // check is enforced regardless of `allowSymlinks`.
+  if (resolved !== docsDir && !resolved.startsWith(docsDir + sep)) {
+    throw new PathError('forbidden');
+  }
+
   let real: string;
   try {
     real = await realpath(resolved);
@@ -60,6 +78,13 @@ export async function ensureInside(
     } else {
       throw new PathError('forbidden');
     }
+  }
+
+  if (opts.allowSymlinks) {
+    // Escape hatch: the addressed path is already known to sit inside
+    // docsDir (lexical check above). The realpath may point anywhere —
+    // that is the whole point of the flag.
+    return real;
   }
 
   const docsReal = await realpath(docsDir);

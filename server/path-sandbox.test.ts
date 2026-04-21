@@ -130,6 +130,63 @@ test('allowMissing: rejects when parent directory is missing', async () => {
   }
 });
 
+test('allowSymlinks: resolves symlink whose target lives outside docsDir', async () => {
+  const docs = await makeDocsDir();
+  try {
+    const outside = join(docs, '..');
+    const outsideReal = await realpath(outside);
+    const target = join(outsideReal, 'secret.txt');
+    await writeFile(target, 'secret');
+    await symlink(target, join(docs, 'leak'));
+    const real = await ensureInside(docs, 'leak', { allowSymlinks: true });
+    assert.equal(real, target);
+  } finally {
+    await rm(docs, { recursive: true, force: true });
+  }
+});
+
+test('allowSymlinks: still rejects lexical `..` traversal', async () => {
+  const docs = await makeDocsDir();
+  try {
+    await assert.rejects(
+      () => ensureInside(docs, '../../etc/passwd', { allowSymlinks: true }),
+      (err: unknown) => err instanceof PathError && err.code === 'forbidden',
+    );
+  } finally {
+    await rm(docs, { recursive: true, force: true });
+  }
+});
+
+test('allowSymlinks: still rejects sibling-prefix bypass', async () => {
+  const parent = await mkdtemp(join(tmpdir(), 'grove-sib-sym-'));
+  const parentReal = await realpath(parent);
+  try {
+    const docs = join(parentReal, 'foo');
+    const sibling = join(parentReal, 'foobar');
+    await mkdir(docs);
+    await mkdir(sibling);
+    await writeFile(join(sibling, 'evil.md'), 'x');
+    await assert.rejects(
+      () => ensureInside(docs, '../foobar/evil.md', { allowSymlinks: true }),
+      (err: unknown) => err instanceof PathError && err.code === 'forbidden',
+    );
+  } finally {
+    await rm(parent, { recursive: true, force: true });
+  }
+});
+
+test('allowSymlinks: still rejects NUL byte', async () => {
+  const docs = await makeDocsDir();
+  try {
+    await assert.rejects(
+      () => ensureInside(docs, 'note\0.md', { allowSymlinks: true }),
+      (err: unknown) => err instanceof PathError && err.code === 'forbidden',
+    );
+  } finally {
+    await rm(docs, { recursive: true, force: true });
+  }
+});
+
 test('without allowMissing: rejects nonexistent target', async () => {
   const docs = await makeDocsDir();
   try {

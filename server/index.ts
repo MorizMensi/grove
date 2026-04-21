@@ -5,6 +5,7 @@ import { documentsRouter } from './documents.js';
 import { openRouter } from './open.js';
 import { capabilitiesRouter } from './capabilities.js';
 import { CONTENT_URL_PREFIX } from '../shared/content-url.js';
+import type { DisabledSecuritySet } from './security-options.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -13,6 +14,11 @@ export interface CreateAppOptions {
   allowEdits?: boolean;
   /** Enables one commit per successful write. */
   gitCommit?: boolean;
+  /**
+   * Named security features to disable. See `security-options.ts` for
+   * the list of valid flags. Empty / undefined keeps all checks on.
+   */
+  disabledSecurity?: DisabledSecuritySet;
 }
 
 export function createApp(
@@ -32,9 +38,10 @@ export function createApp(
     documentsRouter(docsDir, {
       allowEdits: options.allowEdits,
       gitCommit: options.gitCommit,
+      disabledSecurity: options.disabledSecurity,
     }),
   );
-  app.use('/api/open', openRouter(docsDir));
+  app.use('/api/open', openRouter(docsDir, { disabledSecurity: options.disabledSecurity }));
   app.use(
     '/api/capabilities',
     capabilitiesRouter({

@@ -1,11 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
-import { createApp } from './index.js';
+import { createApp, type CreateAppOptions } from './index.js';
 
 interface Harness {
   baseUrl: string;
@@ -13,9 +13,9 @@ interface Harness {
   close: () => Promise<void>;
 }
 
-async function spin(): Promise<Harness> {
+async function spin(options: CreateAppOptions = {}): Promise<Harness> {
   const docs = await realpath(await mkdtemp(join(tmpdir(), 'grove-docs-')));
-  const app = createApp(docs);
+  const app = createApp(docs, options);
   const server: Server = await new Promise((resolve) => {
     const s = app.listen(0, '127.0.0.1', () => resolve(s));
   });
@@ -77,6 +77,58 @@ test('/_content non-HTML/SVG responses get no CSP', async () => {
     const r = await fetch(`${h.baseUrl}/_content/note.md`);
     assert.equal(r.status, 200);
     assert.equal(r.headers.get('Content-Security-Policy'), null);
+  } finally {
+    await h.close();
+  }
+});
+
+test('GET /api/documents/raw rejects an escaping symlink by default', async () => {
+  const h = await spin();
+  try {
+    const outsideDir = await realpath(await mkdtemp(join(tmpdir(), 'grove-outside-')));
+    try {
+      const target = join(outsideDir, 'secret.md');
+      await writeFile(target, '# secret');
+      await symlink(target, join(h.docs, 'leak.md'));
+      const r = await fetch(`${h.baseUrl}/api/documents/raw?path=leak.md`);
+      assert.equal(r.status, 403);
+      const body = await r.json();
+      assert.equal(body.error, 'forbidden');
+    } finally {
+      await rm(outsideDir, { recursive: true, force: true });
+    }
+  } finally {
+    await h.close();
+  }
+});
+
+test('GET /api/documents/raw follows an escaping symlink when allow-symlinks is disabled', async () => {
+  const h = await spin({ disabledSecurity: new Set(['allow-symlinks']) });
+  try {
+    const outsideDir = await realpath(await mkdtemp(join(tmpdir(), 'grove-outside-')));
+    try {
+      const target = join(outsideDir, 'secret.md');
+      await writeFile(target, '# secret');
+      await symlink(target, join(h.docs, 'leak.md'));
+      const r = await fetch(`${h.baseUrl}/api/documents/raw?path=leak.md`);
+      assert.equal(r.status, 200);
+      const body = await r.json();
+      assert.equal(body.content, '# secret');
+    } finally {
+      await rm(outsideDir, { recursive: true, force: true });
+    }
+  } finally {
+    await h.close();
+  }
+});
+
+test('allow-symlinks does NOT permit `..` traversal', async () => {
+  const h = await spin({ disabledSecurity: new Set(['allow-symlinks']) });
+  try {
+    const r = await fetch(
+      `${h.baseUrl}/api/documents/raw?path=${encodeURIComponent('../../etc/passwd')}`,
+    );
+    assert.equal(r.status, 403);
   } finally {
     await h.close();
   }

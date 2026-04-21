@@ -26,11 +26,13 @@ import { ensureInside, PathError } from './path-sandbox.js';
 import { atomicWrite } from './fs-atomic.js';
 import { csrfOrigin, requireEdits } from './edits-middleware.js';
 import { commitChange, type CommitVerb } from './git.js';
+import type { DisabledSecuritySet } from './security-options.js';
 
 export interface DocumentsOptions {
   allowEdits?: boolean;
   /** Enables one commit per successful write. */
   gitCommit?: boolean;
+  disabledSecurity?: DisabledSecuritySet;
 }
 
 /**
@@ -101,6 +103,7 @@ export function documentsRouter(
   const router = Router();
   const allowEdits = options.allowEdits === true;
   const gitCommit = options.gitCommit === true;
+  const allowSymlinks = options.disabledSecurity?.has('allow-symlinks') === true;
 
   /**
    * Post-write commit hook. Returns `null` on success (committed or
@@ -124,7 +127,7 @@ export function documentsRouter(
 
     let absPath: string;
     try {
-      absPath = await ensureInside(docsDir, relPath);
+      absPath = await ensureInside(docsDir, relPath, { allowSymlinks });
     } catch (err) {
       if (err instanceof PathError) {
         res.status(403).json({ error: 'forbidden' });
@@ -177,7 +180,7 @@ export function documentsRouter(
     // instead of the generic 403 forbidden used for traversal.
     let absPath: string;
     try {
-      absPath = await ensureInside(docsDir, relPath, { allowMissing: true });
+      absPath = await ensureInside(docsDir, relPath, { allowMissing: true, allowSymlinks });
     } catch (err) {
       if (err instanceof PathError) {
         res.status(403).json({ error: 'forbidden' });
@@ -222,7 +225,7 @@ export function documentsRouter(
 
       let absPath: string;
       try {
-        absPath = await ensureInside(docsDir, relPath);
+        absPath = await ensureInside(docsDir, relPath, { allowSymlinks });
       } catch (err) {
         if (err instanceof PathError) {
           res.status(403).json({ error: 'forbidden' });
@@ -317,7 +320,7 @@ export function documentsRouter(
       const parentPath = parentRel === '.' || parentRel === '' ? '' : parentRel;
       let parentAbs: string;
       try {
-        parentAbs = await ensureInside(docsDir, parentPath);
+        parentAbs = await ensureInside(docsDir, parentPath, { allowSymlinks });
       } catch (err) {
         if (err instanceof PathError) {
           res.status(409).json({ error: 'parent-missing' });
@@ -384,7 +387,7 @@ export function documentsRouter(
 
       let absPath: string;
       try {
-        absPath = await ensureInside(docsDir, relPath, { allowMissing: true });
+        absPath = await ensureInside(docsDir, relPath, { allowMissing: true, allowSymlinks });
       } catch (err) {
         if (err instanceof PathError) {
           res.status(403).json({ error: 'forbidden' });

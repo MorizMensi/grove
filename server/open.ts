@@ -6,6 +6,11 @@ import {
   type OpenAction,
 } from '../shared/types/open.js';
 import { ensureInside, PathError } from './path-sandbox.js';
+import type { DisabledSecuritySet } from './security-options.js';
+
+export interface OpenRouterOptions {
+  disabledSecurity?: DisabledSecuritySet;
+}
 
 type ExecFileArgs = readonly [file: string, args: readonly string[]];
 
@@ -50,8 +55,9 @@ async function buildExec(
   }
 }
 
-export function openRouter(docsDir: string): Router {
+export function openRouter(docsDir: string, options: OpenRouterOptions = {}): Router {
   const router = Router();
+  const allowSymlinks = options.disabledSecurity?.has('allow-symlinks') === true;
 
   // `/api/open` accepts a small JSON body. The app-level parser is
   // gone (see `createApp`) so we attach one per route.
@@ -68,7 +74,7 @@ export function openRouter(docsDir: string): Router {
     //    rejected here before any child process is spawned.
     let absDir: string;
     try {
-      absDir = await ensureInside(docsDir, relPath);
+      absDir = await ensureInside(docsDir, relPath, { allowSymlinks });
     } catch (err) {
       if (err instanceof PathError) {
         res.status(403).json({ error: 'forbidden' });
