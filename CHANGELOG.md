@@ -87,6 +87,17 @@ All notable changes to Grove are documented here. Format loosely follows
   were treated as atomic. Only the `hide` (replace) decorations over
   `**`, `_`, `` ` ``, and link brackets are now atomic, so arrow keys
   still skip hidden markers as before.
+- Edit pencil now appears on `.md` files again. The
+  `DocumentShellComponent.isEditableFile` computed read `mode` as a
+  plain field (not a signal), so its memo never invalidated when mode
+  transitioned `loading → file` and the pencil stayed hidden if the
+  capabilities fetch won the race against the first document load.
+- Edit, save, reload-after-conflict, overwrite-after-conflict, and
+  delete now pass the actual filename (stem + extension) to the
+  server. Previously the shell sent only the URL stem for `.md` files
+  (e.g. `path=how-it-works`), so `/api/documents/raw` 404-ed, PUT
+  would have silently written to an extensionless sibling, and
+  sidebar delete on a listing entry returned 403.
 - Mobile document shell (<768px): swapped the two-column grid for a
   single-column flex layout. Sidebar now starts closed and dismisses
   on backdrop/link tap (with proper `aria-label`/`aria-expanded`);

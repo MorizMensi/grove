@@ -90,11 +90,21 @@ export class DocumentShellComponent implements OnInit {
   sourceText: string | null = null;
 
   readonly editBuffer = signal<string>("");
-  readonly isEditableFile = computed(() => {
+  /**
+   * Whether the pencil/edit affordance applies to the current view.
+   *
+   * Intentionally a plain method, not `computed()`: it reads `this.mode`
+   * which is a plain field (not a signal), so a `computed` would
+   * memoize against only the tracked signals (`extension`) and stay
+   * stale when `mode` transitions from `"loading"` → `"file"` without
+   * any signal dependency changing. CheckAlways re-invokes this on
+   * each cycle, which is cheap (two string compares).
+   */
+  isEditableFile(): boolean {
     if (this.mode !== "file" && this.mode !== "file-edit") { return false; }
     const ext = this.extension();
     return ext === "" || ext === "md";
-  });
+  }
 
   @ViewChild(EditorComponent) editorRef?: EditorComponent;
   @ViewChild("createInput") createInputRef?: ElementRef<HTMLInputElement>;
@@ -364,6 +374,19 @@ export class DocumentShellComponent implements OnInit {
 
   // ---------- Editor integration ----------
 
+  /**
+   * Disk path including the real file extension. The URL for a markdown
+   * file is the stem (`/how-it-works`), so `currentPath()` returns
+   * `"how-it-works"` and the `extension` query param is empty. The
+   * `/api/documents/raw` and `/api/documents` PUT endpoints need the
+   * actual filename (`how-it-works.md`); fall back to `md` when the
+   * route did not carry an extension.
+   */
+  private effectivePath(): string {
+    const ext = this.extension() || "md";
+    return `${this.currentPath()}.${ext}`;
+  }
+
   togglePencil(): void {
     if (this.mode === "file") {
       void this.enterEditMode();
@@ -373,13 +396,14 @@ export class DocumentShellComponent implements OnInit {
   }
 
   private enterEditMode(): void {
-    const path = this.currentPath();
+    const path = this.effectivePath();
+    const guardPath = this.currentPath();
     this.documentService
       .getRawFile(path)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (raw) => {
-          if (this.currentPath() !== path) { return; }
+          if (this.currentPath() !== guardPath) { return; }
           this.editBuffer.set(raw.content);
           this.saveService.reset(raw.mtime);
           this.mode = "file-edit";
@@ -406,7 +430,7 @@ export class DocumentShellComponent implements OnInit {
   }
 
   async onSaveRequested(event: { content: string }): Promise<void> {
-    const outcome = await this.saveService.save(this.currentPath(), event.content);
+    const outcome = await this.saveService.save(this.effectivePath(), event.content);
     if (outcome === "ok") {
       this.editorRef?.markSaved(event.content);
       // Keep the preview in sync so exiting edit mode shows the saved bytes.
@@ -415,13 +439,14 @@ export class DocumentShellComponent implements OnInit {
   }
 
   reloadAfterConflict(): void {
-    const path = this.currentPath();
+    const path = this.effectivePath();
+    const guardPath = this.currentPath();
     this.documentService
       .getRawFile(path)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (raw) => {
-          if (this.currentPath() !== path) { return; }
+          if (this.currentPath() !== guardPath) { return; }
           this.editorRef?.replaceBuffer(raw.content);
           this.editBuffer.set(raw.content);
           this.saveService.reset(raw.mtime);
@@ -436,7 +461,7 @@ export class DocumentShellComponent implements OnInit {
 
   async overwriteAfterConflict(): Promise<void> {
     const outcome = await this.saveService.overwrite(
-      this.currentPath(),
+      this.effectivePath(),
       this.editBuffer(),
     );
     if (outcome === 'ok') {
@@ -652,7 +677,14 @@ export class DocumentShellComponent implements OnInit {
     });
     if (choice !== "delete") { return; }
 
-    const fullPath = this.parentPath ? `${this.parentPath}/${entry.name}` : entry.name;
+    // Listing entries carry the stem in `name` and the extension separately
+    // (e.g. `{ name: "how-it-works", extension: "md" }`). The DELETE endpoint
+    // needs the real filename on disk, so rejoin them for files. Directories
+    // have no extension.
+    const leafName = entry.type === "file" && entry.extension
+      ? `${entry.name}.${entry.extension}`
+      : entry.name;
+    const fullPath = this.parentPath ? `${this.parentPath}/${leafName}` : leafName;
     const isOpenFile = this.mode !== "directory" && this.isCurrentFile(entry);
     this.documentService
       .deleteEntry(fullPath)
