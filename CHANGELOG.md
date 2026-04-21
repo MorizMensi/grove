@@ -7,6 +7,23 @@ All notable changes to Grove are documented here. Format loosely follows
 ## [Unreleased]
 
 ### Added
+- Editor Phase 6: `--git-commit` opt-in auto-commit. When enabled
+  alongside `--allow-edits`, every successful write produces one
+  commit in the docs folder's worktree: `grove: edit <rel>` for PUT,
+  `grove: create <rel>` for POST of a file, `grove: delete <rel>` for
+  DELETE of a file. Empty-directory create/delete is intentionally
+  skipped because git does not track empty trees. The server fails
+  fast at startup if `docsDir` is not inside a git worktree, if `git`
+  is missing from `PATH`, or if `user.name` / `user.email` is not
+  configured — each with an actionable message so users never hit a
+  silent no-op. Re-saving identical content (which makes `git commit`
+  error with "nothing to commit") is swallowed so the save still
+  returns `200`. Any other git failure surfaces as `500 git-failed`
+  **after** the disk write has already succeeded. A small
+  `auto-commit` pill appears in the document shell header (gated on
+  `/api/capabilities`) so the mode is visible at a glance. The
+  subprocess shape matters: `execFile('git', [...])` with an argv
+  array, never a shell.
 - Editor Phase 5: create and delete files/folders from the sidebar.
   Right-click (or Shift+F10 on a focused entry) opens a context menu
   with **New file**, **New folder** (on directories and blank space),
@@ -31,20 +48,11 @@ All notable changes to Grove are documented here. Format loosely follows
   rapid destroy — minor, scheduled for the Phase 7 polish pass).
 
 ### Fixed
-- Mobile sidebar behavior in the document shell: sidebar now starts
-  closed on viewports below 768px, closes on backdrop tap and on
-  sidebar link tap, and the toggle button is fixed, visible, and
-  accessible (`aria-label`/`aria-expanded` reflect state).
-- Mobile content width: the file view switches from a two-column grid
-  to a single-column flex column on mobile so the content fills the
-  full viewport instead of collapsing into a narrow column. Doubled
-  padding on `.document-shell` was removed.
-- Mobile scrolling on file pages: the content area now scrolls on
-  viewports below 768px. The prior mobile layout used `display: block`,
-  which left `.wiki-content` without a height context so `overflow-y: auto`
-  never activated and long documents were silently clipped by the shell.
-  The mobile layout is now a flex column with `.wiki-content` taking the
-  remaining height.
+- Mobile document shell (<768px): swapped the two-column grid for a
+  single-column flex layout. Sidebar now starts closed and dismisses
+  on backdrop/link tap (with proper `aria-label`/`aria-expanded`);
+  content fills the viewport; long pages scroll instead of being
+  clipped.
 
 ## [0.2.0] — 2026-04-20
 
@@ -71,15 +79,10 @@ All notable changes to Grove are documented here. Format loosely follows
 
 ### Changed
 - Removed the DOMPurify runtime dependency. Iframe sandboxing now
-  provides XSS isolation for user HTML; `sanitize-user-html.ts`,
-  `rewrite-user-html.ts`, and `HtmlPreviewComponent` have been removed.
+  provides XSS isolation for user HTML.
 - `prepublishOnly` now runs `check:sandbox` before `build:all`.
 
 ### Known Issues
-- Mermaid bundles DOMPurify 3.3.3 transitively
-  ([GHSA-39q2-94rc-95cp](https://github.com/advisories/GHSA-39q2-94rc-95cp),
-  moderate). Grove does not invoke the affected API; resolution requires
-  an upstream Mermaid update.
 - `@angular/core` at the `^19.2.0` range carries
   [GHSA-g93w-mfhg-p222](https://github.com/advisories/GHSA-g93w-mfhg-p222)
   (XSS via i18n attribute bindings). Grove does not use Angular i18n

@@ -27,7 +27,13 @@ export function createApp(
   // at the route definition rather than buried in app setup.
 
   // API routes
-  app.use('/api/documents', documentsRouter(docsDir, { allowEdits: options.allowEdits }));
+  app.use(
+    '/api/documents',
+    documentsRouter(docsDir, {
+      allowEdits: options.allowEdits,
+      gitCommit: options.gitCommit,
+    }),
+  );
   app.use('/api/open', openRouter(docsDir));
   app.use(
     '/api/capabilities',

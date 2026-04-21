@@ -25,9 +25,12 @@ import type {
 import { ensureInside, PathError } from './path-sandbox.js';
 import { atomicWrite } from './fs-atomic.js';
 import { csrfOrigin, requireEdits } from './edits-middleware.js';
+import { commitChange, type CommitVerb } from './git.js';
 
 export interface DocumentsOptions {
   allowEdits?: boolean;
+  /** Enables one commit per successful write. Wired in Phase 6. */
+  gitCommit?: boolean;
 }
 
 /**
@@ -97,6 +100,23 @@ export function documentsRouter(
 ): Router {
   const router = Router();
   const allowEdits = options.allowEdits === true;
+  const gitCommit = options.gitCommit === true;
+
+  /**
+   * Post-write commit hook. Returns `null` on success (committed or
+   * nothing-to-commit), or an error code the caller should surface as
+   * `500 { error: 'git-failed' }`. Never throws — the disk write has
+   * already succeeded by the time we get here.
+   */
+  async function maybeCommit(
+    absPath: string,
+    verb: CommitVerb,
+  ): Promise<string | null> {
+    if (!gitCommit) { return null; }
+    const outcome = await commitChange(docsDir, absPath, verb);
+    if (outcome.status === 'failed') { return outcome.reason; }
+    return null;
+  }
 
   // GET /api/documents?path=... → { path, entries }
   router.get('/', async (req, res) => {
@@ -259,6 +279,11 @@ export function documentsRouter(
       await atomicWrite(absPath, body.content);
       const after = await stat(absPath);
       const reply: SaveDocumentResponse = { mtime: after.mtimeMs };
+      const gitErr = await maybeCommit(absPath, 'edit');
+      if (gitErr) {
+        res.status(500).json({ error: 'git-failed', mtime: after.mtimeMs });
+        return;
+      }
       res.json(reply);
     },
   );
@@ -316,6 +341,10 @@ export function documentsRouter(
       try {
         if (rawKind === 'dir') {
           await mkdir(absPath);
+          // Empty directories aren't tracked by git; there's nothing
+          // to commit until the user adds a file. Skip the commit hook
+          // for mkdir to avoid a misleading `grove: mkdir` that does
+          // nothing.
           res.status(201).json({} satisfies CreateEntryResponse);
           return;
         }
@@ -324,6 +353,11 @@ export function documentsRouter(
         await writeFile(absPath, '', { encoding: 'utf8', flag: 'wx' });
         const s = await stat(absPath);
         const body: CreateEntryResponse = { mtime: s.mtimeMs };
+        const gitErr = await maybeCommit(absPath, 'create');
+        if (gitErr) {
+          res.status(500).json({ error: 'git-failed', mtime: s.mtimeMs });
+          return;
+        }
         res.status(201).json(body);
       } catch (err) {
         const code = (err as NodeJS.ErrnoException).code;
@@ -373,10 +407,20 @@ export function documentsRouter(
       }
 
       try {
-        if (s.isDirectory()) {
+        const wasDirectory = s.isDirectory();
+        if (wasDirectory) {
           await rmdir(absPath);
         } else {
           await unlink(absPath);
+        }
+        // Same rationale as mkdir: empty directories aren't tracked by
+        // git, so `rmdir` has nothing to commit.
+        if (!wasDirectory) {
+          const gitErr = await maybeCommit(absPath, 'delete');
+          if (gitErr) {
+            res.status(500).json({ error: 'git-failed' });
+            return;
+          }
         }
         res.status(204).end();
       } catch (err) {

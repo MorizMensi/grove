@@ -5,6 +5,7 @@ import { stat } from 'node:fs/promises';
 import { exec } from 'node:child_process';
 import { createApp } from '../index.js';
 import { buildWiki } from '../wiki/build.js';
+import { validateGitRepo } from '../git.js';
 
 const args = process.argv.slice(2);
 
@@ -66,6 +67,7 @@ let folderPath: string | null = null;
 let port = 3000;
 let noOpen = false;
 let allowEdits = false;
+let gitCommit = false;
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
@@ -80,6 +82,8 @@ for (let i = 0; i < args.length; i++) {
     noOpen = true;
   } else if (arg === '--allow-edits') {
     allowEdits = true;
+  } else if (arg === '--git-commit') {
+    gitCommit = true;
   } else if (arg === '--help' || arg === '-h') {
     console.log(`Usage: grove [folder] [options]
 
@@ -87,11 +91,18 @@ Options:
   --port <number>  Port to serve on (default: 3000)
   --no-open        Don't auto-open browser
   --allow-edits    Enable in-browser editing of .md files
+  --git-commit     Commit every successful write (requires --allow-edits
+                   and a docs folder inside a git worktree)
   -h, --help       Show this help`);
     process.exit(0);
   } else if (!arg.startsWith('-')) {
     folderPath = arg;
   }
+}
+
+if (gitCommit && !allowEdits) {
+  console.error('Error: --git-commit requires --allow-edits.');
+  process.exit(1);
 }
 
 if (!folderPath) {
@@ -111,13 +122,25 @@ try {
   process.exit(1);
 }
 
-const app = createApp(resolvedPath, { allowEdits });
+if (gitCommit) {
+  try {
+    await validateGitRepo(resolvedPath);
+  } catch (err) {
+    console.error((err as Error).message);
+    process.exit(1);
+  }
+}
+
+const app = createApp(resolvedPath, { allowEdits, gitCommit });
 
 const server = app.listen(port, () => {
   const url = `http://localhost:${port}`;
   console.log(`Grove serving "${resolvedPath}"`);
   if (allowEdits) {
     console.log('Editing enabled (--allow-edits).');
+  }
+  if (gitCommit) {
+    console.log('Auto-commit enabled (--git-commit).');
   }
   console.log(`Open ${url}`);
 

@@ -88,6 +88,17 @@
             }
         </div>
         <div class="header-tools">
+            @if (capabilities().supports.gitCommit) {
+                <span
+                    class="git-commit-badge"
+                    role="status"
+                    aria-label="Auto-commit is on. Every successful save produces a git commit."
+                    title="Auto-commit on"
+                >
+                    <i class="bi bi-git" aria-hidden="true"></i>
+                    <span class="git-commit-badge-label">auto-commit</span>
+                </span>
+            }
             <app-theme-switcher />
         </div>
     </nav>
