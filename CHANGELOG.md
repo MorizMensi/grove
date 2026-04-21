@@ -47,6 +47,14 @@ All notable changes to Grove are documented here. Format loosely follows
   APG, and animations respect `prefers-reduced-motion`.
 
 ### Fixed
+- HTML preview theme passthrough: the CSP sent with `/_content/*.html`
+  and `/_content/*.svg` now includes `sandbox allow-same-origin`.
+  Without that token the browser forced the response into an opaque
+  origin, which silently blocked the parent page from reading
+  `iframe.contentDocument` and injecting theme CSS variables —
+  previews rendered with unthemed colors. Scripts remain blocked by
+  `script-src 'none'` and by the absence of `allow-scripts` in both
+  the iframe `sandbox` attribute and the CSP sandbox directive.
 - Editor: clicking a line below a rendered block widget (Mermaid
   diagram, fenced code, table, block image) now places the caret on
   that exact line instead of 5–7 lines further down. Root cause:

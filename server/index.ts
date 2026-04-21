@@ -59,6 +59,14 @@ export function createApp(
   //   Other file types (images, video, audio, markdown, etc.) get no extra
   //   headers — they already render safely in the browser with the native
   //   Content-Type.
+  //
+  //   The CSP sandbox directive MUST include `allow-same-origin`. Without
+  //   that token the response is forced into an opaque origin, which in
+  //   turn blocks the parent document from reading `iframe.contentDocument`
+  //   — breaking the theme-variable passthrough in
+  //   frontend/.../html-theme-injection.ts. Scripts remain blocked by
+  //   `script-src 'none'` and by the absence of `allow-scripts` in both
+  //   the iframe attribute and this sandbox directive.
   app.use(`/${CONTENT_URL_PREFIX}`, express.static(docsDir, {
     redirect: false,
     dotfiles: 'deny',
@@ -71,7 +79,7 @@ export function createApp(
       if (/\.(html?|svg)$/i.test(filePath)) {
         res.setHeader(
           'Content-Security-Policy',
-          "sandbox; script-src 'none'; object-src 'none'; base-uri 'none'",
+          "sandbox allow-same-origin; script-src 'none'; object-src 'none'; base-uri 'none'",
         );
         res.setHeader('X-Content-Type-Options', 'nosniff');
       }
