@@ -11,7 +11,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 export interface CreateAppOptions {
   /** Enables `PUT/POST/DELETE /api/documents` gated by `requireEdits`. */
   allowEdits?: boolean;
-  /** Enables one commit per successful write. Wired in Phase 6. */
+  /** Enables one commit per successful write. */
   gitCommit?: boolean;
 }
 

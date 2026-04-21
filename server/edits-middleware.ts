@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 /**
  * Reject state-changing requests when the `--allow-edits` flag is
- * absent. This is the *real* gate: UI hiding in Phase 2+ is cosmetic.
+ * absent. This is the *real* gate: UI hiding is cosmetic.
  * A hostile tab cannot flip the flag from the browser.
  */
 export function requireEdits(allowEdits: boolean) {

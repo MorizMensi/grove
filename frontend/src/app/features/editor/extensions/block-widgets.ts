@@ -6,7 +6,7 @@ import { DlBlockWidget } from './dl-block-widget';
 import { BlockRenderService } from '../services/block-render.service';
 
 /**
- * Phase 4 — block-widget StateField.
+ * Block-widget StateField.
  *
  * Walks `syntaxTree(state)` and emits `Decoration.replace({ widget, block: true })`
  * for each `FencedCode`, `Table`, and block-level `Image` whose range does not
@@ -23,7 +23,7 @@ import { BlockRenderService } from '../services/block-render.service';
 
 /**
  * Caret "inside" a block is line-granular: the caret is inside iff its line
- * falls within the block's line range. This avoids the Phase 3 inline
+ * falls within the block's line range. This avoids the inline-decoration
  * convention where position==from counts as inside — for blocks that would
  * collapse the widget the moment the caret sits anywhere on the opening line
  * from outside, producing a flicker on simple cursor-home presses.
@@ -130,8 +130,8 @@ export function blockWidgets(blockRender: BlockRenderService): Extension {
     provide: (f) => [
       EditorView.decorations.from(f),
       // Contribute to atomicRanges so arrow keys step over a widget's entire
-      // hidden body instead of landing inside the replaced range. The Phase 3
-      // inline field contributes separately; CM6 unions the facet values.
+      // hidden body instead of landing inside the replaced range. The inline
+      // decoration field contributes separately; CM6 unions the facet values.
       EditorView.atomicRanges.of((view) => view.state.field(f)),
     ],
   });

@@ -148,7 +148,7 @@ for (const { verb, block } of routeBlocks(documentsSource)) {
 
 if (!writeRouteFound) {
   console.warn(
-    '[check:sandbox] NOTE: no write routes detected in server/documents.ts (pre-Phase 1?). Skipping middleware chain assertion.',
+    '[check:sandbox] NOTE: no write routes detected in server/documents.ts. Skipping middleware chain assertion.',
   );
 }
 

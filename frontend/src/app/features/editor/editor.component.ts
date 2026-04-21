@@ -20,8 +20,8 @@ import { blockWidgets } from './extensions/block-widgets';
 import { BlockRenderService } from './services/block-render.service';
 
 /**
- * Grove's CodeMirror 6 host. Phase 3 adds Typora-style inline reveal decorations
- * via the `hybridMarkdown` StateField. Phase 4 adds block widgets (fenced code,
+ * Grove's CodeMirror 6 host. Adds Typora-style inline reveal decorations
+ * via the `hybridMarkdown` StateField and block widgets (fenced code,
  * tables, Mermaid, images) via the `blockWidgets` ViewPlugin; math blocks
  * (`$$…$$`) stay as raw source per §2.2 of editor-design.md.
  */

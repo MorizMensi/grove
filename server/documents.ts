@@ -29,7 +29,7 @@ import { commitChange, type CommitVerb } from './git.js';
 
 export interface DocumentsOptions {
   allowEdits?: boolean;
-  /** Enables one commit per successful write. Wired in Phase 6. */
+  /** Enables one commit per successful write. */
   gitCommit?: boolean;
 }
 

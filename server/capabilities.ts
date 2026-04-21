@@ -14,7 +14,7 @@ export interface Capabilities {
     claude: boolean;
     /** Reflects `--allow-edits`. The real gate is `requireEdits` middleware. */
     edits: boolean;
-    /** Reflects `--git-commit`. Always false until Phase 6 wires the flag. */
+    /** Reflects `--git-commit`. */
     gitCommit: boolean;
   };
 }

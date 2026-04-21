@@ -365,7 +365,7 @@ test('GET /api/capabilities reports edits + gitCommit', async () => {
     };
     assert.equal(body.supports.edits, true);
     assert.equal(body.supports.gitCommit, false);
-    // Regression: `zed` must remain absent after Phase 0 removal.
+    // Regression: `zed` must remain absent after removal.
     assert.ok(!('zed' in (body.supports as Record<string, unknown>)));
   } finally {
     await h.close();

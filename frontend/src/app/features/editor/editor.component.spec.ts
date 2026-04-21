@@ -101,7 +101,7 @@ describe('EditorComponent', () => {
     expect(dirtyChanges.at(-1)).toBeFalse();
   });
 
-  it('mounts a .cm-dl-widget for a fenced code block (Phase 4 wiring)', async () => {
+  it('mounts a .cm-dl-widget for a fenced code block', async () => {
     // Build a fresh fixture with content that contains a block-level construct,
     // so the block-widgets ViewPlugin emits a decoration synchronously.
     fixture.destroy();

@@ -12,7 +12,7 @@ import { DlNodeComponent } from '../../../shared/doclang/dl-node.component';
 import { simplify, toDocLang } from '../../../shared/doclang/md-to-doclang';
 
 /**
- * Phase 4 — manages the lifecycle of DlNodeComponent instances mounted inside
+ * Manages the lifecycle of DlNodeComponent instances mounted inside
  * CodeMirror block widgets. The service is scoped to EditorComponent (not
  * providedIn root) so the hierarchical `Injector` it captures carries the
  * routed ActivatedRoute used by DlNodeComponent for relative-URL resolution.

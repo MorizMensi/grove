@@ -7,59 +7,44 @@ All notable changes to Grove are documented here. Format loosely follows
 ## [Unreleased]
 
 ### Added
-- Editor Phase 7 polish: the save-conflict banner now offers **Reload**,
-  **Overwrite**, and **Cancel** (previously Reload/Dismiss). Overwrite
-  re-issues the PUT with the disk's current `mtime` as
-  `If-Unmodified-Since`, so the user can intentionally replace external
-  changes without leaving edit mode. Added **F2** on sidebar rows as a
-  discoverable placeholder — rename is still out of scope for v1, so
-  F2 announces "Rename is not available yet" through the live region
-  rather than being silently ignored. Added **Alt+N** (Option+N on
-  macOS) as the global "new file" shortcut, scoped to the current folder
-  when browsing and to the parent folder when viewing a file; `Cmd+N` is
-  reserved by the browser for "new window" and cannot be reliably
-  intercepted, so Alt+N is the documented binding. All animations and
-  transitions already respect `prefers-reduced-motion` via
-  `styles/_base.scss` (verified during the Phase 7 audit).
-- Editor Phase 6: `--git-commit` opt-in auto-commit. When enabled
-  alongside `--allow-edits`, every successful write produces one
-  commit in the docs folder's worktree: `grove: edit <rel>` for PUT,
-  `grove: create <rel>` for POST of a file, `grove: delete <rel>` for
-  DELETE of a file. Empty-directory create/delete is intentionally
-  skipped because git does not track empty trees. The server fails
-  fast at startup if `docsDir` is not inside a git worktree, if `git`
-  is missing from `PATH`, or if `user.name` / `user.email` is not
-  configured — each with an actionable message so users never hit a
-  silent no-op. Re-saving identical content (which makes `git commit`
-  error with "nothing to commit") is swallowed so the save still
-  returns `200`. Any other git failure surfaces as `500 git-failed`
-  **after** the disk write has already succeeded. A small
-  `auto-commit` pill appears in the document shell header (gated on
-  `/api/capabilities`) so the mode is visible at a glance. The
-  subprocess shape matters: `execFile('git', [...])` with an argv
-  array, never a shell.
-- Editor Phase 5: create and delete files/folders from the sidebar.
-  Right-click (or Shift+F10 on a focused entry) opens a context menu
-  with **New file**, **New folder** (on directories and blank space),
-  and **Delete** (on entries). An inline `+` affordance appears on
-  hover/focus in the sidebar header and on directory rows. Creating a
-  file navigates to it and enters edit mode; creating into a missing
-  parent surfaces "Create the folder first." Deleting the currently
-  open file confirms via modal, then navigates to the parent directory
-  and announces "Deleted `<name>`" through the live region. Backed by
-  new `POST` and `DELETE` routes on `/api/documents` under the existing
-  `--allow-edits` gate with `requireEdits` + `csrfOrigin` middleware,
-  name validation (rejects empty, `/`, `\`, NUL, leading `.`, >255
-  bytes), and a `409 parent-missing` path so typos can't accidentally
-  materialise a deep tree.
-- Editor Phase 4: block widgets render fenced code, GFM tables, block
-  images, and Mermaid diagrams inline in edit mode. The raw markdown
-  source reveals automatically when the caret enters the block's line
-  range. Math blocks (`$$…$$`) intentionally stay as raw source per
-  editor-design §2.2; revisited for v1.1. Mermaid renders complete
-  even if the widget is destroyed mid-render (`MermaidService` has no
-  AbortSignal support yet, so a tiny offscreen container can leak on
-  rapid destroy — minor, scheduled for the Phase 7 polish pass).
+- **In-browser markdown editor** (see `editor-design.md`), gated
+  behind two opt-in CLI flags and surfaced as a pencil toggle on every
+  `.md` file.
+
+  *Backend.* `--allow-edits` unlocks a CRUD surface on `/api/documents`
+  (`GET /raw` with `mtime`/`ETag`, `PUT` with `If-Unmodified-Since` +
+  atomic tmp+rename, `POST` for files and `?kind=dir`, `DELETE` for
+  files and empty dirs) behind `requireEdits` + `csrfOrigin`, a 10 MB
+  JSON limit, and name validation (`409 parent-missing` on absent
+  parents). `server/path-sandbox.ts` consolidates `realpath`-hardened
+  containment for every path-consuming handler. `--git-commit`
+  produces one `grove: <verb> <rel>` commit per write via
+  `execFile('git', […])` with startup validation and "nothing to
+  commit" swallowed. Zed integration was removed to free the pencil
+  slot.
+
+  *Frontend — editor.* `features/editor/editor.component.ts` hosts a
+  CodeMirror 6 `EditorView`; `hybrid-markdown.ts` runs a
+  `StateField<DecorationSet>` that hides inline syntax (`**`, `_`,
+  `` ` ``, link brackets, heading `#`) outside the caret and reveals
+  it when inside — a Typora-style canvas visually identical to view
+  mode. `DlBlockWidget` replaces fenced code, tables, images, and
+  Mermaid with live `DlNodeComponent` mounts, collapsing to raw source
+  when the caret enters the block; math blocks stay raw in v1.
+  `SaveService` binds `⌘S`, tracks `mtime`, and on `409` surfaces a
+  **Reload / Overwrite / Cancel** banner. A `canDeactivate` guard plus
+  `beforeunload` protect dirty buffers.
+
+  *Frontend — shell and a11y.* The pencil toggle is gated on
+  `supports.edits`; an `auto-commit` pill appears when
+  `supports.gitCommit` is true. The sidebar grows a right-click /
+  Shift+F10 context menu (**New file**, **New folder**, **Delete**),
+  an inline `+` on directory rows, and a confirm-delete modal with
+  focus trap; deleting the open file navigates to the parent and
+  announces through a singleton `LiveRegionComponent`. `Alt+N` creates
+  a new file (browsers reserve `Cmd+N`); `F2` announces "Rename is not
+  available yet". Menu, dialog, and toggle patterns follow WAI-ARIA
+  APG, and animations respect `prefers-reduced-motion`.
 
 ### Fixed
 - Editor: clicking a line below a rendered block widget (Mermaid
