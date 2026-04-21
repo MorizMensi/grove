@@ -27,7 +27,7 @@
   caret-color: var(--accent, #2563eb);
 }
 
-/* ── Typora-style inline decorations (Phase 3) ──────────────── */
+/* ── Typora-style inline decorations ────────────────────────── */
 
 /* Mark decorations emitted by hybrid-markdown.ts. Styling mirrors the tokens
    used by shared/doclang/dl-node/_inline.scss so edit-mode and view-mode
@@ -79,16 +79,21 @@
   letter-spacing: 0.05em;
 }
 
-/* ── Phase 4 block widgets ──────────────────────────────────── */
+/* ── Block widgets ──────────────────────────────────────────── */
 
 /* The widget host replaces block-level source (fenced code, tables, block
    images, Mermaid) with a rendered DocLang subtree. Display:block keeps it
    in the line flow; margin matches the view-mode spacing for structural
    parity. */
 
+/* Vertical rhythm uses padding rather than margin so the host div's bounding
+   box includes that space. Clicks in the spacing band then hit the widget's
+   mousedown handler (top/bottom-half branching) instead of CM6's non-Text
+   posAtCoords shortcut, which would jump the caret to the widget's source
+   `from` or `to`. */
 ::ng-deep .cm-dl-widget {
   display: block;
-  margin: 0.5rem 0;
+  padding: 0.5rem 0;
 }
 
 /* Shown synchronously while `toDocLang` resolves so the widget has a stable

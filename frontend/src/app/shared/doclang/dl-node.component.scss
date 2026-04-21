@@ -13,3 +13,16 @@
 :host {
   display: contents;
 }
+
+/* When DlNodeComponent is mounted inside a CodeMirror block widget (via
+   `createComponent({ hostElement })` in BlockRenderService), the host *must*
+   have a real layout box — `display: contents` gives the host a 0×0 rect,
+   which breaks CM6's heightmap measurement (widget "height" always reads 0,
+   actual SVG/table/image takes hundreds of pixels) and mislocates clicks by
+   N lines, where N ≈ (real height − estimatedHeight) / line-height.
+   `.cm-dl-widget` is applied by BlockRenderService.mount() before the
+   component is created, so this `:host(.class)` rule resolves with higher
+   specificity than the bare `:host` above. */
+:host(.cm-dl-widget) {
+  display: block;
+}

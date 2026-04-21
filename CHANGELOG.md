@@ -62,6 +62,23 @@ All notable changes to Grove are documented here. Format loosely follows
   rapid destroy — minor, scheduled for the Phase 7 polish pass).
 
 ### Fixed
+- Editor: clicking a line below a rendered block widget (Mermaid
+  diagram, fenced code, table, block image) now places the caret on
+  that exact line instead of 5–7 lines further down. Root cause:
+  `DlNodeComponent`'s `:host { display: contents }` applied to the
+  block widget's host element, giving the host a 0×0 box even while
+  its rendered Mermaid SVG occupied ~140 px. CodeMirror's heightmap
+  measured 0 and fell back to the widget's `estimatedHeight` (48 px),
+  so every line below the widget was located (realHeight −
+  estimatedHeight) / line-height ≈ 5–7 lines earlier in the height
+  map than in the actual DOM, and `posAtCoords` resolved clicks
+  accordingly. Fix scopes a `:host(.cm-dl-widget) { display: block }`
+  override in `dl-node.component.scss` so the host becomes a real
+  layout box inside the editor. Additional hardening: widget
+  `mousedown` branches on top/bottom half (top reveals the source,
+  bottom hops past the widget), `ResizeObserver` calls
+  `view.requestMeasure()` on host resize, and the widget's vertical
+  rhythm uses `padding` rather than `margin`.
 - Editor: caret can now be placed inside bold, italic, inline-code,
   and link spans, and Backspace/Delete removes one character instead
   of the entire span. The hybrid-markdown field was contributing its
