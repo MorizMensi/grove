@@ -9,7 +9,11 @@ Grove aims for [SemVer](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-_No unreleased changes._
+### Fixed
+
+- `GET /api/documents/raw` now sends `Cache-Control: no-store` so
+  browsers don't serve stale document bodies to the editor via
+  heuristic freshness.
 
 ## [0.3.0] — 2026-04-21
 

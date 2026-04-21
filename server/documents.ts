@@ -205,6 +205,12 @@ export function documentsRouter(
     const mtime = s.mtimeMs;
     res.setHeader('Last-Modified', new Date(mtime).toUTCString());
     res.setHeader('ETag', `W/"${Math.floor(mtime)}-${s.size}"`);
+    // Files can change outside the editor (external save, git checkout,
+    // sibling tab). Without an explicit Cache-Control, browsers apply
+    // heuristic freshness off Last-Modified and serve stale bodies to
+    // the editor. The server doesn't handle conditional revalidation,
+    // so opt out of caching entirely.
+    res.setHeader('Cache-Control', 'no-store');
     const body: RawDocumentResponse = { content, mtime };
     res.json(body);
   });

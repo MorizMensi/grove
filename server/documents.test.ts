@@ -55,6 +55,7 @@ test('GET /api/documents/raw returns content, mtime, ETag, Last-Modified', async
     assert.ok(Number.isFinite(body.mtime));
     assert.equal(r.headers.get('ETag'), `W/"${Math.floor(s.mtimeMs)}-${s.size}"`);
     assert.ok(r.headers.get('Last-Modified'));
+    assert.equal(r.headers.get('Cache-Control'), 'no-store');
   } finally {
     await h.close();
   }
