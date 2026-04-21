@@ -229,6 +229,132 @@
   display: flex;
   align-items: center;
   padding: var(--space-4) var(--space-4) var(--space-2);
+  gap: var(--space-2);
+}
+
+.sidebar-plus {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+
+  &:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.sidebar-row-plus {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-sm, 4px);
+  opacity: 0;
+
+  .wiki-sidebar-item:hover &,
+  .wiki-sidebar-item:focus-visible &,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.sidebar-create-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 12px 6px 16px;
+  margin: 1px 8px;
+  color: var(--color-text-secondary);
+
+  .bi {
+    color: var(--color-text-muted);
+  }
+}
+
+.sidebar-create-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  padding: 2px var(--space-2);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 0;
+  }
+}
+
+.sidebar-create-error {
+  color: var(--color-text-danger, #c00);
+  font-size: var(--font-size-xs);
+  padding: 0 var(--space-4) var(--space-1);
+}
+
+.context-menu {
+  position: fixed;
+  z-index: 200;
+  min-width: 160px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  padding: var(--space-1);
+  display: flex;
+  flex-direction: column;
+}
+
+.context-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+
+  &:hover,
+  &.is-active,
+  &:focus-visible {
+    background: var(--color-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: -2px;
+  }
 }
 
 .wiki-sidebar-label {

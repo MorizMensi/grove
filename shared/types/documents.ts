@@ -26,3 +26,12 @@ export interface SaveDocumentResponse {
   /** New mtime in milliseconds, used as the next `If-Unmodified-Since`. */
   mtime: number;
 }
+
+/** Query-string `kind` on `POST /api/documents?path=…&kind=…`. */
+export type CreateEntryKind = 'file' | 'dir';
+
+/** Success response for `POST /api/documents?path=…`. `mtime` is
+ *  present for files, omitted for directories. */
+export interface CreateEntryResponse {
+  mtime?: number;
+}

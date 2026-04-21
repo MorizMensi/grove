@@ -132,16 +132,51 @@
                     aria-hidden="true"
                 ></div>
             }
-            <aside class="wiki-sidebar">
+            <aside class="wiki-sidebar"
+                   (contextmenu)="openSidebarContextMenu($event)">
                 <div class="wiki-sidebar-header">
                     <span class="wiki-sidebar-label">In this folder</span>
+                    @if (capabilities().supports.edits) {
+                        <button
+                            class="sidebar-plus"
+                            type="button"
+                            (click)="beginCreate('file', parentPath)"
+                            aria-label="New file in this folder"
+                            title="New file"
+                        >
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    }
                 </div>
                 <div class="wiki-sidebar-entries">
+                    @if (creating(); as c) {
+                        <div class="sidebar-create-row">
+                            <i class="bi" [class.bi-file-earmark]="c.kind === 'file'"
+                                         [class.bi-folder]="c.kind === 'dir'"></i>
+                            <input
+                                #createInput
+                                class="sidebar-create-input"
+                                type="text"
+                                [value]="c.value"
+                                (input)="onCreateInput($any($event.target).value)"
+                                (keydown.enter)="submitCreate()"
+                                (keydown.escape)="cancelCreate()"
+                                (blur)="cancelCreate()"
+                                [attr.aria-label]="c.kind === 'file' ? 'New file name' : 'New folder name'"
+                                [placeholder]="c.kind === 'file' ? 'name.md' : 'folder-name'"
+                            />
+                        </div>
+                        @if (c.error) {
+                            <div class="sidebar-create-error" role="alert">{{ c.error }}</div>
+                        }
+                    }
                     @for (entry of sidebarEntries; track entry.name) {
                         <a
                             [routerLink]="sidebarEntryLink(entry)"
                             [queryParams]="entryQueryParams(entry)"
                             (click)="closeSidebarOnMobile()"
+                            (contextmenu)="onRowContextMenu($event, entry)"
+                            (keydown)="onRowKeydown($event, entry)"
                             class="wiki-sidebar-item"
                             [class.wiki-sidebar-item--active]="
                                 isCurrentFile(entry)
@@ -154,10 +189,47 @@
                                 [class.icon-file]="entry.type === 'file'"
                             ></i>
                             <span>{{ formatName(entry.name) }}</span>
+                            @if (capabilities().supports.edits && entry.type === 'directory') {
+                                <button
+                                    class="sidebar-row-plus"
+                                    type="button"
+                                    (click)="$event.preventDefault(); $event.stopPropagation(); beginCreate('file', (parentPath ? parentPath + '/' : '') + entry.name)"
+                                    [attr.aria-label]="'New file in ' + entry.name"
+                                    title="New file"
+                                >
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            }
                         </a>
                     }
                 </div>
             </aside>
+
+            @if (contextMenu(); as menu) {
+                <div
+                    class="context-menu"
+                    role="menu"
+                    [style.left.px]="menu.x"
+                    [style.top.px]="menu.y"
+                    (keydown)="onContextMenuKeydown($event)"
+                    tabindex="-1"
+                    #contextMenuEl
+                >
+                    @for (item of contextMenuItems(); track item.id; let i = $index) {
+                        <button
+                            class="context-menu-item"
+                            role="menuitem"
+                            type="button"
+                            [class.is-active]="contextMenuActive() === i"
+                            [attr.tabindex]="contextMenuActive() === i ? 0 : -1"
+                            (click)="activateContextMenuItem(item.id)"
+                            (mouseenter)="contextMenuActive.set(i)"
+                        >
+                            {{ item.label }}
+                        </button>
+                    }
+                </div>
+            }
 
             <div class="wiki-content wide"
                  [class.wiki-content--bleed]="mode === 'file' && viewerMode() === 'preview' && hasDualView()"

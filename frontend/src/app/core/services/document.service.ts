@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EMPTY, Observable, map, shareReplay } from 'rxjs';
 import type {
+  CreateEntryResponse,
   DocumentEntry,
   DocumentListing,
   RawDocumentResponse,
@@ -15,6 +16,7 @@ import { environment } from '../../../environments/environment';
 // Re-export the shared types so existing consumers can keep importing them
 // from this service module without needing to know about the alias.
 export type {
+  CreateEntryResponse,
   DocumentEntry,
   DocumentListing,
   OpenAction,
@@ -92,6 +94,25 @@ export class DocumentService {
       params: { path },
       headers: { 'If-Unmodified-Since': String(ifUnmodifiedSince) },
     });
+  }
+
+  /** Create an empty file at `path`. Server returns 201 + mtime. */
+  createFile(path: string): Observable<CreateEntryResponse> {
+    return this.http.post<CreateEntryResponse>('/api/documents', null, {
+      params: { path, kind: 'file' },
+    });
+  }
+
+  /** Create an empty directory at `path`. */
+  createDirectory(path: string): Observable<CreateEntryResponse> {
+    return this.http.post<CreateEntryResponse>('/api/documents', null, {
+      params: { path, kind: 'dir' },
+    });
+  }
+
+  /** Delete a file or empty directory. Server returns 204 on success. */
+  deleteEntry(path: string): Observable<void> {
+    return this.http.delete<void>('/api/documents', { params: { path } });
   }
 
   private loadManifest(): Observable<WikiManifest> {

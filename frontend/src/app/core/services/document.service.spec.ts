@@ -43,6 +43,58 @@ describe('DocumentService — edit endpoints', () => {
     expect(received).toEqual({ mtime: 1_700_000_001_000 });
   });
 
+  it('createFile POSTs /api/documents with kind=file and returns mtime', () => {
+    let received: unknown;
+    service.createFile('notes/new.md').subscribe((r) => (received = r));
+    const req = httpMock.expectOne((r) => r.url === '/api/documents' && r.method === 'POST');
+    expect(req.request.params.get('path')).toBe('notes/new.md');
+    expect(req.request.params.get('kind')).toBe('file');
+    expect(req.request.body).toBeNull();
+    req.flush({ mtime: 1_700_000_000_000 }, { status: 201, statusText: 'Created' });
+    expect(received).toEqual({ mtime: 1_700_000_000_000 });
+  });
+
+  it('createDirectory POSTs /api/documents with kind=dir', () => {
+    service.createDirectory('notes/sub').subscribe();
+    const req = httpMock.expectOne((r) => r.url === '/api/documents' && r.method === 'POST');
+    expect(req.request.params.get('path')).toBe('notes/sub');
+    expect(req.request.params.get('kind')).toBe('dir');
+    req.flush({}, { status: 201, statusText: 'Created' });
+  });
+
+  it('createFile surfaces 409 parent-missing', (done) => {
+    service.createFile('a/b/c.md').subscribe({
+      next: () => done.fail('expected error'),
+      error: (err) => {
+        expect(err.status).toBe(409);
+        expect(err.error?.error).toBe('parent-missing');
+        done();
+      },
+    });
+    const req = httpMock.expectOne((r) => r.url === '/api/documents' && r.method === 'POST');
+    req.flush({ error: 'parent-missing' }, { status: 409, statusText: 'Conflict' });
+  });
+
+  it('deleteEntry DELETEs /api/documents with path param', () => {
+    service.deleteEntry('notes/old.md').subscribe();
+    const req = httpMock.expectOne((r) => r.url === '/api/documents' && r.method === 'DELETE');
+    expect(req.request.params.get('path')).toBe('notes/old.md');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('deleteEntry surfaces 409 not-empty', (done) => {
+    service.deleteEntry('notes/dir').subscribe({
+      next: () => done.fail('expected error'),
+      error: (err) => {
+        expect(err.status).toBe(409);
+        expect(err.error?.error).toBe('not-empty');
+        done();
+      },
+    });
+    const req = httpMock.expectOne((r) => r.url === '/api/documents' && r.method === 'DELETE');
+    req.flush({ error: 'not-empty' }, { status: 409, statusText: 'Conflict' });
+  });
+
   it('saveFile surfaces 409 as an HttpErrorResponse with stale body', (done) => {
     service.saveFile('notes/hello.md', 'x', 1).subscribe({
       next: () => done.fail('expected error'),

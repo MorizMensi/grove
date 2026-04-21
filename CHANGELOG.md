@@ -7,6 +7,20 @@ All notable changes to Grove are documented here. Format loosely follows
 ## [Unreleased]
 
 ### Added
+- Editor Phase 5: create and delete files/folders from the sidebar.
+  Right-click (or Shift+F10 on a focused entry) opens a context menu
+  with **New file**, **New folder** (on directories and blank space),
+  and **Delete** (on entries). An inline `+` affordance appears on
+  hover/focus in the sidebar header and on directory rows. Creating a
+  file navigates to it and enters edit mode; creating into a missing
+  parent surfaces "Create the folder first." Deleting the currently
+  open file confirms via modal, then navigates to the parent directory
+  and announces "Deleted `<name>`" through the live region. Backed by
+  new `POST` and `DELETE` routes on `/api/documents` under the existing
+  `--allow-edits` gate with `requireEdits` + `csrfOrigin` middleware,
+  name validation (rejects empty, `/`, `\`, NUL, leading `.`, >255
+  bytes), and a `409 parent-missing` path so typos can't accidentally
+  materialise a deep tree.
 - Editor Phase 4: block widgets render fenced code, GFM tables, block
   images, and Mermaid diagrams inline in edit mode. The raw markdown
   source reveals automatically when the caret enters the block's line

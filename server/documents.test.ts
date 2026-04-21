@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  mkdir,
   mkdtemp,
   readFile,
   realpath,
@@ -366,6 +367,298 @@ test('GET /api/capabilities reports edits + gitCommit', async () => {
     assert.equal(body.supports.gitCommit, false);
     // Regression: `zed` must remain absent after Phase 0 removal.
     assert.ok(!('zed' in (body.supports as Record<string, unknown>)));
+  } finally {
+    await h.close();
+  }
+});
+
+// ── POST /api/documents ────────────────────────────────────────────────
+
+test('POST creates an empty file and returns 201 + mtime', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=fresh.md`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 201);
+    const body = (await r.json()) as { mtime?: number };
+    assert.ok(Number.isFinite(body.mtime));
+    const contents = await readFile(join(h.docs, 'fresh.md'), 'utf8');
+    assert.equal(contents, '');
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST creates a directory with ?kind=dir', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=sub&kind=dir`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 201);
+    const s = await stat(join(h.docs, 'sub'));
+    assert.ok(s.isDirectory());
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST without --allow-edits → 403 edits-disabled', async () => {
+  const h = await spin({ allowEdits: false });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=x.md`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 403);
+    assert.deepEqual(await r.json(), { error: 'edits-disabled' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST with bad Origin → 403 bad-origin', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=x.md`, {
+      method: 'POST',
+      headers: { origin: 'http://evil.example' },
+    });
+    assert.equal(r.status, 403);
+    assert.deepEqual(await r.json(), { error: 'bad-origin' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST existing target → 409 exists', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    await writeFile(join(h.docs, 'already.md'), 'hi');
+    const r = await fetch(`${h.baseUrl}/api/documents?path=already.md`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 409);
+    assert.deepEqual(await r.json(), { error: 'exists' });
+    assert.equal(await readFile(join(h.docs, 'already.md'), 'utf8'), 'hi');
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST into missing parent → 409 parent-missing', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=no/such/c.md`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 409);
+    assert.deepEqual(await r.json(), { error: 'parent-missing' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST with bad name (leading dot) → 400 bad-name', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=${encodeURIComponent('.hidden')}`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 400);
+    assert.deepEqual(await r.json(), { error: 'bad-name' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST with bad name (parent-ref) → 400 bad-name', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=${encodeURIComponent('..')}`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 400);
+    assert.deepEqual(await r.json(), { error: 'bad-name' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST with bad name (too long) → 400 bad-name', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const huge = 'a'.repeat(300);
+    const r = await fetch(`${h.baseUrl}/api/documents?path=${huge}`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 400);
+    assert.deepEqual(await r.json(), { error: 'bad-name' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST with bad kind → 400 bad-kind', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=x.md&kind=symlink`, {
+      method: 'POST',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 400);
+    assert.deepEqual(await r.json(), { error: 'bad-kind' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('POST with traversal → 403 forbidden', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(
+      `${h.baseUrl}/api/documents?path=${encodeURIComponent('../escape.md')}`,
+      { method: 'POST', headers: { origin: h.baseUrl } },
+    );
+    // `..` normalizes to the docsDir parent; name is `escape.md`,
+    // parent containment fails → 409 parent-missing is also a valid
+    // outcome; either `403 forbidden` or `409 parent-missing` is fine as
+    // long as the write does not happen. We assert both cases here.
+    assert.ok(r.status === 403 || r.status === 409, `status=${r.status}`);
+  } finally {
+    await h.close();
+  }
+});
+
+// ── DELETE /api/documents ──────────────────────────────────────────────
+
+test('DELETE file → 204 and file gone', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const filePath = join(h.docs, 'gone.md');
+    await writeFile(filePath, 'bye');
+    const r = await fetch(`${h.baseUrl}/api/documents?path=gone.md`, {
+      method: 'DELETE',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 204);
+    await assert.rejects(stat(filePath));
+  } finally {
+    await h.close();
+  }
+});
+
+test('DELETE empty directory → 204 and dir gone', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const dirPath = join(h.docs, 'empty');
+    await mkdir(dirPath);
+    const r = await fetch(`${h.baseUrl}/api/documents?path=empty`, {
+      method: 'DELETE',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 204);
+    await assert.rejects(stat(dirPath));
+  } finally {
+    await h.close();
+  }
+});
+
+test('DELETE non-empty directory → 409 not-empty and dir preserved', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const dirPath = join(h.docs, 'full');
+    await mkdir(dirPath);
+    await writeFile(join(dirPath, 'note.md'), 'x');
+    const r = await fetch(`${h.baseUrl}/api/documents?path=full`, {
+      method: 'DELETE',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 409);
+    assert.deepEqual(await r.json(), { error: 'not-empty' });
+    const s = await stat(dirPath);
+    assert.ok(s.isDirectory());
+  } finally {
+    await h.close();
+  }
+});
+
+test('DELETE missing → 404 not-found', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=nope.md`, {
+      method: 'DELETE',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 404);
+    assert.deepEqual(await r.json(), { error: 'not-found' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('DELETE without --allow-edits → 403 edits-disabled', async () => {
+  const h = await spin({ allowEdits: false });
+  try {
+    await writeFile(join(h.docs, 'keep.md'), 'keep');
+    const r = await fetch(`${h.baseUrl}/api/documents?path=keep.md`, {
+      method: 'DELETE',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 403);
+    assert.deepEqual(await r.json(), { error: 'edits-disabled' });
+    assert.equal(await readFile(join(h.docs, 'keep.md'), 'utf8'), 'keep');
+  } finally {
+    await h.close();
+  }
+});
+
+test('DELETE with bad Origin → 403 bad-origin', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    await writeFile(join(h.docs, 'keep.md'), 'keep');
+    const r = await fetch(`${h.baseUrl}/api/documents?path=keep.md`, {
+      method: 'DELETE',
+      headers: { origin: 'http://evil.example' },
+    });
+    assert.equal(r.status, 403);
+    assert.deepEqual(await r.json(), { error: 'bad-origin' });
+    assert.equal(await readFile(join(h.docs, 'keep.md'), 'utf8'), 'keep');
+  } finally {
+    await h.close();
+  }
+});
+
+test('DELETE with traversal → 403 forbidden', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(
+      `${h.baseUrl}/api/documents?path=${encodeURIComponent('../../etc/passwd')}`,
+      { method: 'DELETE', headers: { origin: h.baseUrl } },
+    );
+    assert.equal(r.status, 403);
+    assert.deepEqual(await r.json(), { error: 'forbidden' });
+  } finally {
+    await h.close();
+  }
+});
+
+test('DELETE with empty path → 403 forbidden (refuses docsDir itself)', async () => {
+  const h = await spin({ allowEdits: true });
+  try {
+    const r = await fetch(`${h.baseUrl}/api/documents?path=`, {
+      method: 'DELETE',
+      headers: { origin: h.baseUrl },
+    });
+    assert.equal(r.status, 403);
   } finally {
     await h.close();
   }

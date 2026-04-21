@@ -1,6 +1,7 @@
 import {
   Component,
   DestroyRef,
+  ElementRef,
   HostListener,
   ViewChild,
   computed,
@@ -9,7 +10,8 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { HttpErrorResponse } from "@angular/common/http";
 import { DomSanitizer, SafeResourceUrl, Title } from "@angular/platform-browser";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { GroveMarkComponent } from "../../shared/grove-mark/grove-mark.component";
@@ -53,6 +55,7 @@ type ShellMode = "loading" | "directory" | "file" | "file-edit" | "not-found";
 })
 export class DocumentShellComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly documentService = inject(DocumentService);
@@ -94,12 +97,47 @@ export class DocumentShellComponent implements OnInit {
   });
 
   @ViewChild(EditorComponent) editorRef?: EditorComponent;
+  @ViewChild("createInput") createInputRef?: ElementRef<HTMLInputElement>;
+  @ViewChild("contextMenuEl") contextMenuEl?: ElementRef<HTMLElement>;
+
+  /**
+   * Sidebar context menu state. When non-null, a floating menu is rendered
+   * at the given viewport coordinates. `entry` is the target row (null
+   * when the menu was opened on blank space or the header — only the
+   * "New file" / "New folder" items are shown in that case).
+   */
+  readonly contextMenu = signal<
+    { x: number; y: number; entry: DocumentEntry | null; invoker: HTMLElement | null } | null
+  >(null);
+  /** Roving-tabindex index inside the open context menu. */
+  readonly contextMenuActive = signal(0);
+
+  /**
+   * Inline create state. When set, an `<input>` is rendered inside the
+   * sidebar and submits to `createFile` / `createDirectory` on Enter.
+   */
+  readonly creating = signal<{ kind: "file" | "dir"; parentPath: string; value: string; error: string | null } | null>(
+    null,
+  );
 
   constructor() {
     effect(() => {
       const site = this.siteName();
       const page = this.pageTitle();
       this.titleService.setTitle(page ? `${page} · ${site}` : site);
+    });
+    // Move focus to the active menu item whenever the open menu or its
+    // active index changes, so Arrow navigation feels native and
+    // screen-readers announce the new item per WAI-ARIA menu pattern.
+    effect(() => {
+      const menu = this.contextMenu();
+      const i = this.contextMenuActive();
+      if (!menu) { return; }
+      queueMicrotask(() => {
+        const root = this.contextMenuEl?.nativeElement;
+        const items = root?.querySelectorAll<HTMLElement>("[role='menuitem']");
+        items?.[i]?.focus();
+      });
     });
   }
 
@@ -394,6 +432,227 @@ export class DocumentShellComponent implements OnInit {
 
   dismissConflict(): void {
     this.saveService.clearConflict();
+  }
+
+  // ---------- Sidebar context menu + create/delete ----------
+
+  /** Open the context menu for a specific sidebar entry. */
+  openEntryContextMenu(event: MouseEvent | KeyboardEvent, entry: DocumentEntry): void {
+    if (!this.capabilities().supports.edits) { return; }
+    event.preventDefault();
+    const invoker = event.currentTarget as HTMLElement | null;
+    const { x, y } = this.menuAnchor(event, invoker);
+    this.contextMenu.set({ x, y, entry, invoker });
+    this.contextMenuActive.set(0);
+  }
+
+  /** Open the context menu anchored to the sidebar header (no row context). */
+  openSidebarContextMenu(event: MouseEvent | KeyboardEvent): void {
+    if (!this.capabilities().supports.edits) { return; }
+    event.preventDefault();
+    const invoker = event.currentTarget as HTMLElement | null;
+    const { x, y } = this.menuAnchor(event, invoker);
+    this.contextMenu.set({ x, y, entry: null, invoker });
+    this.contextMenuActive.set(0);
+  }
+
+  private menuAnchor(event: MouseEvent | KeyboardEvent, invoker: HTMLElement | null): { x: number; y: number } {
+    if (event instanceof MouseEvent) {
+      return { x: event.clientX, y: event.clientY };
+    }
+    if (invoker) {
+      const rect = invoker.getBoundingClientRect();
+      return { x: rect.left + 8, y: rect.bottom };
+    }
+    return { x: 16, y: 16 };
+  }
+
+  closeContextMenu(returnFocus = true): void {
+    const menu = this.contextMenu();
+    this.contextMenu.set(null);
+    if (returnFocus && menu?.invoker && document.body.contains(menu.invoker)) {
+      menu.invoker.focus();
+    }
+  }
+
+  /** Items shown in the currently-open context menu. */
+  readonly contextMenuItems = computed<{ id: "new-file" | "new-folder" | "delete"; label: string }[]>(() => {
+    const menu = this.contextMenu();
+    if (!menu) { return []; }
+    const items: { id: "new-file" | "new-folder" | "delete"; label: string }[] = [];
+    const onDir = menu.entry?.type === "directory";
+    const onBlank = menu.entry === null;
+    if (onDir || onBlank) {
+      items.push({ id: "new-file", label: "New file" });
+      items.push({ id: "new-folder", label: "New folder" });
+    }
+    if (menu.entry) {
+      items.push({ id: "delete", label: "Delete" });
+    }
+    return items;
+  });
+
+  onContextMenuKeydown(event: KeyboardEvent): void {
+    const items = this.contextMenuItems();
+    if (items.length === 0) { return; }
+    const i = this.contextMenuActive();
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      this.contextMenuActive.set((i + 1) % items.length);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      this.contextMenuActive.set((i - 1 + items.length) % items.length);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      this.contextMenuActive.set(0);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      this.contextMenuActive.set(items.length - 1);
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      this.closeContextMenu();
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      this.activateContextMenuItem(items[i].id);
+    }
+  }
+
+  activateContextMenuItem(id: "new-file" | "new-folder" | "delete"): void {
+    const menu = this.contextMenu();
+    if (!menu) { return; }
+    if (id === "delete" && menu.entry) {
+      const entry = menu.entry;
+      this.closeContextMenu(false);
+      void this.confirmDelete(entry);
+      return;
+    }
+    const kind: "file" | "dir" = id === "new-file" ? "file" : "dir";
+    const parent = menu.entry?.type === "directory"
+      ? (this.parentPath ? `${this.parentPath}/${menu.entry.name}` : menu.entry.name)
+      : this.parentPath;
+    this.closeContextMenu(false);
+    this.beginCreate(kind, parent);
+  }
+
+  onRowContextMenu(event: MouseEvent, entry: DocumentEntry): void {
+    this.openEntryContextMenu(event, entry);
+  }
+
+  onRowKeydown(event: KeyboardEvent, entry: DocumentEntry): void {
+    // Shift+F10 mirrors the platform contextmenu event.
+    if (event.shiftKey && event.key === "F10") {
+      this.openEntryContextMenu(event, entry);
+    } else if (event.key === "Delete" && this.capabilities().supports.edits) {
+      event.preventDefault();
+      void this.confirmDelete(entry);
+    }
+  }
+
+  beginCreate(kind: "file" | "dir", parentPath: string): void {
+    this.creating.set({ kind, parentPath, value: "", error: null });
+    // Focus the input after it renders.
+    queueMicrotask(() => this.createInputRef?.nativeElement.focus());
+  }
+
+  cancelCreate(): void {
+    this.creating.set(null);
+  }
+
+  onCreateInput(value: string): void {
+    const prev = this.creating();
+    if (!prev) { return; }
+    this.creating.set({ ...prev, value, error: null });
+  }
+
+  submitCreate(): void {
+    const c = this.creating();
+    if (!c) { return; }
+    const trimmed = c.value.trim();
+    if (!trimmed) {
+      this.creating.set({ ...c, error: "Name required" });
+      return;
+    }
+    const name = c.kind === "file" && !trimmed.includes(".") ? `${trimmed}.md` : trimmed;
+    if (name.includes("/") || name.startsWith(".")) {
+      this.creating.set({ ...c, error: "Invalid name" });
+      return;
+    }
+    const fullPath = c.parentPath ? `${c.parentPath}/${name}` : name;
+    const obs = c.kind === "file"
+      ? this.documentService.createFile(fullPath)
+      : this.documentService.createDirectory(fullPath);
+    obs.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.creating.set(null);
+        if (c.kind === "file") {
+          this.live.announce(`Created ${name}`);
+          void this.router.navigateByUrl(`/${fullPath}`);
+        } else {
+          this.live.announce(`Created folder ${name}`);
+          this.loadSidebarEntries(this.currentPath());
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        const code = err.error?.error as string | undefined;
+        const msg = code === "parent-missing"
+          ? "Create the folder first."
+          : code === "exists"
+          ? "Already exists."
+          : code === "bad-name"
+          ? "Invalid name."
+          : "Could not create.";
+        this.creating.set({ ...c, error: msg });
+      },
+    });
+  }
+
+  private async confirmDelete(entry: DocumentEntry): Promise<void> {
+    const label = entry.type === "directory" ? "folder" : "file";
+    const choice = await this.dialog.confirm({
+      title: `Delete ${label}?`,
+      body: `Delete ${label} "${entry.name}"? This cannot be undone.`,
+      actions: [
+        { id: "delete", label: "Delete", primary: true },
+        { id: "cancel", label: "Cancel" },
+      ],
+    });
+    if (choice !== "delete") { return; }
+
+    const fullPath = this.parentPath ? `${this.parentPath}/${entry.name}` : entry.name;
+    const isOpenFile = this.mode !== "directory" && this.isCurrentFile(entry);
+    this.documentService
+      .deleteEntry(fullPath)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.live.announce(`Deleted ${entry.name}`);
+          if (isOpenFile) {
+            this.saveService.markDirty(false);
+            void this.router.navigateByUrl(this.parentPath ? `/${this.parentPath}` : "/");
+          } else {
+            this.loadSidebarEntries(this.currentPath());
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          const code = err.error?.error as string | undefined;
+          const msg = code === "not-empty"
+            ? "Folder is not empty."
+            : code === "not-found"
+            ? "Already gone."
+            : "Could not delete.";
+          this.live.announce(msg);
+        },
+      });
+  }
+
+  /** Closes the context menu on outside click. */
+  @HostListener("document:click", ["$event"])
+  onDocumentClick(event: MouseEvent): void {
+    const menu = this.contextMenu();
+    if (!menu) { return; }
+    const target = event.target as HTMLElement | null;
+    if (target && target.closest(".context-menu")) { return; }
+    this.closeContextMenu(false);
   }
 
   @HostListener("window:beforeunload", ["$event"])

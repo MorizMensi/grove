@@ -4,9 +4,18 @@ import express, {
   type Request,
   type Response,
 } from 'express';
-import { readFile, readdir, stat } from 'node:fs/promises';
-import { extname, basename } from 'node:path';
+import {
+  mkdir,
+  readFile,
+  readdir,
+  rmdir,
+  stat,
+  unlink,
+  writeFile,
+} from 'node:fs/promises';
+import { extname, basename, dirname, join } from 'node:path';
 import type {
+  CreateEntryResponse,
   DocumentEntry,
   DocumentListing,
   RawDocumentResponse,
@@ -254,5 +263,153 @@ export function documentsRouter(
     },
   );
 
+  // POST /api/documents?path=...&kind=file|dir → 201
+  //
+  // No body parser: create is path-only. `kind` defaults to `file`.
+  router.post(
+    '/',
+    requireEdits(allowEdits),
+    csrfOrigin,
+    async (req: Request, res: Response) => {
+      const relPath = (req.query['path'] as string) || '';
+      const rawKind = (req.query['kind'] as string | undefined) ?? 'file';
+      if (rawKind !== 'file' && rawKind !== 'dir') {
+        res.status(400).json({ error: 'bad-kind' });
+        return;
+      }
+
+      const name = basename(relPath);
+      if (!isValidName(name)) {
+        res.status(400).json({ error: 'bad-name' });
+        return;
+      }
+
+      // Resolve the parent first so an existent-but-not-leaf path passes
+      // containment, and so a missing parent surfaces as `parent-missing`
+      // rather than the generic `forbidden` that `ensureInside` returns
+      // when both the leaf and its parent are absent.
+      const parentRel = dirname(relPath);
+      const parentPath = parentRel === '.' || parentRel === '' ? '' : parentRel;
+      let parentAbs: string;
+      try {
+        parentAbs = await ensureInside(docsDir, parentPath);
+      } catch (err) {
+        if (err instanceof PathError) {
+          res.status(409).json({ error: 'parent-missing' });
+          return;
+        }
+        throw err;
+      }
+      let parentStat;
+      try {
+        parentStat = await stat(parentAbs);
+      } catch {
+        res.status(409).json({ error: 'parent-missing' });
+        return;
+      }
+      if (!parentStat.isDirectory()) {
+        res.status(409).json({ error: 'parent-missing' });
+        return;
+      }
+      const absPath = join(parentAbs, name);
+
+      try {
+        if (rawKind === 'dir') {
+          await mkdir(absPath);
+          res.status(201).json({} satisfies CreateEntryResponse);
+          return;
+        }
+        // `flag: 'wx'` makes writeFile fail if the target already exists,
+        // giving us atomic create-or-conflict without a separate stat.
+        await writeFile(absPath, '', { encoding: 'utf8', flag: 'wx' });
+        const s = await stat(absPath);
+        const body: CreateEntryResponse = { mtime: s.mtimeMs };
+        res.status(201).json(body);
+      } catch (err) {
+        const code = (err as NodeJS.ErrnoException).code;
+        if (code === 'EEXIST') {
+          res.status(409).json({ error: 'exists' });
+          return;
+        }
+        if (code === 'ENOENT') {
+          res.status(409).json({ error: 'parent-missing' });
+          return;
+        }
+        throw err;
+      }
+    },
+  );
+
+  // DELETE /api/documents?path=... → 204
+  router.delete(
+    '/',
+    requireEdits(allowEdits),
+    csrfOrigin,
+    async (req: Request, res: Response) => {
+      const relPath = (req.query['path'] as string) || '';
+
+      let absPath: string;
+      try {
+        absPath = await ensureInside(docsDir, relPath, { allowMissing: true });
+      } catch (err) {
+        if (err instanceof PathError) {
+          res.status(403).json({ error: 'forbidden' });
+          return;
+        }
+        throw err;
+      }
+      // Refuse to let DELETE unlink docsDir itself.
+      if (absPath === docsDir) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+
+      let s;
+      try {
+        s = await stat(absPath);
+      } catch {
+        res.status(404).json({ error: 'not-found' });
+        return;
+      }
+
+      try {
+        if (s.isDirectory()) {
+          await rmdir(absPath);
+        } else {
+          await unlink(absPath);
+        }
+        res.status(204).end();
+      } catch (err) {
+        const code = (err as NodeJS.ErrnoException).code;
+        if (code === 'ENOTEMPTY' || code === 'EEXIST') {
+          res.status(409).json({ error: 'not-empty' });
+          return;
+        }
+        if (code === 'ENOENT') {
+          res.status(404).json({ error: 'not-found' });
+          return;
+        }
+        throw err;
+      }
+    },
+  );
+
   return router;
+}
+
+/**
+ * Name validation for create. Rejects empty, path separators, NUL,
+ * leading `.` (dotfiles are hidden by listing), and names over 255
+ * bytes. Windows reserved names are intentionally out of scope — Grove
+ * targets macOS and Linux.
+ */
+function isValidName(name: string): boolean {
+  if (!name) { return false; }
+  if (name === '.' || name === '..') { return false; }
+  if (name.startsWith('.')) { return false; }
+  if (name.includes('/') || name.includes('\\') || name.includes('\0')) {
+    return false;
+  }
+  if (Buffer.byteLength(name, 'utf8') > 255) { return false; }
+  return true;
 }
