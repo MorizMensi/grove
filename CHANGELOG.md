@@ -7,7 +7,11 @@ compact index; full per-release narratives live in
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 Grove aims for [SemVer](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0]
+## [Unreleased]
+
+_No unreleased changes._
+
+## [0.3.0] — 2026-04-21
 
 In-browser markdown editor (opt-in via `--allow-edits` and
 `--git-commit`), `--disable-security` escape hatches starting with
