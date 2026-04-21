@@ -9,7 +9,7 @@ import { syntaxTree } from '@codemirror/language';
 import type { SyntaxNode, SyntaxNodeRef } from '@lezer/common';
 
 /**
- * Phase 3 — Typora-style inline reveal decorations.
+ * Typora-style inline reveal decorations.
  *
  * Walks the lezer-markdown syntax tree once per state and produces three kinds
  * of decorations:
@@ -23,8 +23,9 @@ import type { SyntaxNode, SyntaxNodeRef } from '@lezer/common';
  *             containing an ATX heading so the editor's font sizing mirrors
  *             the view-mode `h1..h6` visual treatment.
  *
- * Block widgets (fenced code, tables, Mermaid, images) are deferred to Phase 4.
- * Math blocks (`$$…$$`) intentionally stay raw in v1 — see §2.2 of the spec.
+ * Block widgets (fenced code, tables, Mermaid, images) are handled by the
+ * `blockWidgets` ViewPlugin. Math blocks (`$$…$$`) intentionally stay raw
+ * in v1 — see §2.2 of the spec.
  */
 
 type Kind = 'mark' | 'hide' | 'line';
@@ -209,9 +210,17 @@ export const hybridMarkdownDecorations = StateField.define<DecorationSet>({
   },
   provide: (field) => [
     EditorView.decorations.from(field),
-    // Make hidden markers atomic so arrow keys step over them instead of into
-    // the gap, matching Obsidian Live Preview's behaviour.
-    EditorView.atomicRanges.of((view) => view.state.field(field)),
+    // Only the `hide` (replace) decorations are atomic, so arrow keys step over
+    // hidden syntax markers instead of into the gap. Mark and line decorations
+    // must NOT be atomic — otherwise clicking inside `**bold**`, `*em*`,
+    // `` `code` `` or `[label](url)` would snap the caret to the span's edge
+    // and Backspace would delete the whole span instead of one character.
+    EditorView.atomicRanges.of((view) =>
+      view.state.field(field).update({
+        filter: (_from, _to, value) =>
+          (value.spec as { __kind?: Kind } | null)?.__kind === 'hide',
+      }),
+    ),
   ],
 });
 

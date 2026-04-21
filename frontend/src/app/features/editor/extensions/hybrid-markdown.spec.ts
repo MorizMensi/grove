@@ -246,6 +246,87 @@ describe('hybridMarkdown state field', () => {
       }
     });
   });
+
+  /**
+   * Only `hide` (replace) decorations should contribute to EditorView.atomicRanges —
+   * mark decorations (styling) covering the whole inline span must NOT be atomic,
+   * or the caret cannot be placed inside bold/italic/code/link text and Backspace
+   * would delete the entire span instead of one character.
+   */
+  describe('atomic ranges (caret placement inside formatted spans)', () => {
+    function atomicRangesFor(doc: string, cursor: number): Array<[number, number]> {
+      const host = document.createElement('div');
+      document.body.appendChild(host);
+      try {
+        const view = new EditorView({
+          state: EditorState.create({
+            doc,
+            selection: { anchor: cursor },
+            extensions: [markdown(), hybridMarkdown()],
+          }),
+          parent: host,
+        });
+        try {
+          const builders = view.state.facet(EditorView.atomicRanges);
+          const ranges: Array<[number, number]> = [];
+          for (const build of builders) {
+            const set = build(view);
+            set.between(0, doc.length, (from, to) => {
+              ranges.push([from, to]);
+            });
+          }
+          return ranges.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        } finally {
+          view.destroy();
+        }
+      } finally {
+        host.remove();
+      }
+    }
+
+    it('strong: only the ** markers are atomic, not the whole span', () => {
+      // Caret outside → ** markers are hidden. Only those two ranges must be atomic.
+      // The StrongEmphasis mark range [2,10) must NOT be in the set, otherwise
+      // clicking inside "bold" snaps to the edge and Backspace deletes everything.
+      expect(atomicRangesFor('a **bold** b', 0)).toEqual([
+        [2, 4],
+        [8, 10],
+      ]);
+    });
+
+    it('emphasis: only the * markers are atomic', () => {
+      expect(atomicRangesFor('a *em* b', 0)).toEqual([
+        [2, 3],
+        [5, 6],
+      ]);
+    });
+
+    it('inline code: only the backticks are atomic', () => {
+      expect(atomicRangesFor('see `x + 1` here', 0)).toEqual([
+        [4, 5],
+        [10, 11],
+      ]);
+    });
+
+    it('link: only [ and ](url) are atomic, not the label or whole span', () => {
+      expect(atomicRangesFor('see [docs](https://example.com) for more', 0)).toEqual([
+        [4, 5],
+        [9, 31],
+      ]);
+    });
+
+    it('caret inside the span: no atomic ranges exist (mark decorations are not atomic)', () => {
+      // With caret at 6 (inside **bold**), hide decorations are not emitted.
+      // Mark decorations must not leak into atomicRanges, so the facet must be empty.
+      expect(atomicRangesFor('a **bold** b', 6)).toEqual([]);
+    });
+
+    it('heading line class does not contribute to atomic ranges', () => {
+      // '## Two\nbody' with caret on body line: only the '## ' hide range is atomic.
+      // The cm-heading line decoration must not be atomic.
+      expect(atomicRangesFor('## Two\nbody', 8)).toEqual([[0, 3]]);
+    });
+  });
 });
 
 // Ensure Decoration symbol is referenced so the test file type-checks even if

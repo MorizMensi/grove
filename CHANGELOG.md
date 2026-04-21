@@ -62,6 +62,14 @@ All notable changes to Grove are documented here. Format loosely follows
   rapid destroy — minor, scheduled for the Phase 7 polish pass).
 
 ### Fixed
+- Editor: caret can now be placed inside bold, italic, inline-code,
+  and link spans, and Backspace/Delete removes one character instead
+  of the entire span. The hybrid-markdown field was contributing its
+  whole decoration set to `EditorView.atomicRanges`, so the outer
+  `mark` ranges (styling the full `**bold**` / `` `code` `` / etc.)
+  were treated as atomic. Only the `hide` (replace) decorations over
+  `**`, `_`, `` ` ``, and link brackets are now atomic, so arrow keys
+  still skip hidden markers as before.
 - Mobile document shell (<768px): swapped the two-column grid for a
   single-column flex layout. Sidebar now starts closed and dismisses
   on backdrop/link tap (with proper `aria-label`/`aria-expanded`);
